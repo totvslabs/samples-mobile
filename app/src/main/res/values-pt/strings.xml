@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">DeepLinking</string>
+    <string name="appscheme">Scheme do app:\u0020</string>
+    <string name="appname">Nome do app:\u0020</string>
+    <string name="appidentifier">Identificador do app:\u0020</string>
+    <string name="clock_in_not_found">Clock-In não foi encontrado</string>
+    <string name="data_to_send">Dados a serem enviados</string>
+    <string name="email">E-mail:\u0020</string>
+    <string name="go_to_clock_in">Logar no Clock-In</string>
+    <string name="password">Senha:\u0020</string>
+    <string name="reset">Limpar</string>
+    <string name="received_data">Dados recebidos</string>
+    <string name="tenant">Tenant:\u0020</string>
+    <string name="yes_install">Sim, instalar</string>
+    <string name="want_to_install_clock_in">Deseja instalar o app Clock-In?</string>
+</resources>
