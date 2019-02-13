@@ -19,6 +19,25 @@ Aplicativo Android criado para simular o envio/recebimento de dados fazendo uso 
 
 ### Enviando dados para realizar o login com e-mail/senha:
 
+```xml
+<manifest>
+   <application>
+      <activity android:name=".MyActivity">
+         <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.LAUNCHER" />
+         </intent-filter>
+         <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:scheme="myappscheme" android:host="clockin" />
+         </intent-filter>
+      </activity>
+   </application>
+</manifest>
+```
+
 ```java
 public final class MyActivity extends AppCompatActivity {
 
