@@ -1,6 +1,6 @@
 # Deep Linking for Android
 
-Android app created to simulate the sending/receiving of data using the Deep Linking.
+Android app created to sending/receiving data using the Deep Linking.
 
 ## Requirements
 
@@ -11,7 +11,7 @@ Android app created to simulate the sending/receiving of data using the Deep Lin
 
 1. Install JDK 8.
 
-2. Install Android Studio e configure an emulador.
+2. Install Android Studio and setup an emulador.
 
 3. Open the Android Studio and build.
 
@@ -128,7 +128,7 @@ public final class ClockInObject {
 }
 ```
  
-*For more implementation details on just build and analise the example.*
+*For more implementation details just build the example.*
 
 *Information about deep linking protocol can be found on [Wiki](https://github.com/totvslabs/clockin-deep-linking-android/wiki).*
 
