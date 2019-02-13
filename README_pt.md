@@ -1,27 +1,28 @@
-# Deep Linking for Android
+# Deep Linking para Android
 
-Android app created to simulate the sending/receiving of data using the Deep Linking.
+Aplicativo Android criado para simular o envio/recebimento de dados fazendo uso do Deep Linking.
 
-## Requirements
+## Requisitos
 
 - [Android Studio](https://developer.android.com/studio)
 - [Java 8](https://www.oracle.com/technetwork/pt/java/javase/downloads/index.html)
 
-## Steps to Run
+## Configuração do ambiente
 
-1. Install JDK 8.
+1. Instale o JDK 8.
 
-2. Install Android Studio e configure an emulador.
+2. Instale o Android Studio e configure um emulador.
 
-3. Open the Android Studio and build.
+3. No Android Studio, abra e rode o projeto.
 
-## Clock-In Integration
+## Integração com o Clock-In
 
-### Sending data to login with email/password:
+### Enviando dados para realizar o login com e-mail/senha:
 
 ```java
 public final class MyActivity extends AppCompatActivity {
 
+   // Ação quando usuário pressiona um botão
    public void sendDataToClockIn() {
       final Uri.Builder builder = new Uri.Builder()
          .scheme("clockin")
@@ -53,7 +54,7 @@ public final class MyActivity extends AppCompatActivity {
 }
 ```
 
-### Receiving data from the latest clock-in(s):
+### Recebendo dados da(s) última(s) batida(s):
 
 ```xml
 <manifest>
@@ -90,7 +91,7 @@ public final class MyActivity extends AppCompatActivity {
       }
 
       final String data = mManager.receivedData(intent);
-      intent.setData(null); // reset the data after handled
+      intent.setData(null); // limpar intent após opter os dados
 
       if (data == null) {
          return;
@@ -99,7 +100,7 @@ public final class MyActivity extends AppCompatActivity {
       final List<ClockInObject> clockIns = serializeData(data);
       
       // ...
-      // handle the serialized list
+      // manipular a lista serializada
       // ...
    }
 
@@ -128,15 +129,15 @@ public final class ClockInObject {
 }
 ```
  
-*For more implementation details on just build and analise the example.*
+*Para obter mais detalhes sobre a implementação basta rodar o projeto.*
 
-*Information about deep linking protocol can be found on [Wiki](https://github.com/totvslabs/clockin-deep-linking-android/wiki).*
+*Informações sobre a comunicação com o Clock-In podem ser obtidas na [Wiki](https://github.com/totvslabs/clockin-deep-linking-android/wiki).*
 
 ## Change-log
 
-A brief summary of each release can be found on the [releases](https://github.com/totvslabs/clockin-deep-linking-android/releases) do projeto.
+Um breve resumo de cada versão pode ser encontrado nas [releases](https://github.com/totvslabs/clockin-deep-linking-android/releases) do projeto.
 
-## License
+## Licença de uso
 
 ```
 © TOTVS Labs
@@ -145,5 +146,5 @@ A brief summary of each release can be found on the [releases](https://github.co
 - - -
 
 <p align="center">
-<a href="https://github.com/totvslabs/clockin-deep-linking-android/blob/master/README_pt.md">Português</a>
+<a href="https://github.com/totvslabs/clockin-deep-linking-android/blob/master/README.md">English</a>
 </p>
