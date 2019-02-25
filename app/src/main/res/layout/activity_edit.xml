@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.EditActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:layout_marginLeft="@dimen/margin"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="@dimen/card_elevation">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- TENANT -->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/edt_tenant"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/tenant"
+                            android:inputType="text"
+                            android:imeOptions="actionNext"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <!-- EMAIL -->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/edt_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/email"
+                            android:inputType="textEmailAddress"
+                            android:imeOptions="actionNext"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <!-- PASSWORD -->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/edt_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/password"
+                            android:inputType="textNoSuggestions"
+                            android:imeOptions="actionNext"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <!-- APP SCHEME -->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/edt_app_scheme"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/appscheme"
+                            android:inputType="textNoSuggestions"
+                            android:imeOptions="actionNext"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <!-- APP NAME -->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/edt_app_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/appname"
+                            android:inputType="textCapWords"
+                            android:imeOptions="actionNext"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <!-- APP IDENTIFIER -->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin">
+
+                        <android.support.v7.widget.AppCompatEditText
+                            android:id="@+id/edt_app_identifier"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/appidentifier"
+                            android:inputType="textNoSuggestions"
+                            android:imeOptions="actionDone"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_save"
+                android:text="@string/save"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_margin="@dimen/margin"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/colorPrimary" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

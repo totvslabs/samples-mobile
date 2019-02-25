@@ -1,135 +1,128 @@
 package ai.carol.deeplinking.activity;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.method.ScrollingMovementMethod;
-import android.widget.TextView;
 
 import java.util.List;
 import java.util.Locale;
 
 import ai.carol.deeplinking.R;
-import ai.carol.deeplinking.helper.ClockInHelper;
-import ai.carol.deeplinking.manager.ClockInManager;
+import ai.carol.deeplinking.helper.ConverterHelper;
+import ai.carol.deeplinking.helper.DatabaseHelper;
 import ai.carol.deeplinking.model.ClockInObject;
 
-public final class MainActivity extends AppActivity {
+public final class MainActivity extends AppCompatActivity {
 
     private static final String ZERO_TEXT = "0";
     private static final String EMPTY_TEXT = "-";
 
-    private TextView mTxtTenant;
-    private TextView mTxtEmail;
-    private TextView mTxtPassword;
-    private TextView mTxtAppScheme;
-    private TextView mTxtAppName;
-    private TextView mTxtAppIdentifier;
-    private TextView mTxtDataCounter;
-    private TextView mTxtData;
-    private AppCompatButton mBtnReset;
-    private AppCompatButton mBtnGoToClockIn;
+    private AppCompatTextView mTxtTenant;
+    private AppCompatTextView mTxtEmail;
+    private AppCompatTextView mTxtPassword;
+    private AppCompatTextView mTxtAppScheme;
+    private AppCompatTextView mTxtAppName;
+    private AppCompatTextView mTxtAppIdentifier;
+    private AppCompatTextView mTxtClockInsCounter;
+    private AppCompatTextView mTxtClockIns;
+    private AppCompatButton mBtnEdit;
+    private AppCompatButton mBtnResetClockIns;
+    private AppCompatButton mBtnSendData;
 
-    private final ClockInManager mManager = new ClockInManager(this);
-
-    //region - Activity
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        receiveClockInData();
-    }
-
-    //endregion
-
-    //region - AppActivity
+    //region - AppCompatActivity
 
     @Override
-    int getContentView() {
-        return R.layout.activity_main;
-    }
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-    @SuppressLint("SetTextI18n")
-    @Override
-    void findViewsById() {
         mTxtTenant = findViewById(R.id.txt_tenant);
         mTxtEmail = findViewById(R.id.txt_email);
         mTxtPassword = findViewById(R.id.txt_password);
         mTxtAppScheme = findViewById(R.id.txt_app_scheme);
         mTxtAppName = findViewById(R.id.txt_app_name);
         mTxtAppIdentifier = findViewById(R.id.txt_app_identifier);
-        mTxtDataCounter = findViewById(R.id.txt_data_counter);
-        mTxtData = findViewById(R.id.txt_data);
-        mBtnReset = findViewById(R.id.btn_reset);
-        mBtnGoToClockIn = findViewById(R.id.btn_go_to_clock_in);
+        mTxtClockInsCounter = findViewById(R.id.txt_clockins_counter);
+        mTxtClockIns = findViewById(R.id.txt_clockins);
+        mBtnEdit = findViewById(R.id.btn_edit);
+        mBtnResetClockIns = findViewById(R.id.btn_reset_clockins);
+        mBtnSendData = findViewById(R.id.btn_send_data);
 
-        mTxtTenant.setText("deeplinking");
-        mTxtEmail.setText("user@mycompany.com");
-        mTxtPassword.setText("1a2B3#");
-        mTxtAppScheme.setText("deeplinking");
-        mTxtAppName.setText("My App");
-        mTxtAppIdentifier.setText("ai.carol.deeplinking");
-        mTxtData.setMovementMethod(new ScrollingMovementMethod());
+        mTxtClockIns.setMovementMethod(new ScrollingMovementMethod());
 
-        resetReceivedData();
+        mBtnEdit.setOnClickListener((view) -> startEditActivity());
+        mBtnResetClockIns.setOnClickListener((view) -> resetClockIns());
+        mBtnSendData.setOnClickListener((view) -> startSendDataActivity());
     }
 
     @Override
-    void addListeners() {
-        mBtnReset.setOnClickListener((view) -> resetReceivedData());
-        mBtnGoToClockIn.setOnClickListener((view) -> sendDataToClockIn());
+    protected void onResume() {
+        super.onResume();
+        refreshData();
     }
 
     //endregion
 
-    //region - Private
+    //region - Private Action
 
-    private void sendDataToClockIn() {
-        final String tenant = mTxtTenant.getText().toString();
-        final String email = mTxtEmail.getText().toString();
-        final String password = mTxtPassword.getText().toString();
-        final String appScheme = mTxtAppScheme.getText().toString();
-        final String appName = mTxtAppName.getText().toString();
-        final String appIdentifier = mTxtAppIdentifier.getText().toString();
-
-        final Intent intent = mManager.buildIntent(tenant, email, password, appScheme, appName, appIdentifier);
-
-        if (intent == null) {
-            ClockInHelper.showPlayStoreAlert(MainActivity.this);
-            return;
-        }
-
-        startActivity(intent);
+    private void startEditActivity() {
+        final Intent editIntent = new Intent(getBaseContext(), EditActivity.class);
+        startActivity(editIntent);
     }
 
-    private void receiveClockInData() {
-        final Intent intent = getIntent();
-        if (intent == null) {
-            resetReceivedData();
+    private void startSendDataActivity() {
+        final Intent sendDataIntent = new Intent(getBaseContext(), SendDataActivity.class);
+
+        sendDataIntent.putExtra(SendDataActivity.TENANT_EXTRA, getString(mTxtTenant));
+        sendDataIntent.putExtra(SendDataActivity.EMAIL_EXTRA, getString(mTxtEmail));
+        sendDataIntent.putExtra(SendDataActivity.PASSWORD_EXTRA, getString(mTxtPassword));
+        sendDataIntent.putExtra(SendDataActivity.APP_SCHEME_EXTRA, getString(mTxtAppScheme));
+        sendDataIntent.putExtra(SendDataActivity.APP_NAME_EXTRA, getString(mTxtAppName));
+        sendDataIntent.putExtra(SendDataActivity.APP_IDENTIFIER_EXTRA, getString(mTxtAppIdentifier));
+
+        startActivity(sendDataIntent);
+    }
+
+    private void resetClockIns() {
+        mTxtClockInsCounter.setText(ZERO_TEXT);
+        mTxtClockIns.setText(EMPTY_TEXT);
+    }
+
+    //endregion
+
+    //region - Private Helper
+
+    private String getString(final AppCompatTextView textView) {
+        return textView.getText().toString();
+    }
+
+    private void refreshData() {
+        final Context context = getApplicationContext();
+
+        mTxtTenant.setText(DatabaseHelper.fetchTenant(context));
+        mTxtEmail.setText(DatabaseHelper.fetchEmail(context));
+        mTxtPassword.setText(DatabaseHelper.fetchPassword(context));
+        mTxtAppScheme.setText(DatabaseHelper.fetchAppScheme(context));
+        mTxtAppName.setText(DatabaseHelper.fetchAppName(context));
+        mTxtAppIdentifier.setText(DatabaseHelper.fetchAppIdentifier(context));
+
+        final String clockInsStr = DatabaseHelper.fetchClockIns(context);
+
+        if (clockInsStr == null) {
+            resetClockIns();
             return;
         }
 
-        final String data = mManager.receivedData(intent);
-
-        intent.setData(null);
-
-        if (data == null) {
-            resetReceivedData();
-            return;
-        }
-
-        mTxtData.setText(data);
-
-        final List<ClockInObject> clockIns = mManager.serializeReceivedData(data);
+        final List<ClockInObject> clockIns = ConverterHelper.getClockInsFromString(clockInsStr);
         final String clockInsCounter = String.format(Locale.getDefault(), "%d", clockIns.size());
 
-        mTxtDataCounter.setText(clockInsCounter);
-        mTxtData.setText(data);
-    }
-
-    private void resetReceivedData() {
-        mTxtDataCounter.setText(ZERO_TEXT);
-        mTxtData.setText(EMPTY_TEXT);
+        mTxtClockInsCounter.setText(clockInsCounter);
+        mTxtClockIns.setText(clockInsStr);
     }
 
     //endregion

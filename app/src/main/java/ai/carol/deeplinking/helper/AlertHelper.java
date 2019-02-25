@@ -9,13 +9,13 @@ import android.support.annotation.NonNull;
 
 import ai.carol.deeplinking.R;
 
-public final class ClockInHelper {
+public final class AlertHelper {
 
     private static final String PACKAGE = "com.clockinfieldtools";
     private static final String MARKET_URL = "market://details?id=" + PACKAGE;
     private static final String HTTPS_URL = "https://play.google.com/store/apps/details?id=" + PACKAGE;
 
-    private ClockInHelper() { }
+    private AlertHelper() { }
 
     //region - Public
 

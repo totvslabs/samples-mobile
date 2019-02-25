@@ -11,19 +11,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="ai.carol.deeplinking.activity.MainActivity">
+        <activity
+            android:name=".activity.EditActivity"
+            android:label="@string/edit" />
+
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
 
+        <activity android:name=".activity.ReceiveDataActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="deeplinking" android:host="clockin" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".activity.SendDataActivity" />
 
     </application>
 
