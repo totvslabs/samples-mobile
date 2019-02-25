@@ -27,7 +27,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="deeplinking" android:host="clockin" />
+                <data android:scheme="${scheme}" android:host="clockin" />
             </intent-filter>
         </activity>
 
