@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activity.MainActivity">
 
     <LinearLayout
@@ -30,12 +30,33 @@
 
                 <!-- TITLE -->
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_large"
-                    android:textStyle="bold"
-                    android:text="@string/data_to_send" />
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_large"
+                        android:textStyle="bold"
+                        android:text="@string/data_to_send" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/btn_edit"
+                        android:layout_width="60dp"
+                        android:layout_height="25dp"
+                        android:gravity="center"
+                        android:background="@android:color/transparent"
+                        android:text="@string/edit"
+                        android:textColor="@color/colorPrimary" />
+
+                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -51,13 +72,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_normal"
                         android:text="@string/tenant" />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/txt_tenant"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -73,13 +94,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_normal"
                         android:text="@string/email" />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/txt_email"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -95,13 +116,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_normal"
                         android:text="@string/password" />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/txt_password"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -117,13 +138,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_normal"
                         android:text="@string/appscheme" />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/txt_app_scheme"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -139,13 +160,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_normal"
                         android:text="@string/appname" />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/txt_app_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -161,13 +182,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_normal"
                         android:text="@string/appidentifier" />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/txt_app_identifier"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -205,14 +226,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_large"
                         android:textStyle="bold"
                         android:text="@string/received_data"  />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_large"
@@ -220,14 +241,14 @@
                         android:text=" ("
                         tools:ignore="HardcodedText" />
 
-                    <TextView
-                        android:id="@+id/txt_data_counter"
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/txt_clockins_counter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_large"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_large"
@@ -241,10 +262,10 @@
                         android:layout_weight="1" />
 
                     <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/btn_reset"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/btn_reset_clockins"
+                        android:layout_width="60dp"
                         android:layout_height="25dp"
-                        android:layout_gravity="center"
+                        android:gravity="center"
                         android:background="@android:color/transparent"
                         android:text="@string/reset"
                         android:textColor="@color/colorPrimary" />
@@ -260,8 +281,8 @@
 
                 <!-- DATA -->
 
-                <TextView
-                    android:id="@+id/txt_data"
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/txt_clockins"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scrollbars="vertical"
@@ -274,7 +295,7 @@
         <!-- BUTTON -->
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_go_to_clock_in"
+            android:id="@+id/btn_send_data"
             android:text="@string/go_to_clock_in"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
