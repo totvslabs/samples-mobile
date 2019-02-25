@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 import ai.carol.deeplinking.R;
+import ai.carol.deeplinking.helper.AlertHelper;
 import ai.carol.deeplinking.helper.ConverterHelper;
 import ai.carol.deeplinking.helper.DatabaseHelper;
 import ai.carol.deeplinking.model.ClockInObject;
@@ -76,11 +77,20 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void startSendDataActivity() {
+        final String tenant = getString(mTxtTenant);
+        final String email = getString(mTxtEmail);
+        final String password = getString(mTxtPassword);
+
+        if (tenant.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            AlertHelper.showFillFieldsAlert(this);
+            return;
+        }
+
         final Intent sendDataIntent = new Intent(getBaseContext(), SendDataActivity.class);
 
-        sendDataIntent.putExtra(SendDataActivity.TENANT_EXTRA, getString(mTxtTenant));
-        sendDataIntent.putExtra(SendDataActivity.EMAIL_EXTRA, getString(mTxtEmail));
-        sendDataIntent.putExtra(SendDataActivity.PASSWORD_EXTRA, getString(mTxtPassword));
+        sendDataIntent.putExtra(SendDataActivity.TENANT_EXTRA, tenant);
+        sendDataIntent.putExtra(SendDataActivity.EMAIL_EXTRA, email);
+        sendDataIntent.putExtra(SendDataActivity.PASSWORD_EXTRA, password);
         sendDataIntent.putExtra(SendDataActivity.APP_SCHEME_EXTRA, getString(mTxtAppScheme));
         sendDataIntent.putExtra(SendDataActivity.APP_NAME_EXTRA, getString(mTxtAppName));
         sendDataIntent.putExtra(SendDataActivity.APP_IDENTIFIER_EXTRA, getString(mTxtAppIdentifier));

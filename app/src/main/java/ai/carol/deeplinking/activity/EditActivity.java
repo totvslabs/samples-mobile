@@ -50,6 +50,10 @@ public final class EditActivity extends AppCompatActivity {
         mEdtAppName.setText(DatabaseHelper.fetchAppName(context));
         mEdtAppIdentifier.setText(DatabaseHelper.fetchAppIdentifier(context));
 
+        mEdtAppScheme.setEnabled(false);
+        mEdtAppName.setEnabled(false);
+        mEdtAppIdentifier.setEnabled(false);
+
         mBtnSave.setOnClickListener((view) -> save());
     }
 
