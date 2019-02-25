@@ -32,7 +32,6 @@ public final class ConverterHelper {
     //region - Private
 
     private static Type getClockInsType() {
-        TypeToken type = new TypeToken<List<ClockInObject>>(){}.getType();
         return new TypeToken<List<ClockInObject>>(){}.getType();
     }
 
