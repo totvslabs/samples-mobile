@@ -22,33 +22,31 @@ Aplicativo Android criado para simular o envio/recebimento de dados fazendo uso 
 ```java
 public final class MyActivity extends AppCompatActivity {
 
-   // Ação quando usuário pressiona um botão
-   public void sendDataToClockIn() {
-      final Uri.Builder builder = new Uri.Builder()
+   private void sendDataToClockIn() {
+      Uri.Builder builder = new Uri.Builder()
          .scheme("clockin")
          .authority("login")
          .appendPath("oauth2")
-         .appendQueryParameter("tenant", "mycompany")
-         .appendQueryParameter("email", "user@mycompany.com")
-         .appendQueryParameter("password", "MyP455w0rd")
-         .appendQueryParameter("appScheme", "myappscheme")
-         .appendQueryParameter("appName", "My App Name")
-         .appendQueryParameter("appIdentifier", "com.mycompany.app");
+         .appendQueryParameter("tenant", tenant)
+         .appendQueryParameter("email", email)
+         .appendQueryParameter("password", password)
+         .appendQueryParameter("appScheme", appScheme)
+         .appendQueryParameter("appName", appName)
+         .appendQueryParameter("appIdentifier", appIdentifier);
 
-      final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      final Uri uri = builder.build();
 
-      if (!isIntentSave(intent)) {
-         return;
-      }
+      Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+      intent = intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                               | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                               | Intent.FLAG_ACTIVITY_NO_HISTORY);
 
-      startActivity(intent);
-   }
-
-   private boolean isIntentSave(final Intent intent) {
       final PackageManager packageManager = mContext.getPackageManager();
       List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
-      return activities.size() > 0;
+
+      if (activities.size() > 0) {
+         activity.startActivity(intent);
+      }
    }
 	
 }
@@ -59,73 +57,83 @@ public final class MyActivity extends AppCompatActivity {
 ```xml
 <manifest>
    <application>
-      <activity android:name=".MyActivity">
-         <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.LAUNCHER" />
-         </intent-filter>
+      <!-- ... -->
+
+      <activity android:name=".ReceiveDataActivity">
          <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
-            <data android:scheme="myappscheme" android:host="clockin" />
+            <data android:scheme="myscheme" android:host="clockin" />
          </intent-filter>
       </activity>
+
+      <!-- ... -->
    </application>
 </manifest>
 ```
 
 ```java
-public final class MyActivity extends AppCompatActivity {
+public final class ReceiveDataActivity extends AppCompatActivity {
 
    @Override
-   protected void onResume() {
-      super.onResume();
+   protected void onCreate(@Nullable Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
       receiveDataFromClockIn();
    }
 
-   private void receiveDataFromClockIn() {
+   private void receiveDataFromClockIn(final Intent intent) {
       final Intent intent = getIntent();
       if (intent == null) {
-         return;
+         return null;
       }
 
-      final String data = mManager.receivedData(intent);
-      intent.setData(null); // limpar intent após opter os dados
-
-      if (data == null) {
-         return;
+      final Uri intentData = intent.getData();
+      if (intentData == null) {
+         return null;
       }
 
-      final List<ClockInObject> clockIns = serializeData(data);
-      
-      // ...
-      // manipular a lista serializada
-      // ...
-   }
+      intent.setData(null);
 
-   private List<ClockInObject> serializeData(@NonNull final String data) {
-      final Type type = new TypeToken<List<ClockInObject>>(){}.getType();
-      return new Gson().fromJson(data, type);
-   }
+      final String host = intentData.getHost();
+      if (host == null || !host.equals("clockin")) {
+         return null;
+      }
+
+      final String clockInsStr = intentData.getQueryParameter("data");
+      if (clockInsStr == null) {
+         return null;
+      }
+
+      TypeToken type = new TypeToken<List<ClockInObject>>(){}.getType();
+      List<ClockInObject> clockIns = new Gson().toJson(clockInsStr, type);
+
+      // ...
+    }
 
 }
 
 public final class ClockInObject {
 
+   @SerializedName("name")
+   private String name;
+
+   @SerializedName("data")
+   private ClockInDataObject data;
+   
+}
+
+public final class ClockInDataObject {
+
    @SerializedName("clockinCoordinates")
    private String clockinCoordinates;
 
-   @SerializedName("deviceCode")
-   private String deviceCode;
+   @SerializedName("clockinDatetime")
+   private String clockinDatetime;
 
    @SerializedName("employeePersonId")
    private String employeePersonId;
 
-   // ...
-   // getters e setters
-   // ...
-	
+   //...
 }
 ```
  
