@@ -7,6 +7,7 @@
     <string name="data_to_send">Dados a serem enviados</string>
     <string name="edit">Editar dados a serem enviados</string>
     <string name="email">E-mail:\u0020</string>
+    <string name="fill_all_fields">Preencha todos os campos para continuar.</string>
     <string name="go_to_clock_in">Logar no Clock-In</string>
     <string name="password">Senha:\u0020</string>
     <string name="reset">Limpar</string>
@@ -14,5 +15,6 @@
     <string name="save">Salvar</string>
     <string name="tenant">Tenant:\u0020</string>
     <string name="yes_install">Sim, instalar</string>
+    <string name="yes_right_away">Sim, é pra já!</string>
     <string name="want_to_install_clock_in">Deseja instalar o app Clock-In?</string>
 </resources>
