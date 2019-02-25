@@ -59,7 +59,8 @@ public final class MyActivity extends AppCompatActivity {
    <application>
       <!-- ... -->
 
-      <activity android:name=".ReceiveDataActivity">
+      <activity android:name=".ReceiveDataActivity"
+         android:launchMode="singleTask">
          <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />

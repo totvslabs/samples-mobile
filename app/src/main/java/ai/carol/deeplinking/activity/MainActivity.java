@@ -99,6 +99,9 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void resetClockIns() {
+        final Context context = getApplicationContext();
+        DatabaseHelper.saveClockIns(context, null);
+
         mTxtClockInsCounter.setText(ZERO_TEXT);
         mTxtClockIns.setText(EMPTY_TEXT);
     }

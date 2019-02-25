@@ -77,7 +77,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/password"
                             android:inputType="textNoSuggestions"
-                            android:imeOptions="actionNext"/>
+                            android:imeOptions="actionDone"/>
 
                     </android.support.design.widget.TextInputLayout>
 
