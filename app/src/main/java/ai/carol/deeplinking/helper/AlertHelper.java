@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import ai.carol.deeplinking.R;
+import ai.carol.deeplinking.activity.EditActivity;
 
 public final class AlertHelper {
 
@@ -28,6 +29,15 @@ public final class AlertHelper {
                 .show();
     }
 
+    public static void showFillFieldsAlert(@NonNull final Activity activity) {
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.fill_all_fields)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes_right_away, (dialog, which) -> openEditActivity(activity))
+                .show();
+    }
+
     //endregion
 
     //region - Private
@@ -40,6 +50,11 @@ public final class AlertHelper {
         } catch (ActivityNotFoundException exception) {
             activity.startActivity(new Intent(action, Uri.parse(HTTPS_URL)));
         }
+    }
+
+    private static void openEditActivity(@NonNull final Activity activity) {
+        final Intent editIntent = new Intent(activity, EditActivity.class);
+        activity.startActivity(editIntent);
     }
 
     //endregion

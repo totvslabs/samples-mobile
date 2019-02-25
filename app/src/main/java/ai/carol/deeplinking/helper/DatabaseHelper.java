@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
+import ai.carol.deeplinking.BuildConfig;
+import ai.carol.deeplinking.R;
+
 public final class DatabaseHelper {
 
     private static final String DB_NAME = "ai.carol.deeplinking.database";
@@ -22,21 +25,21 @@ public final class DatabaseHelper {
         save(context, APP_IDENTIFIER_KEY, appIdentifier);
     }
     public static String fetchAppIdentifier(@NonNull final Context context) {
-        return fetch(context, APP_IDENTIFIER_KEY);
+        return fetch(context, APP_IDENTIFIER_KEY, getAppIdentifierDefault());
     }
 
     public static void saveAppName(@NonNull final Context context, final String appName) {
         save(context, APP_NAME_KEY, appName);
     }
     public static String fetchAppName(@NonNull final Context context) {
-        return fetch(context, APP_NAME_KEY);
+        return fetch(context, APP_NAME_KEY, getAppNameDefault(context));
     }
 
     public static void saveAppScheme(@NonNull final Context context, final String appScheme) {
         save(context, APP_SCHEME_KEY, appScheme);
     }
     public static String fetchAppScheme(@NonNull final Context context) {
-        return fetch(context, APP_SCHEME_KEY);
+        return fetch(context, APP_SCHEME_KEY, getAppSchemeDefault(context));
     }
 
     public static void saveClockIns(@NonNull final Context context, final String clockIns) {
@@ -67,7 +70,7 @@ public final class DatabaseHelper {
         return fetch(context, TENANT_KEY);
     }
 
-    //region - Private
+    //region - Private Helper
 
     private static void save(@NonNull final Context context, @NonNull final String key, final String value) {
         final SharedPreferences preferences = getPreferences(context);
@@ -78,13 +81,32 @@ public final class DatabaseHelper {
     }
 
     private static String fetch(@NonNull final Context context, @NonNull final String key) {
+        return fetch(context, key, null);
+    }
+
+    private static String fetch(@NonNull final Context context, @NonNull final String key, final String defaultValue) {
         final SharedPreferences preferences = getPreferences(context);
-        final String defaultValue = null;
         return preferences.getString(key, defaultValue);
     }
 
     private static SharedPreferences getPreferences(@NonNull final Context context) {
         return context.getSharedPreferences(DB_NAME, Context.MODE_PRIVATE);
+    }
+
+    //endregion
+
+    //region - Private Default
+
+    private static String getAppIdentifierDefault() {
+        return BuildConfig.APPLICATION_ID;
+    }
+
+    private static String getAppNameDefault(final @NonNull Context context) {
+        return context.getString(R.string.app_name);
+    }
+
+    private static String getAppSchemeDefault(final @NonNull Context context) {
+        return BuildConfig.SCHEME;
     }
 
     //endregion
