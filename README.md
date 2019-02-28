@@ -45,7 +45,7 @@ public final class MyActivity extends AppCompatActivity {
       List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
 
       if (activities.size() > 0) {
-         activity.startActivity(intent);
+         startActivity(intent);
       }
    }
    
