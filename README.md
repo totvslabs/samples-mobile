@@ -126,7 +126,7 @@ public final class ClockInObject {
 public final class ClockInDataObject {
 
    @SerializedName("clockinCoordinates")
-   private String clockinCoordinates;
+   private ClockInCoordinatesObject clockinCoordinates;
 
    @SerializedName("clockinDatetime")
    private String clockinDatetime;
@@ -135,6 +135,19 @@ public final class ClockInDataObject {
    private String employeePersonId;
 
    //...
+}
+
+public final class ClockInCoordinatesObject {
+
+   @SerializedName("lat")
+   private double latitude;
+
+   @SerializedName("long")
+   private double longitude;
+
+   @SerializedName("formatted")
+   private String formatted;
+
 }
 ```
  
