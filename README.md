@@ -42,7 +42,7 @@ public final class MyActivity extends AppCompatActivity {
                                | Intent.FLAG_ACTIVITY_NO_HISTORY);
 
       final PackageManager packageManager = mContext.getPackageManager();
-      List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+      final List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
 
       if (activities.size() > 0) {
          startActivity(intent);
@@ -157,7 +157,7 @@ public final class ClockInCoordinatesObject {
 
 ## Change-log
 
-A brief summary of each release can be found on the [releases](https://github.com/totvslabs/clockin-deep-linking-android/releases) do projeto.
+A brief summary of each release can be found on the [releases](https://github.com/totvslabs/clockin-deep-linking-android/releases).
 
 ## License
 
