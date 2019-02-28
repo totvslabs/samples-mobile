@@ -42,7 +42,7 @@ public final class MyActivity extends AppCompatActivity {
                                | Intent.FLAG_ACTIVITY_NO_HISTORY);
 
       final PackageManager packageManager = mContext.getPackageManager();
-      List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+      final List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
 
       if (activities.size() > 0) {
          startActivity(intent);
