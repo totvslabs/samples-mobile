@@ -6,7 +6,7 @@ public final class ClockInDataObject {
 
     @SuppressWarnings("unused")
     @SerializedName("clockinCoordinates")
-    private String clockinCoordinates;
+    private ClockInCoordinatesObject clockinCoordinates;
 
     @SuppressWarnings("unused")
     @SerializedName("clockinDatetime")
@@ -53,7 +53,7 @@ public final class ClockInDataObject {
 
 
     @SuppressWarnings("unused")
-    public String getClockinCoordinates() {
+    public ClockInCoordinatesObject getClockinCoordinates() {
         return clockinCoordinates;
     }
 
