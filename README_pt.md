@@ -116,7 +116,7 @@ public final class ReceiveDataActivity extends AppCompatActivity {
 public final class ClockInDataObject {
 
    @SerializedName("clockinCoordinates")
-   private ClockInCoordinatesObject clockinCoordinates;
+   private String clockinCoordinates;
 
    @SerializedName("clockinDatetime")
    private String clockinDatetime;
@@ -125,19 +125,6 @@ public final class ClockInDataObject {
    private String employeePersonId;
 
    //...
-}
-
-public final class ClockInCoordinatesObject {
-
-   @SerializedName("lat")
-   private double latitude;
-
-   @SerializedName("long")
-   private double longitude;
-
-   @SerializedName("formatted")
-   private String formatted;
-
 }
 ```
  
