@@ -9,6 +9,10 @@ public final class ClockInDataObject {
     private String clockinCoordinates;
 
     @SuppressWarnings("unused")
+    @SerializedName("clockinCoordinatesAccuracy")
+    private String clockinCoordinatesAccuracy;
+
+    @SuppressWarnings("unused")
     @SerializedName("clockinDatetime")
     private String clockinDatetime;
 
@@ -21,33 +25,28 @@ public final class ClockInDataObject {
     private int clockinMode;
 
     @SuppressWarnings("unused")
-    @SerializedName("clockinNSRNumber")
-    private int clockinNSRNumber;
-
-    @SuppressWarnings("unused")
     @SerializedName("deviceCode")
     private String deviceCode;
+
+    @SuppressWarnings("unused")
+    @SerializedName("deviceSyncHistoryCode")
+    private String deviceSyncHistoryCode;
 
     @SuppressWarnings("unused")
     @SerializedName("employeePersonId")
     private String employeePersonId;
 
     @SuppressWarnings("unused")
-    @SerializedName("clockinImage")
-    private String clockinImage;
+    @SerializedName("isAutoDateAndTime")
+    private String isAutoDateAndTime;
 
     @SuppressWarnings("unused")
-    @SerializedName("locationCode")
-    private String locationCode;
-
-    @SuppressWarnings("unused")
-    @SerializedName("smsSentOnDateTime")
-    private String smsSentOnDateTime;
+    @SerializedName("isSelfClockin")
+    private String isSelfClockin;
 
     @SuppressWarnings("unused")
     @SerializedName("supervisorPersonId")
     private String supervisorPersonId;
-
 
     private ClockInDataObject() { }
 
@@ -55,6 +54,11 @@ public final class ClockInDataObject {
     @SuppressWarnings("unused")
     public String getClockinCoordinates() {
         return clockinCoordinates;
+    }
+
+    @SuppressWarnings("unused")
+    public String clockinCoordinatesAccuracy() {
+        return clockinCoordinatesAccuracy;
     }
 
     @SuppressWarnings("unused")
@@ -73,13 +77,13 @@ public final class ClockInDataObject {
     }
 
     @SuppressWarnings("unused")
-    public int getClockinNSRNumber() {
-        return clockinNSRNumber;
+    public String getDeviceCode() {
+        return deviceCode;
     }
 
     @SuppressWarnings("unused")
-    public String getDeviceCode() {
-        return deviceCode;
+    public String getDeviceSyncHistoryCode() {
+        return deviceSyncHistoryCode;
     }
 
     @SuppressWarnings("unused")
@@ -88,18 +92,13 @@ public final class ClockInDataObject {
     }
 
     @SuppressWarnings("unused")
-    public String getClockinImage() {
-        return clockinImage;
+    public String getIsAutoDateAndTime() {
+        return isAutoDateAndTime;
     }
 
     @SuppressWarnings("unused")
-    public String getLocationCode() {
-        return locationCode;
-    }
-
-    @SuppressWarnings("unused")
-    public String getSmsSentOnDateTime() {
-        return smsSentOnDateTime;
+    public String getIsSelfClockin() {
+        return isSelfClockin;
     }
 
     @SuppressWarnings("unused")
