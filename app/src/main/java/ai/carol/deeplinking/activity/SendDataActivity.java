@@ -2,9 +2,11 @@ package ai.carol.deeplinking.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import ai.carol.deeplinking.helper.AlertHelper;
 import ai.carol.deeplinking.manager.ClockInManager;
 
 public final class SendDataActivity extends AppCompatActivity {
@@ -40,9 +42,18 @@ public final class SendDataActivity extends AppCompatActivity {
         final String appName = intent.getStringExtra(APP_NAME_EXTRA);
         final String appIdentifier = intent.getStringExtra(APP_IDENTIFIER_EXTRA);
 
-        mManager.startClockInActivity(this, tenant, email, password, appScheme, appName, appIdentifier);
-        finish();
+        final boolean isStarted = mManager.startClockInActivity(this, tenant, email, password, appScheme, appName, appIdentifier, mAlertListener);
+
+        if (isStarted) {
+            finish();
+        }
     }
+
+    //endregion
+
+    //region - Private Listeners
+
+    private final AlertHelper.Listener mAlertListener = () -> finish();
 
     //endregion
 
