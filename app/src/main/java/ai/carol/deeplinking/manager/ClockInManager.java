@@ -6,7 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import java.util.List;
 
@@ -22,13 +23,14 @@ public final class ClockInManager {
         mContext = context;
     }
 
-    public void startClockInActivity(@NonNull final Activity activity,
-                                     @NonNull final String tenant,
-                                     @NonNull final String email,
-                                     @NonNull final String password,
-                                     @NonNull final String appScheme,
-                                     @NonNull final String appName,
-                                     @NonNull final String appIdentifier) {
+    public boolean startClockInActivity(@NonNull final Activity activity,
+                                        @NonNull final String tenant,
+                                        @NonNull final String email,
+                                        @NonNull final String password,
+                                        @NonNull final String appScheme,
+                                        @NonNull final String appName,
+                                        @NonNull final String appIdentifier,
+                                        @NonNull final AlertHelper.Listener alertListener) {
         Uri.Builder builder = new Uri.Builder()
                 .scheme("clockin")
                 .authority("login")
@@ -50,8 +52,10 @@ public final class ClockInManager {
 
         if (activities.size() > 0) {
             activity.startActivity(clockInIntent);
+            return true;
         } else {
-            AlertHelper.showPlayStoreAlert(activity);
+            AlertHelper.showPlayStoreAlert(activity, alertListener);
+            return false;
         }
     }
 

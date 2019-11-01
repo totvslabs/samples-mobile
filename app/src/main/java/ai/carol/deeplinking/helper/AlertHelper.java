@@ -5,7 +5,8 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import ai.carol.deeplinking.R;
 import ai.carol.deeplinking.activity.EditActivity;
@@ -20,12 +21,15 @@ public final class AlertHelper {
 
     //region - Public
 
-    public static void showPlayStoreAlert(@NonNull final Activity activity) {
+    public static void showPlayStoreAlert(@NonNull final Activity activity, @NonNull final Listener listener) {
         new AlertDialog.Builder(activity)
                 .setTitle(R.string.clock_in_not_found)
                 .setMessage(R.string.want_to_install_clock_in)
                 .setCancelable(false)
-                .setPositiveButton(R.string.yes_install, (dialog, which) -> openPlayStorePage(activity))
+                .setPositiveButton(R.string.yes_install, (dialog, which) -> {
+                    openPlayStorePage(activity);
+                    listener.onConfirm();
+                })
                 .show();
     }
 
@@ -55,6 +59,14 @@ public final class AlertHelper {
     private static void openEditActivity(@NonNull final Activity activity) {
         final Intent editIntent = new Intent(activity, EditActivity.class);
         activity.startActivity(editIntent);
+    }
+
+    //endregion
+
+    //region - Listener
+
+    public interface Listener {
+        void onConfirm();
     }
 
     //endregion
