@@ -24,7 +24,8 @@ public final class MainActivity extends AppCompatActivity {
     private static final String ZERO_TEXT = "0";
     private static final String EMPTY_TEXT = "-";
 
-    private AppCompatTextView mTxtTenant;
+    private AppCompatTextView mTxtOrganization;
+    private AppCompatTextView mTxtEnvironment;
     private AppCompatTextView mTxtEmail;
     private AppCompatTextView mTxtPassword;
     private AppCompatTextView mTxtAppScheme;
@@ -43,7 +44,8 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTxtTenant = findViewById(R.id.txt_tenant);
+        mTxtOrganization = findViewById(R.id.txt_organization);
+        mTxtEnvironment = findViewById(R.id.txt_environment);
         mTxtEmail = findViewById(R.id.txt_email);
         mTxtPassword = findViewById(R.id.txt_password);
         mTxtAppScheme = findViewById(R.id.txt_app_scheme);
@@ -78,18 +80,20 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void startSendDataActivity() {
-        final String tenant = getString(mTxtTenant);
+        final String organization = getString(mTxtOrganization);
+        final String environment = getString(mTxtEnvironment);
         final String email = getString(mTxtEmail);
         final String password = getString(mTxtPassword);
 
-        if (tenant.isEmpty() || email.isEmpty() || password.isEmpty()) {
+        if (organization.isEmpty() || environment.isEmpty() || email.isEmpty() || password.isEmpty()) {
             AlertHelper.showFillFieldsAlert(this);
             return;
         }
 
         final Intent sendDataIntent = new Intent(getBaseContext(), SendDataActivity.class);
 
-        sendDataIntent.putExtra(SendDataActivity.TENANT_EXTRA, tenant);
+        sendDataIntent.putExtra(SendDataActivity.ORGANIZATION_EXTRA, organization);
+        sendDataIntent.putExtra(SendDataActivity.ENVIRONMENT_EXTRA, environment);
         sendDataIntent.putExtra(SendDataActivity.EMAIL_EXTRA, email);
         sendDataIntent.putExtra(SendDataActivity.PASSWORD_EXTRA, password);
         sendDataIntent.putExtra(SendDataActivity.APP_SCHEME_EXTRA, getString(mTxtAppScheme));
@@ -118,7 +122,8 @@ public final class MainActivity extends AppCompatActivity {
     private void refreshData() {
         final Context context = getApplicationContext();
 
-        mTxtTenant.setText(DatabaseHelper.fetchTenant(context));
+        mTxtOrganization.setText(DatabaseHelper.fetchOrganization(context));
+        mTxtEnvironment.setText(DatabaseHelper.fetchEnvironment(context));
         mTxtEmail.setText(DatabaseHelper.fetchEmail(context));
         mTxtPassword.setText(DatabaseHelper.fetchPassword(context));
         mTxtAppScheme.setText(DatabaseHelper.fetchAppScheme(context));

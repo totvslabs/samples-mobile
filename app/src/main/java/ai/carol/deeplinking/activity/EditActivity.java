@@ -15,7 +15,8 @@ import ai.carol.deeplinking.helper.DatabaseHelper;
 
 public final class EditActivity extends AppCompatActivity {
 
-    private AppCompatEditText mEdtTenant;
+    private AppCompatEditText mEdtOrganization;
+    private AppCompatEditText mEdtEnvironment;
     private AppCompatEditText mEdtEmail;
     private AppCompatEditText mEdtPassword;
     private AppCompatEditText mEdtAppScheme;
@@ -35,7 +36,8 @@ public final class EditActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mEdtTenant = findViewById(R.id.edt_tenant);
+        mEdtOrganization = findViewById(R.id.edt_organization);
+        mEdtEnvironment = findViewById(R.id.edt_environment);
         mEdtEmail = findViewById(R.id.edt_email);
         mEdtPassword = findViewById(R.id.edt_password);
         mEdtAppScheme = findViewById(R.id.edt_app_scheme);
@@ -44,7 +46,8 @@ public final class EditActivity extends AppCompatActivity {
         mBtnSave = findViewById(R.id.btn_save);
 
         final Context context = getApplicationContext();
-        mEdtTenant.setText(DatabaseHelper.fetchTenant(context));
+        mEdtOrganization.setText(DatabaseHelper.fetchOrganization(context));
+        mEdtEnvironment.setText(DatabaseHelper.fetchEnvironment(context));
         mEdtEmail.setText(DatabaseHelper.fetchEmail(context));
         mEdtPassword.setText(DatabaseHelper.fetchPassword(context));
         mEdtAppScheme.setText(DatabaseHelper.fetchAppScheme(context));
@@ -70,7 +73,8 @@ public final class EditActivity extends AppCompatActivity {
 
     private void save() {
         final Context context = getApplicationContext();
-        DatabaseHelper.saveTenant(context, getString(mEdtTenant));
+        DatabaseHelper.saveOrganization(context, getString(mEdtOrganization));
+        DatabaseHelper.saveEnvironment(context, getString(mEdtEnvironment));
         DatabaseHelper.saveEmail(context, getString(mEdtEmail));
         DatabaseHelper.savePassword(context, getString(mEdtPassword));
         DatabaseHelper.saveAppScheme(context, getString(mEdtAppScheme));

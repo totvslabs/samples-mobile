@@ -11,7 +11,8 @@ import ai.carol.deeplinking.manager.ClockInManager;
 
 public final class SendDataActivity extends AppCompatActivity {
 
-    static final String TENANT_EXTRA = "tenant_extra";
+    static final String ORGANIZATION_EXTRA = "organization_extra";
+    static final String ENVIRONMENT_EXTRA = "environment_extra";
     static final String EMAIL_EXTRA = "email_extra";
     static final String PASSWORD_EXTRA = "password_extra";
     static final String APP_SCHEME_EXTRA = "app_scheme_extra";
@@ -35,14 +36,15 @@ public final class SendDataActivity extends AppCompatActivity {
     private void sendDataToClockIn() {
         final Intent intent = getIntent();
 
-        final String tenant = intent.getStringExtra(TENANT_EXTRA);
+        final String organization = intent.getStringExtra(ORGANIZATION_EXTRA);
+        final String environment = intent.getStringExtra(ENVIRONMENT_EXTRA);
         final String email = intent.getStringExtra(EMAIL_EXTRA);
         final String password = intent.getStringExtra(PASSWORD_EXTRA);
         final String appScheme = intent.getStringExtra(APP_SCHEME_EXTRA);
         final String appName = intent.getStringExtra(APP_NAME_EXTRA);
         final String appIdentifier = intent.getStringExtra(APP_IDENTIFIER_EXTRA);
 
-        final boolean isStarted = mManager.startClockInActivity(this, tenant, email, password, appScheme, appName, appIdentifier, mAlertListener);
+        final boolean isStarted = mManager.startClockInActivity(this, organization, environment, email, password, appScheme, appName, appIdentifier, mAlertListener);
 
         if (isStarted) {
             finish();
