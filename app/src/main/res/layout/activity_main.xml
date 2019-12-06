@@ -65,7 +65,7 @@
                     android:layout_marginBottom="@dimen/margin"
                     android:background="@color/gray" />
 
-                <!-- TENANT -->
+                <!-- ORGANIZATION -->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -76,10 +76,32 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_normal"
-                        android:text="@string/tenant" />
+                        android:text="@string/organization" />
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/txt_tenant"
+                        android:id="@+id/txt_organization"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_normal"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- ENVIRONMENT -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_normal"
+                        android:text="@string/environment" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txt_environment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_normal"

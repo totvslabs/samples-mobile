@@ -6,14 +6,15 @@
     <string name="clock_in_not_found">Clock-In not found</string>
     <string name="data_to_send">Data to Send</string>
     <string name="edit">Edit Data to Send</string>
+    <string name="environment">Environment:\u0020</string>
     <string name="email">Email:\u0020</string>
     <string name="fill_all_fields">Fill all the fields to continue.</string>
     <string name="go_to_clock_in">Login into Clock-In</string>
+    <string name="organization">Organization:\u0020</string>
     <string name="password">Password:\u0020</string>
     <string name="reset">Reset</string>
     <string name="received_data">Received Data</string>
     <string name="save">Save</string>
-    <string name="tenant">Tenant:\u0020</string>
     <string name="yes_install">Yes, install</string>
     <string name="yes_right_away">Yes, right away!</string>
     <string name="want_to_install_clock_in">Do you want to install the Clock-In app?</string>

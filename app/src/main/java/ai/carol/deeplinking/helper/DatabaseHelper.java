@@ -18,7 +18,8 @@ public final class DatabaseHelper {
     private static final String CLOCKINS_KEY = "v1.clockins";
     private static final String EMAIL_KEY = "v1.email";
     private static final String PASSWORD_KEY = "v1.password";
-    private static final String TENANT_KEY = "v1.tenant";
+    private static final String ORGANIZATION_KEY = "v1.organization";
+    private static final String ENVIRONMENT_KEY = "v1.environment";
 
     private DatabaseHelper() { }
 
@@ -64,11 +65,18 @@ public final class DatabaseHelper {
         return fetch(context, PASSWORD_KEY);
     }
 
-    public static void saveTenant(@NonNull final Context context, final String tenant) {
-        save(context, TENANT_KEY, tenant);
+    public static void saveOrganization(@NonNull final Context context, final String organization) {
+        save(context, ORGANIZATION_KEY, organization);
     }
-    public static String fetchTenant(@NonNull final Context context) {
-        return fetch(context, TENANT_KEY);
+    public static String fetchOrganization(@NonNull final Context context) {
+        return fetch(context, ORGANIZATION_KEY);
+    }
+
+    public static void saveEnvironment(@NonNull final Context context, final String environment) {
+        save(context, ENVIRONMENT_KEY, environment);
+    }
+    public static String fetchEnvironment(@NonNull final Context context) {
+        return fetch(context, ENVIRONMENT_KEY);
     }
 
     //region - Private Helper

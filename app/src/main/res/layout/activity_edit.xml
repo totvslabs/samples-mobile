@@ -30,7 +30,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- TENANT -->
+                    <!-- ORGANIZATION -->
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -38,10 +38,27 @@
                         android:layout_margin="@dimen/margin">
 
                         <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/edt_tenant"
+                            android:id="@+id/edt_organization"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/tenant"
+                            android:hint="@string/organization"
+                            android:inputType="text"
+                            android:imeOptions="actionNext"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- ENVIRONMENT -->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/edt_environment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/environment"
                             android:inputType="text"
                             android:imeOptions="actionNext"/>
 
