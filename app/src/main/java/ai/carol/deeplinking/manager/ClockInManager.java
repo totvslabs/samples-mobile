@@ -24,7 +24,8 @@ public final class ClockInManager {
     }
 
     public boolean startClockInActivity(@NonNull final Activity activity,
-                                        @NonNull final String tenant,
+                                        @NonNull final String organization,
+                                        @NonNull final String environment,
                                         @NonNull final String email,
                                         @NonNull final String password,
                                         @NonNull final String appScheme,
@@ -35,7 +36,8 @@ public final class ClockInManager {
                 .scheme("clockin")
                 .authority("login")
                 .appendPath("oauth2")
-                .appendQueryParameter("tenant", tenant)
+                .appendQueryParameter("organization", organization)
+                .appendQueryParameter("environment", environment)
                 .appendQueryParameter("email", email)
                 .appendQueryParameter("password", password)
                 .appendQueryParameter("appScheme", appScheme)
