@@ -10,6 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/deep-linking" />
+            <option value="$PROJECT_DIR$/totvs-camera" />
+            <option value="$PROJECT_DIR$/totvs-camera-app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
