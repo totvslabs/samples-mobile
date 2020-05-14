@@ -144,6 +144,7 @@ class CameraView @JvmOverloads constructor(
 
             val provider = cameraProviderFuture.get()
 
+            // [Preview]
             preview = Preview.Builder()
                 // We request aspect ratio but no resolution
                 .setTargetAspectRatio(screenAspectRatio)
@@ -158,6 +159,11 @@ class CameraView @JvmOverloads constructor(
                 .setTargetAspectRatio(screenAspectRatio)
                 .setTargetRotation(rotation)
                 .build()
+
+            // [ImageAnalysis]
+            // @TODO When time comes, don't forget schedule the analyzer on a different
+            //       executor than [cameraExecutor] this way you don't interfere with
+            //       [imageCapture] use case.
 
             // must unbind all the previous use cases before binding them again
             provider.unbindAll()
