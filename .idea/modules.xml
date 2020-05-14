@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/clockin-deep-linking-android.iml" filepath="$PROJECT_DIR$/clockin-deep-linking-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/deep-linking/deep-linking.iml" filepath="$PROJECT_DIR$/deep-linking/deep-linking.iml" group="samples-mobile/deep-linking" />
+      <module fileurl="file://$PROJECT_DIR$/samples-mobile.iml" filepath="$PROJECT_DIR$/samples-mobile.iml" group="samples-mobile" />
     </modules>
   </component>
 </project>
