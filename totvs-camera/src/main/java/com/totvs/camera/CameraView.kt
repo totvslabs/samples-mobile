@@ -92,7 +92,6 @@ class CameraView @JvmOverloads constructor(
         override fun onDisplayRemoved(displayId: Int) = Unit
         override fun onDisplayChanged(displayId: Int) {
             if (displayId == displayId) {
-                Log.e(TAG, "Rotation changed ${display.rotation}")
                 imageCapture?.targetRotation = display.rotation
             }
             Unit
@@ -173,9 +172,6 @@ class CameraView @JvmOverloads constructor(
                 camera = provider.bindToLifecycle(
                     lifecycleOwner, cameraSelector, preview, imageCapture
                 )
-
-//                camera?.cameraControl?.enableTorch(true)
-
                 // Attach the preview surface provider to preview use case
                 preview?.setSurfaceProvider(createSurfaceProvider(camera?.cameraInfo))
             } catch (ex: Exception) {
