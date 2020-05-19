@@ -37,11 +37,6 @@ const TOTVSCameraView = requireNativeComponent('TOTVSCameraView');
 const CameraModule = NativeModules.TOTVSCamera;
 
 /////////////////////////////
-// Constants
-/////////////////////////////
-
-
-/////////////////////////////
 // Type System
 ////////////////////////////
 
@@ -56,6 +51,27 @@ type PropsType = {
 type StateType = {
   isAuthorized: bool
 };
+
+export type State = 'READY' | 'AUTHORIZING' | 'UNAUTHORIZED';
+
+/////////////////////////////
+// Constants
+/////////////////////////////
+
+/**
+ * Enum representing camera status
+ */
+const CameraState = {
+  READY: 'READY',
+  AUTHORIZING: 'AUTHORIZING',
+  UNAUTHORIZED: 'UNAUTHORIZED'
+};
+/**
+ * Constants exposed by the camera manager of the camera view
+ */
+const Constants = {    
+};
+
 
 /////////////////////////////
 // Component & Utilities
@@ -144,6 +160,10 @@ class CameraView extends Component<PropsType, StateType> {
     return expanded;
   }
 
+  getState = (): State => {
+      
+  }
+
   /**
    * View renderization happens here
    */
@@ -152,7 +172,11 @@ class CameraView extends Component<PropsType, StateType> {
     
     return (
       <View style={style}>
-        <TOTVSCameraView {...properties} style={styles.cameraView.camera} />
+        <TOTVSCameraView
+          {...properties}
+          ref={this._setReference}
+          style={styles.cameraView.camera}
+        />
         <Children camera={this} {...this.props} />
       </View>
     );
@@ -200,13 +224,6 @@ const UnauthorizedView = props => {
     </View>
   );
 }
-
-
-/**
- * Constants exposed by the camera manager of the camera view
- */
-const Constants = {    
-};
 
 /////////////////////////////
 // Exports
