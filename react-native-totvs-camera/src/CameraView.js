@@ -1,4 +1,7 @@
-// @flow
+/**
+ * @format
+ * @flow strict-local
+ */
 
 /////////////////////////////
 // Imports
@@ -8,8 +11,7 @@ import PropTypes from 'prop-types';
 import {
   findNodeHandle,
   requireNativeComponent,
-  NativeModules,  
-  StyleSheet,
+  NativeModules,
   ViewPropTypes,
   View,
   ActivityIndicator,

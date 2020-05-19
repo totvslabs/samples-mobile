@@ -1,3 +1,9 @@
+/**
+ * @format
+ * @flow strict-local
+ */
+
+ 
 ////////////////////////////
 // ANCHOR Import Modules
 ////////////////////////////
