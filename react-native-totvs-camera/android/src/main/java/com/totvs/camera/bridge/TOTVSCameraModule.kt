@@ -1,5 +1,5 @@
-package com.totvs.camera
-
+package com.totvs.camera.bridge
+//
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 
@@ -10,7 +10,8 @@ class TOTVSCameraModule(
     private val context: ReactApplicationContext
 ) : ReactContextBaseJavaModule(context) {
 
-    override fun getName(): String = NAME
+    override fun getName(): String =
+        NAME
 
     /**
      * Constants exported to JS side

@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -70,6 +70,6 @@ dependencies {
     implementation 'androidx.camera:camera-view:1.0.0-alpha10'
 
     // React Native
-    implementation 'com.facebook.react:react-native:+'
+    implementation 'com.facebook.react:react-native:+' // from node_modules
 }
   

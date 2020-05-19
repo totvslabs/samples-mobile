@@ -1,7 +1,9 @@
-package com.totvs.camera
+package com.totvs.camera.bridge
 
+import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.totvs.camera.TOTVSCameraView
 import com.totvs.camera.events.Event
 
 /**
@@ -14,12 +16,14 @@ class TOTVSCameraManager : ViewGroupManager<TOTVSCameraView>() {
     /**
      * React Native view name for the view managed by this manager
      */
-    override fun getName(): String = VIEW_NAME
+    override fun getName(): String =
+        VIEW_NAME
 
     /**
      * Create an instance of the view managed by this manager
      */
-    override fun createViewInstance(context: ThemedReactContext?): TOTVSCameraView = TOTVSCameraView(context!!)
+    override fun createViewInstance(context: ThemedReactContext): TOTVSCameraView =
+        TOTVSCameraView(context)
 
     /**
      * Register events
