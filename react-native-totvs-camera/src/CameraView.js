@@ -12,6 +12,7 @@ import {
   findNodeHandle,
   requireNativeComponent,
   NativeModules,
+  Platform,
   ViewPropTypes,
   View,
   ActivityIndicator,
@@ -30,13 +31,19 @@ import styles from './styles';
 // Import Native Components
 /////////////////////////////
 
-const TOTVSCameraView = requireNativeComponent('TOTVSCameraView');
+const NativeCamera = Platform.select({
+  ios: View, 
+  android: requireNativeComponent('CameraView')
+});
 
 /////////////////////////////
 // Import Native Modules
 /////////////////////////////
 
-const CameraModule = NativeModules.TOTVSCamera;
+const CameraModule = Platform.select({
+  ios: { },
+  android: NativeModules.CameraModule
+});
 
 /////////////////////////////
 // Type System
@@ -76,7 +83,7 @@ const Constants = {
 
 
 /////////////////////////////
-// Component & Utilities
+// Utilities
 /////////////////////////////
 
 /**
@@ -85,6 +92,53 @@ const Constants = {
  * @param {Object} value 
  */
 const isAbsent = value => null === value || undefined == value;
+
+
+/////////////////////////////
+// Components
+/////////////////////////////
+
+/**
+ * Render appropriately a child component based on the type. 
+ * We use this in case we need to have a child function component that 
+ * need access to the camera component.
+ */
+const Children = ({ camera, ...props }) => {
+  const isFunction = e => typeof e === 'function';
+
+  const { children, ...rest } = props;
+  
+  return isFunction(children) ? children({ camera, ...props }) : children;
+}
+
+/**
+ * View representing the state of the camera while requesting permission.
+ * The caller code can customize this setting `authorizingView` property.
+ * 
+ * @param {Object} props 
+ */
+const AuthorizingView = () => {
+  return (
+    <View style={[styles.authorizingView.view]}>
+      <ActivityIndicator size="small"/>
+    </View>
+  );
+}
+
+/**
+ * View representing the state of the camera when no permission was granted
+ * The caller code can customize this setting `unathorizedView` property.
+ * 
+ * @param {Object} props 
+ */
+const UnauthorizedView = () => {
+  const text = "Camera not authorized";
+  return (
+    <View style={[styles.unauthorizedView.view]}>
+      <Text style={[styles.unauthorizedView.text]}>{text}</Text>
+    </View>
+  );
+}
 
 /**
  * View that bridge the native implementation of the camera to JS.
@@ -174,7 +228,7 @@ class CameraView extends Component<PropsType, StateType> {
     
     return (
       <View style={style}>
-        <TOTVSCameraView
+        <NativeCamera
           {...properties}
           ref={this._setReference}
           style={styles.cameraView.camera}
@@ -185,55 +239,9 @@ class CameraView extends Component<PropsType, StateType> {
   }
 }
 
-/**
- * Render appropriately a child component based on the type. 
- * We use this in case we need to have a child function component that 
- * need access to the camera component.
- */
-const Children = ({ camera, ...props }) => {
-  const isFunction = e => typeof e === 'function';
-
-  const { children, ...rest } = props;
-  
-  return isFunction(children) ? children({ camera, ...props }) : children;
-}
-
-/**
- * View representing the state of the camera while requesting permission.
- * The caller code can customize this setting `authorizingView` property.
- * 
- * @param {Object} props 
- */
-const AuthorizingView = props => {
-  return (
-    <View style={[styles.authorizingView.view, props.style]}>
-      <ActivityIndicator size="small"/>
-    </View>
-  );
-}
-
-/**
- * View representing the state of the camera when no permission was granted
- * The caller code can customize this setting `unathorizedView` property.
- * 
- * @param {Object} props 
- */
-const UnauthorizedView = props => {
-  const text = "Camera not authorized";
-  return (
-    <View style={[styles.unauthorizedView.view, props.style]}>
-      <Text style={[styles.unauthorizedView.text]}>{text}</Text>
-    </View>
-  );
-}
-
 /////////////////////////////
 // Exports
 ////////////////////////////
 
 export { CameraView as default, Constants };
-
-
-
-
 

@@ -1,4 +1,4 @@
-package com.totvs.camera.bridge
+package com.totvs.camera
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
@@ -19,7 +19,7 @@ import com.facebook.react.uimanager.ViewManager
  *
  * @author Jansel Valentin
  */
-class TOTVSCameraPackage : ReactPackage {
+class CameraPackage : ReactPackage {
     // Deprecated and don't implement this method. Read above
 //    override fun createJSModules(): List<Class<out JavaScriptModule>> = emptyList()
 
@@ -29,7 +29,7 @@ class TOTVSCameraPackage : ReactPackage {
     override fun createNativeModules(
         context: ReactApplicationContext
     ): List<NativeModule> = listOf(
-        TOTVSCameraModule(context)
+        CameraModule(context)
     )
 
     /**
@@ -38,6 +38,6 @@ class TOTVSCameraPackage : ReactPackage {
     override fun createViewManagers(
         context: ReactApplicationContext
     ): List<ViewManager<*, *>> = listOf(
-        TOTVSCameraManager()
+        CameraManager()
     )
 }

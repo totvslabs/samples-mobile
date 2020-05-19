@@ -3,8 +3,10 @@
  * @flow strict-local
  */
 
+import { type State } from './CameraView';
+
 // export components & constants
-export { default as TOTVSCamera, Constants } from './CameraView';
+export { default as CameraView, Constants } from './CameraView';
 
 // export types
-export { type State as CameraState } from './CameraView';
+export type CameraState = State;

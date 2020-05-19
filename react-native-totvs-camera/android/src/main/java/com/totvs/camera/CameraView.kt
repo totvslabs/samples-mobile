@@ -32,7 +32,7 @@ typealias CoreCamera = androidx.camera.core.Camera
  *
  * @author Jansel Valentin
  */
-class TOTVSCameraView @JvmOverloads constructor(
+class CameraView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0
@@ -221,7 +221,7 @@ class TOTVSCameraView @JvmOverloads constructor(
 
     // Companion & Objects
     companion object {
-        private val TAG = TOTVSCameraView::class.java.simpleName
+        private val TAG = CameraView::class.java.simpleName
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
 

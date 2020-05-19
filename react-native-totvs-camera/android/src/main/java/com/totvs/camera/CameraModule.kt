@@ -1,4 +1,4 @@
-package com.totvs.camera.bridge
+package com.totvs.camera
 //
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -6,7 +6,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 /**
  * @author Jansel Valentin
  */
-class TOTVSCameraModule(
+class CameraModule(
     private val context: ReactApplicationContext
 ) : ReactContextBaseJavaModule(context) {
 
@@ -22,6 +22,6 @@ class TOTVSCameraModule(
         /**
          * Exported name of the module representing this library
          */
-        private const val NAME = "TOTVSCamera"
+        private const val NAME = "CameraModule"
     }
 }
