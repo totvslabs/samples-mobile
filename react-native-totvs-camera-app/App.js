@@ -19,9 +19,7 @@ import CameraView from 'react-native-totvs-camera';
 const App = () => {  
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.camera}>
-        <CameraView />
-      </View>
+      <CameraView style={styles.camera}/>
     </SafeAreaView>
   );
 };
@@ -29,13 +27,11 @@ const App = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center'
   },
   camera: {
     width: '100%',
-    height: 300,
-    backgroundColor: "red"
+    height: '100%'
   }
 });
 
