@@ -9,9 +9,9 @@
 import PropTypes from 'prop-types';
 
 import {
-  findNodeHandle,
-  requireNativeComponent,
+  findNodeHandle,  
   NativeModules,
+  requireNativeComponent, 
   Platform,
   ViewPropTypes,
   View,
@@ -78,7 +78,7 @@ const CameraState = {
 /**
  * Constants exposed by the camera manager of the camera view
  */
-const Constants = {    
+export const Constants = {    
 };
 
 
@@ -143,7 +143,7 @@ const UnauthorizedView = () => {
 /**
  * View that bridge the native implementation of the camera to JS.
  */
-class CameraView extends Component<PropsType, StateType> {
+export default class CameraView extends Component<PropsType, StateType> {
   /**
    * Properies exposed by this view
    */
@@ -233,15 +233,9 @@ class CameraView extends Component<PropsType, StateType> {
           ref={this._setReference}
           style={styles.cameraView.camera}
         />
-        <Children camera={this} {...this.props} />
+        {Children({ camera: this, ...this.props })}
       </View>
     );
   }
 }
-
-/////////////////////////////
-// Exports
-////////////////////////////
-
-export { CameraView as default, Constants };
 

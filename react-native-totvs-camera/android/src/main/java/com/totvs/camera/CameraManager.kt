@@ -1,5 +1,6 @@
 package com.totvs.camera
 
+
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.totvs.camera.events.Event
@@ -26,10 +27,10 @@ class CameraManager : ViewGroupManager<CameraView>() {
     /**
      * Register events
      */
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         val events = mutableMapOf<String, Any>()
         Event.exported.forEach { export ->
-            events[export.name] = mapOf("registrationName" to export.name)
+            events[export.name] = mutableMapOf("registrationName" to export.name)
         }
         return events
     }

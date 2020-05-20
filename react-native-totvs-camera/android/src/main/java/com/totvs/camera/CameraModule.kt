@@ -1,22 +1,22 @@
 package com.totvs.camera
-//
+
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 
 /**
  * @author Jansel Valentin
  */
-class CameraModule(
+public class CameraModule(
     private val context: ReactApplicationContext
 ) : ReactContextBaseJavaModule(context) {
 
-    override fun getName(): String =
+    public override fun getName(): String =
         NAME
 
     /**
      * Constants exported to JS side
      */
-    override fun getConstants(): MutableMap<String, Any> = mutableMapOf()
+    public override fun getConstants(): MutableMap<String, Any> = mutableMapOf()
 
     companion object {
         /**

@@ -7,7 +7,7 @@ package com.totvs.camera
  * @author Jansel Valentin
  * @note @TODO Operations regarding to real-time processing will be added later
  */
-interface Camera {
+public interface Camera {
     /**
      * Weather or not to enabled flash light for this camera
      */
@@ -18,20 +18,20 @@ interface Camera {
      * @TODO as right now is unclear what to do with the captured image, this
      *       callback is only intended for notifications
      */
-    fun takePicture(onTaken: OnPictureTakenCallback)
+    public fun takePicture(onTaken: OnPictureTakenCallback)
 
     /**
      * Set target rotation for the camera preview
      */
-    fun setTargetRotation(rotation: Int)
+    public fun setTargetRotation(rotation: Int)
 
     /**
      * Set facing of the camera device
      */
-    fun setFacing(facing: LensFacing)
+    public fun setFacing(facing: LensFacing)
 
     /**
      * Set zoom for the camera
      */
-    fun zoom(zoom: Float)
+    public fun zoom(zoom: Float)
 }

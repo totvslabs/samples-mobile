@@ -32,7 +32,7 @@ typealias CoreCamera = androidx.camera.core.Camera
  *
  * @author Jansel Valentin
  */
-class CameraView @JvmOverloads constructor(
+public class CameraView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0

@@ -16,13 +16,11 @@ import {
 
 import CameraView from 'react-native-totvs-camera';
 
-
-const App = () => {
-  console.log(CameraView);
-
+const App = () => {  
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.camera}>
+        <CameraView />
       </View>
     </SafeAreaView>
   );

@@ -19,7 +19,7 @@ import com.facebook.react.uimanager.ViewManager
  *
  * @author Jansel Valentin
  */
-class CameraPackage : ReactPackage {
+public class CameraPackage : ReactPackage {
     // Deprecated and don't implement this method. Read above
 //    override fun createJSModules(): List<Class<out JavaScriptModule>> = emptyList()
 
