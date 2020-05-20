@@ -16,6 +16,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.facebook.react.bridge.LifecycleEventListener
+import com.facebook.react.uimanager.ThemedReactContext
+import java.lang.IllegalArgumentException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.math.abs
@@ -37,6 +39,10 @@ public class CameraView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     style: Int = 0
 ) : PreviewView(context, attrs, style), Camera, LifecycleObserver, LifecycleEventListener {
+
+    init {
+        Log.e(TAG, "View Initialized: ${context is LifecycleOwner}")
+    }
 
     // [Camera] contract
     override var isFlashEnabled: Boolean
@@ -76,7 +82,14 @@ public class CameraView @JvmOverloads constructor(
     private val lifecycleOwner: LifecycleOwner =
         ((context as? LifecycleOwner) ?: ReactLifecycleOwner)
             .also {
-                if (context is LifecycleOwner) context.lifecycle.addObserver(this)
+                require(context is LifecycleOwner || context is ThemedReactContext) {
+                    "Invalid context type. You must use this view with a LifecycleOwner or ThemedReactContext context"
+                }
+
+                when (context) {
+                    is LifecycleOwner -> context.lifecycle.addObserver(this)
+                    is ThemedReactContext -> context.addLifecycleEventListener(this)
+                }
             }
 
     /** Blocking camera operations are performed using this executor */
