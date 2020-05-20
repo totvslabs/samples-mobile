@@ -40,10 +40,6 @@ public class CameraView @JvmOverloads constructor(
     style: Int = 0
 ) : PreviewView(context, attrs, style), Camera, LifecycleObserver, LifecycleEventListener {
 
-    init {
-        Log.e(TAG, "View Initialized: ${context is LifecycleOwner}")
-    }
-
     // [Camera] contract
     override var isFlashEnabled: Boolean
         get() = camera!!.cameraInfo.torchState.value == TorchState.ON
@@ -115,9 +111,8 @@ public class CameraView @JvmOverloads constructor(
     private fun onStart() {
         if (!hasPermissions(context)) return
 
-        // camera executor
         cameraExecutor = Executors.newSingleThreadExecutor()
-        // orientation listener
+
         displayManager.registerDisplayListener(displayListener, null)
         // wait for this view to render properly
         post {
@@ -133,32 +128,30 @@ public class CameraView @JvmOverloads constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onDestroy() {
         if (!::cameraExecutor.isInitialized) return
-        // shut down executor
+
         cameraExecutor.shutdown()
-        // unregister listener
+
         displayManager.unregisterDisplayListener(displayListener)
     }
 
 
     /** Here we declare and bind capture and preview use cases */
     private fun bindCamerasUseCases() {
-        // Get screen metrics used to setup camera for full screen resolution
         val metrics = DisplayMetrics().also { display.getRealMetrics(it) }
 
         val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
 
         val rotation = display.rotation
-        // Bind the CameraProvider to the LifecycleOwner
-        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-        cameraProviderFuture.addListener(Runnable {
-            // [CameraProvider]
 
-            val provider = cameraProviderFuture.get()
+        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+        val futureProvider = ProcessCameraProvider.getInstance(context)
+        futureProvider.addListener(Runnable {
+
+            // [CameraProvider]
+            val provider = futureProvider.get()
 
             // [Preview]
             preview = Preview.Builder()
-                // We request aspect ratio but no resolution
                 .setTargetAspectRatio(screenAspectRatio)
                 .setTargetRotation(rotation)
                 .build()
@@ -166,8 +159,6 @@ public class CameraView @JvmOverloads constructor(
             // [ImageCapture]
             imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                // we request aspect ratio but not resolution to match preview config, but letting
-                // CameraX optimize for whatever specific resolution fits our use case
                 .setTargetAspectRatio(screenAspectRatio)
                 .setTargetRotation(rotation)
                 .build()
@@ -180,8 +171,6 @@ public class CameraView @JvmOverloads constructor(
             // must unbind all the previous use cases before binding them again
             provider.unbindAll()
             try {
-                // a variable number of use cases can be passed here: camera provides
-                // access to [CameraControl] and [CameraInfo]
                 camera = provider.bindToLifecycle(
                     lifecycleOwner, cameraSelector, preview, imageCapture
                 )
