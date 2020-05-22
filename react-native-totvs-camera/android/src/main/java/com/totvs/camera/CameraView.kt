@@ -32,6 +32,33 @@ public class CameraView @JvmOverloads constructor(
     style: Int = 0
 ) : FrameLayout(context, attrs, style), LifecycleEventListener {
 
+    /**
+     * Lifecycle owner to control [CameraX] lifecycle.
+     *
+     * This property is a hack around react native environment. Since
+     * react native is built on top of old android activity api, it is not
+     * lifecycle aware, hence this view context is not a lifecycle owner.
+     *
+     * We create a custom lifecycle owner tied to react-native self lifecycle
+     * when we detect that this view context is not a lifecycle owner, otherwise
+     * a custom one is used.
+     *
+     * This view obtain its lifecycle events from react-native mapping lifecycle events
+     * when running on a reac-native environment, otherwise throught a subscription
+     * to the holder context.
+     *
+     * @see also [ReactLifecycleOwner]
+     */
+    private val lifecycle: LifecycleOwner = when (context) {
+        is LifecycleOwner -> context
+        is ThemedReactContext -> ReactLifecycleOwner
+            .also {
+                context.addLifecycleEventListener(this)
+            }
+        else -> throw IllegalArgumentException("Invalid context type. You must use this view with a LifecycleOwner or ThemedReactContext context")
+    }
+
+
     /** Preview view where the camera is gonna be displayed */
     internal val previewView: PreviewView
 
@@ -47,7 +74,8 @@ public class CameraView @JvmOverloads constructor(
         }
         setBackgroundResource(android.R.color.black)
     }
-    /** Calculated properties */
+
+    /** Computed properties */
     /**
      * Returns one of the [android.view.Surface.ROTATION_0] [android.view.Surface.ROTATION_180]
      * [android.view.Surface.ROTATION_90] [android.view.Surface.ROTATION_270] constants
@@ -91,31 +119,6 @@ public class CameraView @JvmOverloads constructor(
             cameraXModule.facing = value
         }
 
-    /**
-     * Lifecycle owner to control [CameraX] lifecycle.
-     *
-     * This property is a hack around react native environment. Since
-     * react native is built on top of old android activity api, it is not
-     * lifecycle aware, hence this view context is not a lifecycle owner.
-     *
-     * We create a custom lifecycle owner tied to react-native self lifecycle
-     * when we detect that this view context is not a lifecycle owner, otherwise
-     * a custom one is used.
-     *
-     * This view obtain its lifecycle events from react-native mapping lifecycle events
-     * when running on a reac-native environment, otherwise throught a subscription
-     * to the holder context.
-     *
-     * @see also [ReactLifecycleOwner]
-     */
-    private val lifecycle: LifecycleOwner = when (context) {
-        is LifecycleOwner -> context
-        is ThemedReactContext -> ReactLifecycleOwner
-            .also {
-                context.addLifecycleEventListener(this)
-            }
-        else -> throw IllegalArgumentException("Invalid context type. You must use this view with a LifecycleOwner or ThemedReactContext context")
-    }
 
     override fun generateDefaultLayoutParams() = LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
@@ -172,9 +175,9 @@ public class CameraView @JvmOverloads constructor(
     }
 
     // Bridge lifecycle event listeners
-    override fun onHostResume() = Unit
-    override fun onHostPause() = Unit
-    override fun onHostDestroy() = Unit
+    override fun onHostResume()  = (lifecycle as? ReactLifecycleOwner)?.onHostResume() ?: Unit
+    override fun onHostPause()   = (lifecycle as? ReactLifecycleOwner)?.onHostPause() ?: Unit
+    override fun onHostDestroy() = (lifecycle as? ReactLifecycleOwner)?.onHostDestroy() ?: Unit
 
 
     /**
