@@ -4,8 +4,6 @@ import androidx.camera.core.CameraSelector
 
 /**
  * Camera lens facing.
- *
- * @author Jansel Valentin
  */
 public enum class LensFacing : () -> Int {
     /* Conveniently mapping to CameraX len facings */

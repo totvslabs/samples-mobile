@@ -8,9 +8,8 @@ import com.totvs.camera.events.Event
 /**
  * [CameraView] react native manager
  *
- * @author Jansel Valentin
  */
-class CameraManager : ViewGroupManager<CameraView>() {
+class ReactCameraManager : ViewGroupManager<CameraView>() {
 
     /**
      * React Native view name for the view managed by this manager
@@ -29,8 +28,9 @@ class CameraManager : ViewGroupManager<CameraView>() {
      */
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         val events = mutableMapOf<String, Any>()
-        Event.exported.forEach { export ->
-            events[export.name] = mutableMapOf("registrationName" to export.name)
+        // Event.forEach { e -> ... } will also work or Event.exported.forEach { e -> .. }
+        for (e in Event) {
+            events[e.name] = mutableMapOf("registrationName" to e.name)
         }
         return events
     }

@@ -39,5 +39,16 @@ interface Event : () -> Unit {
      */
     companion object {
         val exported = listOf<Export>(OnPictureTaken)
+
+        /**
+         * Fancy operator to enable for-each on Event.
+         *
+         * @see also [ReactCameraManager.getExportedCustomDirectEventTypeConstants]
+         */
+        operator fun iterator(): Iterator<Export> = exported.iterator()
+
+        public fun forEach(block: (Export) -> Unit) {
+            for (e in Event) block(e)
+        }
     }
 }

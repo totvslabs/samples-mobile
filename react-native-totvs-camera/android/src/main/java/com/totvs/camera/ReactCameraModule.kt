@@ -4,9 +4,9 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 
 /**
- * @author Jansel Valentin
+ * React Native module for this library
  */
-public class CameraModule(
+public class ReactCameraModule(
     private val context: ReactApplicationContext
 ) : ReactContextBaseJavaModule(context) {
 

@@ -2,8 +2,6 @@ include ':deep-linking'
 include ':totvs-camera'
 include ':totvs-camera-app'
 include ':react-native-totvs-camera'
-include ':react-native-totvs-camera-app'
 
 // Map project reference to physical location
 project(':react-native-totvs-camera').projectDir = new File(rootProject.projectDir, 'react-native-totvs-camera/android')
-project(':react-native-totvs-camera-app').projectDir = new File(rootProject.projectDir, 'react-native-totvs-camera-app/android')

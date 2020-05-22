@@ -1,4 +1,4 @@
-package com.totvs.camera
+package com.totvs.camera.view
 
 import android.Manifest
 import android.content.Context
@@ -17,7 +17,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
-import java.lang.IllegalArgumentException
+import com.totvs.camera.*
+import com.totvs.camera.Camera
+import com.totvs.camera.ReactLifecycleOwner
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.math.abs
@@ -213,13 +215,13 @@ public class CameraView @JvmOverloads constructor(
 
     // React Native [LifecycleEventListener] events
     override fun onHostResume() =
-        ((lifecycleOwner as? ReactLifecycleOwner)?.onHostResume() ?: Unit).also { onStart() }
+        (ReactLifecycleOwner.onHostResume() ?: Unit).also { onStart() }
 
     override fun onHostPause() =
-        ((lifecycleOwner as? ReactLifecycleOwner)?.onHostPause() ?: Unit).also { onStop() }
+        (ReactLifecycleOwner.onHostPause() ?: Unit).also { onStop() }
 
     override fun onHostDestroy() =
-        ((lifecycleOwner as? ReactLifecycleOwner)?.onHostDestroy() ?: Unit).also { onDestroy() }
+        (ReactLifecycleOwner.onHostDestroy() ?: Unit).also { onDestroy() }
 
     // Companion & Objects
     companion object {

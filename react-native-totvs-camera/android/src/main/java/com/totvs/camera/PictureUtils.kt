@@ -14,7 +14,6 @@ import java.util.concurrent.Executor
 /**
  * Test function to capture pictures and save them in local storage.
  *
- * @author Jansel Valentin
  * @note this function is intended only for show case purpose
  *      once the right approach is determine to handle photos taken
  *      this must be removed

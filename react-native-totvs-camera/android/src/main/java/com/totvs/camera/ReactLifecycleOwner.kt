@@ -8,7 +8,6 @@ import com.facebook.react.bridge.LifecycleEventListener
 /**
  * LifecycleOwner to bridge with react-native environment
  *
- * @author Jansel Valentin
  * @see also [CameraView.lifecycleOwner]
  */
 internal object ReactLifecycleOwner : LifecycleOwner, LifecycleEventListener {

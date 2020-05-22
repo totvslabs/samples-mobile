@@ -17,9 +17,8 @@ import com.facebook.react.uimanager.ViewManager
  * to reflect the actual signature of the runtime library with which the project is
  * compiled.
  *
- * @author Jansel Valentin
  */
-public class CameraPackage : ReactPackage {
+public class ReactCameraPackage : ReactPackage {
     // Deprecated and don't implement this method. Read above
 //    override fun createJSModules(): List<Class<out JavaScriptModule>> = emptyList()
 
@@ -29,7 +28,7 @@ public class CameraPackage : ReactPackage {
     override fun createNativeModules(
         context: ReactApplicationContext
     ): List<NativeModule> = listOf(
-        CameraModule(context)
+        ReactCameraModule(context)
     )
 
     /**
@@ -38,6 +37,6 @@ public class CameraPackage : ReactPackage {
     override fun createViewManagers(
         context: ReactApplicationContext
     ): List<ViewManager<*, *>> = listOf(
-        CameraManager()
+        ReactCameraManager()
     )
 }

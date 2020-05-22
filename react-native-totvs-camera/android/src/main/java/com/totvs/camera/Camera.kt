@@ -4,14 +4,28 @@ package com.totvs.camera
  * Representation of a camera device. Operations here are the one performed
  * with either an standard camera device or with outputs of such device.
  *
- * @author Jansel Valentin
  * @note @TODO Operations regarding to real-time processing will be added later
  */
 public interface Camera {
     /**
-     * Weather or not to enabled flash light for this camera
+     * Weather or not to enabled torch light for this camera
      */
-    var isFlashEnabled: Boolean
+    var isTorchEnabled: Boolean
+
+    /**
+     * Set target rotation for the camera preview
+     */
+    var rotation: Int
+
+    /**
+     * Set facing of the camera device
+     */
+    var facing: LensFacing
+
+    /**
+     * Set zoom for the camera
+     */
+    var zoom: Float
 
     /**
      * Trigger the action of capturing a picture.
@@ -19,19 +33,4 @@ public interface Camera {
      *       callback is only intended for notifications
      */
     public fun takePicture(onTaken: OnPictureTakenCallback)
-
-    /**
-     * Set target rotation for the camera preview
-     */
-    public fun setTargetRotation(rotation: Int)
-
-    /**
-     * Set facing of the camera device
-     */
-    public fun setFacing(facing: LensFacing)
-
-    /**
-     * Set zoom for the camera
-     */
-    public fun zoom(zoom: Float)
 }
