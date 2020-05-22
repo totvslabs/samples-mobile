@@ -1,5 +1,6 @@
 package com.totvs.camera
 
+import android.Manifest.permission
 import android.content.Context
 import android.hardware.display.DisplayManager
 import android.hardware.display.DisplayManager.DisplayListener
@@ -10,21 +11,26 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.Surface
 import android.widget.FrameLayout
+import androidx.annotation.RequiresPermission
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraX
 import androidx.camera.view.PreviewView
+import androidx.lifecycle.LifecycleOwner
+import com.facebook.react.bridge.LifecycleEventListener
+import com.facebook.react.uimanager.ThemedReactContext
 
 /**
- * Main view where the camera preview is rendered. It conform the set of camera operations
- * that supported through [Camera]. Other operations invoked in this view apart from the
- * one stated in the [Camera] contract, are not guaranteed to be available in future versions
- * of this view.
+ * A [android.view.View] that display a camera preview and has the [Camera] capabilities.
  *
+ * This component is lifecycle aware and must be bound a lifecycle in order to render
+ * and perform camera's operations. The lifecycle open/close of the camera is handled
+ * automatically and is directly tied to the provided lifecycle.
  */
 public class CameraView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0
-) : FrameLayout(context, attrs, style) {
+) : FrameLayout(context, attrs, style), LifecycleEventListener {
 
     /** Preview view where the camera is gonna be displayed */
     internal val previewView: PreviewView
@@ -36,7 +42,9 @@ public class CameraView @JvmOverloads constructor(
         addView(PreviewView(context).also {
             previewView = it
         })
-        cameraXModule = CameraXModule(this)
+        cameraXModule = CameraXModule(this).apply {
+            @Suppress("MissingPermission") bindToLifecycle(lifecycle)
+        }
         setBackgroundResource(android.R.color.black)
     }
     /** Calculated properties */
@@ -82,6 +90,32 @@ public class CameraView @JvmOverloads constructor(
         set(value) {
             cameraXModule.facing = value
         }
+
+    /**
+     * Lifecycle owner to control [CameraX] lifecycle.
+     *
+     * This property is a hack around react native environment. Since
+     * react native is built on top of old android activity api, it is not
+     * lifecycle aware, hence this view context is not a lifecycle owner.
+     *
+     * We create a custom lifecycle owner tied to react-native self lifecycle
+     * when we detect that this view context is not a lifecycle owner, otherwise
+     * a custom one is used.
+     *
+     * This view obtain its lifecycle events from react-native mapping lifecycle events
+     * when running on a reac-native environment, otherwise throught a subscription
+     * to the holder context.
+     *
+     * @see also [ReactLifecycleOwner]
+     */
+    private val lifecycle: LifecycleOwner = when (context) {
+        is LifecycleOwner -> context
+        is ThemedReactContext -> ReactLifecycleOwner
+            .also {
+                context.addLifecycleEventListener(this)
+            }
+        else -> throw IllegalArgumentException("Invalid context type. You must use this view with a LifecycleOwner or ThemedReactContext context")
+    }
 
     override fun generateDefaultLayoutParams() = LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
@@ -137,11 +171,31 @@ public class CameraView @JvmOverloads constructor(
         super.onLayout(changed, left, top, right, bottom)
     }
 
+    // Bridge lifecycle event listeners
+    override fun onHostResume() = Unit
+    override fun onHostPause() = Unit
+    override fun onHostDestroy() = Unit
+
+
+    /**
+     * Bind this view related camera preview to the [lifecycle]. If at the bind
+     * moment the lifecycle is on [androidx.lifecycle.Lifecycle.State.DESTROYED] then
+     * the bind fail with a [IllegalArgumentException] otherwise the camera preview will
+     * transition to a valid state according to the [lifecycle] state.
+     *
+     * Most of the time the binding is automatically at this view creation, but if a rebind
+     * is needed, then this method can be used.
+     */
+    @RequiresPermission(permission.CAMERA)
+    public fun bindToLifecycle(lifecycle: LifecycleOwner) {
+        cameraXModule.bindToLifecycle(lifecycle)
+    }
+
     companion object {
         private const val TAG = "CameraView"
 
         private const val EXTRA_CAMERA_FACING = "camera_facing"
-        private const val EXTRA_FACING_BACK  = CameraSelector.LENS_FACING_BACK
+        private const val EXTRA_FACING_BACK = CameraSelector.LENS_FACING_BACK
         private const val EXTRA_FACING_FRONT = CameraSelector.LENS_FACING_FRONT
     }
 }

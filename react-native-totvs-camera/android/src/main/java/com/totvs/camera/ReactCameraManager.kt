@@ -20,6 +20,7 @@ class ReactCameraManager : ViewGroupManager<CameraView>() {
     /**
      * Create an instance of the view managed by this manager
      */
+    @Suppress("MissingPermission")
     override fun createViewInstance(context: ThemedReactContext): CameraView =
         CameraView(context)
 
