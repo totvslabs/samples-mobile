@@ -11,6 +11,8 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.Surface
 import android.widget.FrameLayout
+import androidx.annotation.CallSuper
+import androidx.annotation.MainThread
 import androidx.annotation.RequiresPermission
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraX
@@ -189,6 +191,7 @@ public class CameraView @JvmOverloads constructor(
      * Most of the time the binding is automatically at this view creation, but if a rebind
      * is needed, then this method can be used.
      */
+    @MainThread
     @RequiresPermission(permission.CAMERA)
     public fun bindToLifecycle(lifecycle: LifecycleOwner) {
         cameraXModule.bindToLifecycle(lifecycle)

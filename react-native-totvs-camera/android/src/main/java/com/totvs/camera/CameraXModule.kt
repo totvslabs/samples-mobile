@@ -3,7 +3,10 @@ package com.totvs.camera
 import android.Manifest.permission
 import android.util.Rational
 import android.util.Size
+import androidx.annotation.FloatRange
+import androidx.annotation.MainThread
 import androidx.annotation.RequiresPermission
+import androidx.annotation.RestrictTo
 import androidx.camera.core.*
 import androidx.camera.core.Camera
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -17,6 +20,7 @@ import androidx.lifecycle.OnLifecycleEvent
 /**
  * CameraX use case ope
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class CameraXModule(private val view: CameraView) {
 
     init {
@@ -35,7 +39,7 @@ internal class CameraXModule(private val view: CameraView) {
 
     // Computed properties
 
-    private val measuredWidth:  Int get() = view.measuredWidth
+    private val measuredWidth: Int get() = view.measuredWidth
     private val measuredHeight: Int get() = view.measuredHeight
     private val width: Int get() = view.width
     private val height: Int get() = view.height
@@ -83,7 +87,7 @@ internal class CameraXModule(private val view: CameraView) {
 
     var zoom: Float
         get() = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 1.0f
-        set(value) {
+        set(@FloatRange(from = 0.0, to = 1.0) value) {
             camera!!.cameraControl.setLinearZoom(value.coerceIn(0.0f, 1.0f))
         }
 
@@ -108,6 +112,7 @@ internal class CameraXModule(private val view: CameraView) {
     /**
      * Bind the use cases to the cameraX module
      */
+    @MainThread
     @RequiresPermission(permission.CAMERA)
     fun bindToLifecycle(lifecycle: LifecycleOwner) {
         pendingLifecycle = lifecycle
@@ -120,6 +125,7 @@ internal class CameraXModule(private val view: CameraView) {
     /**
      * Bind to the lifecycle after the view has been measured and now is displayed
      */
+    @MainThread
     @RequiresPermission(permission.CAMERA)
     fun bindToLifecycleAfterViewMeasured() {
         pendingLifecycle ?: return
@@ -170,6 +176,7 @@ internal class CameraXModule(private val view: CameraView) {
     /**
      * Unbind all the bounded use cases and release the bounded to lifecycle
      */
+    @MainThread
     fun cleanCurrentLifecycle() {
         val toUnbind = with(mutableListOf<UseCase>()) {
             preview?.let { add(it) }
