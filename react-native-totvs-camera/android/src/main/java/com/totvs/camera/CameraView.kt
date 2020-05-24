@@ -10,6 +10,9 @@ import android.os.Looper
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.Surface
+import android.view.SurfaceView
+import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.CallSuper
 import androidx.annotation.MainThread
@@ -62,15 +65,15 @@ public class CameraView @JvmOverloads constructor(
 
 
     /** Preview view where the camera is gonna be displayed */
-    internal val previewView: PreviewView
+    internal val previewView: PreviewView = PreviewView(context).apply {
+        installHierarchyFitter(this)
+    }
 
     /** CameraX implementation manipulator */
     private val cameraXModule: CameraXModule
 
     init {
-        addView(PreviewView(context).also {
-            previewView = it
-        })
+        addView(previewView, 0)
         cameraXModule = CameraXModule(this).apply {
             @Suppress("MissingPermission") bindToLifecycle(lifecycle)
         }
@@ -126,6 +129,7 @@ public class CameraView @JvmOverloads constructor(
         LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
     )
 
+    @CallSuper
     override fun onSaveInstanceState(): Parcelable? {
         super.onSaveInstanceState()
         return Bundle().apply {
@@ -136,6 +140,7 @@ public class CameraView @JvmOverloads constructor(
         }
     }
 
+    @CallSuper
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
             lensFacing = state.getInt(EXTRA_CAMERA_FACING, EXTRA_FACING_BACK)
@@ -177,11 +182,60 @@ public class CameraView @JvmOverloads constructor(
         super.onLayout(changed, left, top, right, bottom)
     }
 
+    /**
+     * CameraX add to [previewView] a camera [SurfaceView] which render the camera preview.
+     * The [SurfaceView] is added to [previewView] as a posted task on the main thread by
+     * [CameraX].
+     * It turns out that under an Android native environment the view hierarchy of this view
+     * (including [previewView] of course) triggers a [onMeasure] and [onLayout] calls
+     * that force this view and it whole hierarchy to update which in turn will cause the
+     * camera preview to show because of the render of the [SurfaceView] added to [previewView],
+     * but under a react-native environment, after the first pass of [onMeasure] and [onLayout]
+     * any changes made to this view hierarchy won't be reflected because no recalculation or
+     * re-layout would be performed.
+     * e.g
+     * if during a layout pass on this view we add a view on [onMeasure] method, then all the views
+     * added will be displayed and correctly rendered, in both environments, react-native and
+     * Android, but if instead we postpone by [post] an addition of a new child to this view or
+     * [previewView] then on an Android environment, any action of parent.addView(child) will
+     * trigger on a parent a re-layout request and cause to create another pass of [onMeasure]
+     * and [onLayout] which will effectively render the childrens appropriately, but under
+     * react-native after the first pass any view added on a new task that is not the one
+     * running the current pass, wont trigger another pass. i.e no children will be visible
+     * if we add parent.addView(child) in a posted task.
+     *
+     * This brought as a consequence that under an Android environment, we could see the camera
+     * preview but under react-native we couldn't because [CameraX] postpone the addition of the
+     * surface to [previewView] way after the first pass on this view has ended.
+     *
+     * The purpose of this method is install a [OnHierarchyChangeListener] to [previewView] so
+     * we detect when a view is added to it so we trigger manually the pass for re-layout
+     * on [previewView]. We do this selectively only when the app is running under a react-native
+     * environment.
+     *
+     * @see also these issues:
+     * 1. https://groups.google.com/a/android.com/forum/#!topic/camerax-developers/G9jKs1Bo_CE
+     * 2. https://github.com/facebook/react-native/issues/17968
+     */
+    private fun installHierarchyFitter(view: ViewGroup) {
+        if (context is ThemedReactContext) { // only react-native setup
+            view.setOnHierarchyChangeListener(object : OnHierarchyChangeListener {
+                override fun onChildViewRemoved(parent: View?, child: View?) = Unit
+                override fun onChildViewAdded(parent: View?, child: View?) {
+                    parent?.measure(
+                        MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
+                    )
+                    parent?.layout(0, 0, parent.measuredWidth, parent.measuredHeight)
+                }
+            })
+        }
+    }
+
     // Bridge lifecycle event listeners
     override fun onHostResume()  = (lifecycle as? ReactLifecycleOwner)?.onHostResume() ?: Unit
     override fun onHostPause()   = (lifecycle as? ReactLifecycleOwner)?.onHostPause() ?: Unit
     override fun onHostDestroy() = (lifecycle as? ReactLifecycleOwner)?.onHostDestroy() ?: Unit
-
 
     /**
      * Bind this view related camera preview to the [lifecycle]. If at the bind
