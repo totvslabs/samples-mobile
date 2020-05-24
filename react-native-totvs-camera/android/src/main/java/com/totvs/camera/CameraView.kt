@@ -142,6 +142,7 @@ public class CameraView @JvmOverloads constructor(
         } else {
             super.onRestoreInstanceState(state)
         }
+        super.onRestoreInstanceState(null) // compensate for kotlin call super requirement
     }
 
     override fun onAttachedToWindow() {
