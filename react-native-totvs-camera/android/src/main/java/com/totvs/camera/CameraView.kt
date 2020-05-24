@@ -1,7 +1,9 @@
 package com.totvs.camera
 
+import android.Manifest
 import android.Manifest.permission
 import android.content.Context
+import android.content.pm.PackageManager
 import android.hardware.display.DisplayManager
 import android.hardware.display.DisplayManager.DisplayListener
 import android.os.Bundle
@@ -20,6 +22,7 @@ import androidx.annotation.RequiresPermission
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraX
 import androidx.camera.view.PreviewView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
@@ -36,6 +39,30 @@ public class CameraView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     style: Int = 0
 ) : FrameLayout(context, attrs, style), LifecycleEventListener {
+
+    // Listeners
+
+    /** Display listener */
+    private val displayListener = object : DisplayListener {
+        override fun onDisplayAdded(displayId: Int) = Unit
+        override fun onDisplayRemoved(displayId: Int) = Unit
+        override fun onDisplayChanged(displayId: Int) {
+            cameraXModule.invalidateView()
+        }
+    }
+
+    /** [ViewGroup.OnHierarchyChangeListener] to be installed on [previewView] */
+    private val viewHierarchyListener = object : OnHierarchyChangeListener {
+        override fun onChildViewRemoved(parent: View?, child: View?) = Unit
+        override fun onChildViewAdded(parent: View?, child: View?) {
+            parent?.measure(
+                MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
+            )
+            parent?.layout(0, 0, parent.measuredWidth, parent.measuredHeight)
+        }
+    }
+
 
     /**
      * Lifecycle owner to control [CameraX] lifecycle.
@@ -72,6 +99,12 @@ public class CameraView @JvmOverloads constructor(
     /** CameraX implementation manipulator */
     private val cameraXModule: CameraXModule
 
+    /** [DisplayManager] */
+    private val displayManager by lazy {
+        context.applicationContext.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    }
+
+    /** Initialization */
     init {
         addView(previewView, 0)
         cameraXModule = CameraXModule(this).apply {
@@ -80,7 +113,7 @@ public class CameraView @JvmOverloads constructor(
         setBackgroundResource(android.R.color.black)
     }
 
-    /** Computed properties */
+    // Computed properties
     /**
      * Returns one of the [android.view.Surface.ROTATION_0] [android.view.Surface.ROTATION_180]
      * [android.view.Surface.ROTATION_90] [android.view.Surface.ROTATION_270] constants
@@ -105,26 +138,18 @@ public class CameraView @JvmOverloads constructor(
             else -> throw IllegalArgumentException("Unsupported surface rotation")
         }
 
-    private val displayManager by lazy {
-        context.applicationContext.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    internal val hasPermissions: Boolean get() = PERMISSIONS_REQUIRED.all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
     }
 
-    /** Listeners **/
-    private val displayListener = object : DisplayListener {
-        override fun onDisplayAdded(displayId: Int) = Unit
-        override fun onDisplayRemoved(displayId: Int) = Unit
-        override fun onDisplayChanged(displayId: Int) {
-            cameraXModule.invalidateView()
-        }
-    }
-
+    // [Camera] contract
     private var lensFacing: Int
         get() = cameraXModule.facing
         set(value) {
             cameraXModule.facing = value
         }
 
-
+    // Overrides
     override fun generateDefaultLayoutParams() = LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
     )
@@ -182,6 +207,9 @@ public class CameraView @JvmOverloads constructor(
         super.onLayout(changed, left, top, right, bottom)
     }
 
+    // [Camera] contract
+
+    // Interface methods
     /**
      * Bind this view related camera preview to the [lifecycle]. If at the bind
      * moment the lifecycle is on [androidx.lifecycle.Lifecycle.State.DESTROYED] then
@@ -223,7 +251,7 @@ public class CameraView @JvmOverloads constructor(
      * preview but under react-native we couldn't because [CameraX] postpone the addition of the
      * surface to [previewView] way after the first pass on this view has ended.
      *
-     * The purpose of this method is install a [OnHierarchyChangeListener] to [previewView] so
+     * The purpose of this method is install a [ViewGroup.OnHierarchyChangeListener] to [previewView] so
      * we detect when a view is added to it so we trigger manually the pass for re-layout
      * on [previewView]. We do this selectively only when the app is running under a react-native
      * environment.
@@ -234,16 +262,7 @@ public class CameraView @JvmOverloads constructor(
      */
     private fun installHierarchyFitter(view: ViewGroup) {
         if (context is ThemedReactContext) { // only react-native setup
-            view.setOnHierarchyChangeListener(object : OnHierarchyChangeListener {
-                override fun onChildViewRemoved(parent: View?, child: View?) = Unit
-                override fun onChildViewAdded(parent: View?, child: View?) {
-                    parent?.measure(
-                        MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
-                    )
-                    parent?.layout(0, 0, parent.measuredWidth, parent.measuredHeight)
-                }
-            })
+            view.setOnHierarchyChangeListener(viewHierarchyListener)
         }
     }
 
@@ -259,5 +278,7 @@ public class CameraView @JvmOverloads constructor(
         private const val EXTRA_CAMERA_FACING = "camera_facing"
         private const val EXTRA_FACING_BACK = CameraSelector.LENS_FACING_BACK
         private const val EXTRA_FACING_FRONT = CameraSelector.LENS_FACING_FRONT
+
+        private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
     }
 }

@@ -115,6 +115,8 @@ internal class CameraXModule(private val view: CameraView) {
     @MainThread
     @RequiresPermission(permission.CAMERA)
     fun bindToLifecycle(lifecycle: LifecycleOwner) {
+        if (!view.hasPermissions) return
+
         pendingLifecycle = lifecycle
 
         if (measuredWidth > 0 && measuredHeight > 0) {
@@ -128,6 +130,8 @@ internal class CameraXModule(private val view: CameraView) {
     @MainThread
     @RequiresPermission(permission.CAMERA)
     fun bindToLifecycleAfterViewMeasured() {
+        if (!view.hasPermissions) return
+
         pendingLifecycle ?: return
 
         // we clean the previous use cases and consume the pending lifecycle
@@ -149,9 +153,6 @@ internal class CameraXModule(private val view: CameraView) {
             view.displayRotationDegrees == 0 || view.displayRotationDegrees == 180
 
         // we set the preferred aspect ratio to 4:3
-        // @TODO consider using here an aspect ratio computed from display metrics and use the same
-        //      aspect ratio for both, preview and capture
-
         val targetAspectRatio =
             if (isDisplayPortrait) ASPECT_RATIO_4_3.inverse else ASPECT_RATIO_4_3
 
@@ -182,6 +183,8 @@ internal class CameraXModule(private val view: CameraView) {
      */
     @MainThread
     fun cleanCurrentLifecycle() {
+        if (!view.hasPermissions) return
+
         val toUnbind = with(mutableListOf<UseCase>()) {
             preview?.let { add(it) }
             capture?.let { add(it) }
@@ -199,16 +202,12 @@ internal class CameraXModule(private val view: CameraView) {
             CameraSelector.LENS_FACING_BACK
     }
 
-    fun getRelativeCameraOrientation(compensateForMirroring: Boolean) = camera?.let {
-        val degrees = it.cameraInfo
-            .getSensorRotationDegrees(view.displaySurfaceRotation)
-        if (compensateForMirroring) (360 - degrees) % 360 else degrees
-    } ?: 0
-
     fun invalidateView() = updateViewInfo()
 
     // update view related information used by the use cases
     private fun updateViewInfo() {
+        if (!view.hasPermissions) return
+
         capture?.let {
             it.setCropAspectRatio(Rational(width, height))
             it.targetRotation = view.displaySurfaceRotation
