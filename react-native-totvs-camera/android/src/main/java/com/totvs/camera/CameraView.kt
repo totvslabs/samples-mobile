@@ -183,6 +183,21 @@ public class CameraView @JvmOverloads constructor(
     }
 
     /**
+     * Bind this view related camera preview to the [lifecycle]. If at the bind
+     * moment the lifecycle is on [androidx.lifecycle.Lifecycle.State.DESTROYED] then
+     * the bind fail with a [IllegalArgumentException] otherwise the camera preview will
+     * transition to a valid state according to the [lifecycle] state.
+     *
+     * Most of the time the binding is automatically at this view creation, but if a rebind
+     * is needed, then this method can be used.
+     */
+    @MainThread
+    @RequiresPermission(permission.CAMERA)
+    public fun bindToLifecycle(lifecycle: LifecycleOwner) {
+        cameraXModule.bindToLifecycle(lifecycle)
+    }
+
+    /**
      * CameraX add to [previewView] a camera [SurfaceView] which render the camera preview.
      * The [SurfaceView] is added to [previewView] as a posted task on the main thread by
      * [CameraX].
@@ -237,20 +252,6 @@ public class CameraView @JvmOverloads constructor(
     override fun onHostPause()   = (lifecycle as? ReactLifecycleOwner)?.onHostPause() ?: Unit
     override fun onHostDestroy() = (lifecycle as? ReactLifecycleOwner)?.onHostDestroy() ?: Unit
 
-    /**
-     * Bind this view related camera preview to the [lifecycle]. If at the bind
-     * moment the lifecycle is on [androidx.lifecycle.Lifecycle.State.DESTROYED] then
-     * the bind fail with a [IllegalArgumentException] otherwise the camera preview will
-     * transition to a valid state according to the [lifecycle] state.
-     *
-     * Most of the time the binding is automatically at this view creation, but if a rebind
-     * is needed, then this method can be used.
-     */
-    @MainThread
-    @RequiresPermission(permission.CAMERA)
-    public fun bindToLifecycle(lifecycle: LifecycleOwner) {
-        cameraXModule.bindToLifecycle(lifecycle)
-    }
 
     companion object {
         private const val TAG = "CameraView"
