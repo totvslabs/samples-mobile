@@ -129,8 +129,10 @@ internal class CameraXModule(private val view: CameraView) {
     @RequiresPermission(permission.CAMERA)
     fun bindToLifecycleAfterViewMeasured() {
         pendingLifecycle ?: return
-        cameraProvider ?: return
 
+        // we clean the previous use cases and consume the pending lifecycle
+        // so when the camera preview is ready, it does find a valid current
+        // lifecycle to bind to
         cleanCurrentLifecycle().also {
             currentLifecycle = pendingLifecycle
             pendingLifecycle = null
@@ -140,6 +142,8 @@ internal class CameraXModule(private val view: CameraView) {
             currentLifecycle = null
             throw IllegalArgumentException("Cannot bind to a lifecycle in a destroyed state")
         }
+
+        cameraProvider ?: return // let's try later when the provider is not null
 
         val isDisplayPortrait =
             view.displayRotationDegrees == 0 || view.displayRotationDegrees == 180
