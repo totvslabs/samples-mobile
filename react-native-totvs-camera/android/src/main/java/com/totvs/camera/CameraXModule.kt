@@ -205,7 +205,7 @@ internal class CameraXModule(private val view: CameraView) {
         if (compensateForMirroring) (360 - degrees) % 360 else degrees
     } ?: 0
 
-    fun invalidateViews() = updateViewInfo()
+    fun invalidateView() = updateViewInfo()
 
     // update view related information used by the use cases
     private fun updateViewInfo() {

@@ -111,7 +111,7 @@ public class CameraView @JvmOverloads constructor(
         override fun onDisplayAdded(displayId: Int) = Unit
         override fun onDisplayRemoved(displayId: Int) = Unit
         override fun onDisplayChanged(displayId: Int) {
-            cameraXModule.invalidateViews()
+            cameraXModule.invalidateView()
         }
     }
 
@@ -172,7 +172,7 @@ public class CameraView @JvmOverloads constructor(
         // cause the lifecycle binding
         cameraXModule.apply {
             bindToLifecycleAfterViewMeasured()
-            invalidateViews()
+            invalidateView()
         }
         super.onLayout(changed, left, top, right, bottom)
     }
