@@ -172,6 +172,8 @@ public class CameraView @JvmOverloads constructor(
             cameraXModule.zoom = value
         }
 
+    override fun toggleCamera() = cameraXModule.toggleCamera()
+
     // Overrides
     override fun generateDefaultLayoutParams() = LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
@@ -302,6 +304,6 @@ public class CameraView @JvmOverloads constructor(
         private const val EXTRA_FACING_BACK = CameraSelector.LENS_FACING_BACK
         private const val EXTRA_FACING_FRONT = CameraSelector.LENS_FACING_FRONT
 
-        private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
+        private val PERMISSIONS_REQUIRED = arrayOf(permission.CAMERA)
     }
 }

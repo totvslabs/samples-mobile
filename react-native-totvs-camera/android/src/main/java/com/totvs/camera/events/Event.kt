@@ -47,8 +47,6 @@ interface Event : () -> Unit {
          */
         operator fun iterator(): Iterator<Export> = exported.iterator()
 
-        public fun forEach(block: (Export) -> Unit) {
-            for (e in Event) block(e)
-        }
+        public fun forEach(block: (Export) -> Unit) = iterator().forEach(block)
     }
 }

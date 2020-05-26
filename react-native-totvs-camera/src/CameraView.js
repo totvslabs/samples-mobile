@@ -17,6 +17,7 @@ import {
   View,
   ActivityIndicator,
   Text,  
+  PermissionsAndroid
 } from 'react-native';
 
 import React, { Component } from 'react';
@@ -49,19 +50,29 @@ const CameraModule = Platform.select({
 // Type System
 ////////////////////////////
 
-type PropsType = {
+const Rationale = PropTypes.shape({
+  title: PropTypes.string.isRequired, 
+  message: PropTypes.string.isRequired, 
+  buttonPositive: PropTypes.string, 
+  buttonNegative: PropTypes.string,
+  buttonNeutral: PropTypes.string
+});
+
+type PropsType = typeof View.props & {
   requestPermissions?: boolean,
-  permissionDialogTitle?: string, 
-  permissionDialogMessage?: string,
-  authorizingView?: React.Component,
-  unauthorizedView?: React.Component
+  cameraPermissionOptions?: Rationale,
+  pendingAuthorizationView?: React.Component,
+  unauthorizedView?: React.Component,
+  onCameraStateChanged?: Function
 };
 
 type StateType = {
-  isAuthorized: bool
+  isAuthorized: bool,
+  isAuthorizationRequested: bool
 };
 
-export type State = 'READY' | 'AUTHORIZING' | 'UNAUTHORIZED';
+export type State = 'READY' | 'PENDING' | 'UNAUTHORIZED';
+
 
 /////////////////////////////
 // Constants
@@ -72,13 +83,17 @@ export type State = 'READY' | 'AUTHORIZING' | 'UNAUTHORIZED';
  */
 const CameraState = {
   READY: 'READY',
-  AUTHORIZING: 'AUTHORIZING',
+  PENDING: 'PENDING',
   UNAUTHORIZED: 'UNAUTHORIZED'
 };
 /**
  * Constants exposed by the camera manager of the camera view
  */
-export const Constants = {    
+export const Constants = {
+  // LENS_FACING.FRONT, LENS_FACING.BACK
+  LENS_FACING: CameraModule.LENS_FACING,
+  // ZOOM_LIMITS.MAX, ZOOM_LIMITS.MIN
+  ZOOM_LIMITS: CameraModule.ZOOM_LIMITS,
 };
 
 
@@ -113,13 +128,13 @@ const Children = ({ camera, ...props }) => {
 
 /**
  * View representing the state of the camera while requesting permission.
- * The caller code can customize this setting `authorizingView` property.
+ * The caller code can customize this setting `pendingAuthorizationView` property.
  * 
  * @param {Object} props 
  */
-const AuthorizingView = () => {
+const PendingAuthorizationView = () => {
   return (
-    <View style={[styles.authorizingView.view]}>
+    <View style={[styles.pendingAuthorizationView.view]}>
       <ActivityIndicator size="small"/>
     </View>
   );
@@ -150,19 +165,19 @@ export default class CameraView extends Component<PropsType, StateType> {
   static propTypes = {
     ...ViewPropTypes,
     requestPermissions: PropTypes.bool,
-    permissionDialogTitle: PropTypes.string, 
-    permissionDialogMessage: PropTypes.string,
-    authorizingView: PropTypes.element,
-    unauthorizedView: PropTypes.element
+    cameraPermissionOptions: Rationale,
+    pendingAuthorizationView: PropTypes.element,
+    unauthorizedView: PropTypes.element,
+    onCameraStateChanged: PropTypes.func
   };
   /**
    * Default props for this view
    */
   static defaultProps = {    
-    permissionDialogTitle: '', 
-    permissionDialogMessage: '',
-    authorizingView: AuthorizingView(),
-    unauthorizedView: UnauthorizedView()
+    cameraPermissionOptions: { },    
+    pendingAuthorizationView: PendingAuthorizationView(),
+    unauthorizedView: UnauthorizedView(),
+    onCameraStateChanged: () => { },    
   };
 
   _cameraId;
@@ -170,23 +185,14 @@ export default class CameraView extends Component<PropsType, StateType> {
   _isMounted;
 
   constructor(props: PropsType) {
-    super(props);
-    
+    super(props);    
     // set props default values
-    this._isMounted = false;
-
+    this._isMounted = true;
     // set state initial values
     this.state = { 
-      isAuthorized: false
+      isAuthorized: false,
+      isAuthorizationRequested: false,      
     };
-  }
-
-  componentDidMount = async () => {
-
-  }
-  
-  componentWillUnmount = () => {
-    this._isMounted = false;
   }
 
   /**
@@ -206,22 +212,101 @@ export default class CameraView extends Component<PropsType, StateType> {
   _expandProps = ({ children, ...props } : PropsType) => {
     const expanded: PropsType = { ...props };
     
-    // enable permission request in case user enable permission dialor 
+    // enable permission request in case user set permission rationale
     // props and didn't set the allow flag.
     expanded.requestPermissions = (
-      props.permissionDialogTitle || 
-      props.permissionDialogMessage
+      props.cameraPermissionOptions
     ) && isAbsent(props.requestPermissions) ? true : props.requestPermissions;
 
     return expanded;
   }
 
-  // public accessors and manipulators
-
-  getState = (): State => {
-
+  /**
+   * Notify of camera state changed.
+   */
+  _onCameraStateChanged = () => {
+    this.props.onCameraStateChanged(this.getState())
   }
 
+  /**
+   * Selectively request poermissions required to render the native component apropriately.
+   */
+  _requestCameraPermissions = async (rationale: Rationale) => {
+    if (Platform.OS === 'android') {
+      const result = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA, rationale
+      );
+
+      if (typeof result === 'boolean') {
+        return result;
+      } else {
+        return PermissionsAndroid.RESULTS.GRANTED === result;
+      }
+    }
+    return false;
+  }
+
+  // public accessors and manipulators
+
+   /**
+   * Indicate if this component has a function as a child component. This is used to enable 
+   * a handy way to interact with the camera state. e.g we can indicate a function as a child
+   * that have an specific way to request permissions and then refresh this component state.
+   */
+  hasFaCC = () => typeof this.props.children === 'function';
+
+  /**
+   * Get the current camera state
+   */
+  getState = (): State => {
+    const {
+      isAuthorized, isAuthorizationRequested
+    } = this.state;
+    
+    return isAuthorizationRequested 
+      ? isAuthorized ? CameraState.READY : CameraState.UNAUTHORIZED
+      : CameraState.PENDING
+      ;
+  }
+  
+  /**
+   * Check if the app has camera permissions
+   */
+  hasCameraPermission = async () => {
+    const defaults = { 
+      title: '', message: '',
+      buttonPositive: '',
+      buttonNegative: '',
+      buttonNeutral: ''
+    };
+    const rationale = {
+      ...defaults,
+      ...(this.props.cameraPermissionOptions || { })
+    };
+    return await this._requestCameraPermissions(rationale);
+  }
+
+  refreshCameraState = async () => {
+    const { 
+      requestPermissions 
+    } = this._expandProps(this.props);
+
+    const isAuthorized = requestPermissions && await this.hasCameraPermission();
+        
+    this._isMounted && this.setState(
+      { isAuthorized, isAuthorizationRequested: true }, this._onCameraStateChanged
+    );    
+  };
+
+  componentDidMount = async () => {
+    await this.refreshCameraState();
+  }
+  
+  componentWillUnmount = () => {
+    this._isMounted = false;
+  }
+
+  // Camera Contract
   
 
   /**
@@ -229,17 +314,26 @@ export default class CameraView extends Component<PropsType, StateType> {
    */
   render = () => {
     const { style, ...properties } = this._expandProps(this.props);
-    
-    return (
-      <View style={style}>
-        <NativeCamera
-          {...properties}
-          ref={this._setReference}
-          style={styles.cameraView.camera}
-        />
-        {Children({ camera: this, ...this.props })}
-      </View>
-    );
+
+    // if we were authorized or there's a possibly handler function, let's render the camera
+    if (this.state.isAuthorized || this.hasFaCC()) {
+      return (
+        <View style={style}>
+          <NativeCamera
+            {...properties}
+            ref={this._setReference}
+            style={styles.cameraView.camera}
+          />
+          {Children({ camera: this, ...this.props })}
+        </View>
+      );
+    }
+    // if this component hasn't been authorized to use the camera but requested
+    if (!this.state.isAuthorizationRequested) {
+      return this.props.pendingAuthorizationView;
+    }
+    // otherwise
+    return this.props.unauthorizedView;
   }
 }
 

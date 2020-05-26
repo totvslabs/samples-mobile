@@ -14,12 +14,21 @@ import {
   Text,
 } from 'react-native';
 
-import CameraView from 'react-native-totvs-camera';
+import CameraView, { Constants } from 'react-native-totvs-camera';
 
 const App = () => {  
+  console.log('Constants', { ...Constants });
+  
+  const rationale = {
+    title: 'Title',
+    message: 'message',
+    buttonPositive: 'OK',
+    buttonNegative: 'CANCEL'
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <CameraView style={styles.camera}/>
+      <CameraView style={styles.camera} cameraPermissionOptions={rationale}/>
     </SafeAreaView>
   );
 };

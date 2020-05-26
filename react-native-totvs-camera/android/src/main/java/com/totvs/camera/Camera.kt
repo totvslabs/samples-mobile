@@ -30,6 +30,12 @@ public interface Camera {
     var zoom: Float
 
     /**
+     * Toggle camera facing, works the same as requesting the opposite of the current
+     * facing.
+     */
+    public fun toggleCamera()
+
+    /**
      * Trigger the action of capturing a picture.
      * @TODO as right now is unclear what to do with the captured image, this
      *       callback is only intended for notifications

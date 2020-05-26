@@ -20,7 +20,7 @@ const cameraView = StyleSheet.create({
   }
 });
 
-const authorizingView = StyleSheet.create({
+const pendingAuthorizationView = StyleSheet.create({
   view: {
     flex: 1,
     alignItems: 'center',
@@ -37,11 +37,12 @@ const unauthorizedView = StyleSheet.create({
   text: {
     textAlign: 'center',
     fontSize: 16,    
+    color: 'black'
   }
 });
 
 export default {
   cameraView,
-  authorizingView,
+  pendingAuthorizationView,
   unauthorizedView
 };

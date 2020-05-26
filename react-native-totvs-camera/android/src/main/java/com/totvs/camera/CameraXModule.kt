@@ -1,6 +1,7 @@
 package com.totvs.camera
 
 import android.Manifest.permission
+import android.util.Log
 import android.util.Rational
 import android.util.Size
 import androidx.annotation.FloatRange
@@ -9,6 +10,7 @@ import androidx.annotation.RequiresPermission
 import androidx.annotation.RestrictTo
 import androidx.camera.core.*
 import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector.LensFacing
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -73,6 +75,7 @@ internal class CameraXModule(private val view: CameraView) {
     private var camera: Camera? = null
 
     // Internal manipulators
+    @LensFacing
     var facing: Int = CameraSelector.LENS_FACING_BACK
         set(value) {
             if (field == value) return // no-op
@@ -115,7 +118,10 @@ internal class CameraXModule(private val view: CameraView) {
     @MainThread
     @RequiresPermission(permission.CAMERA)
     fun bindToLifecycle(lifecycle: LifecycleOwner) {
-        if (!view.hasPermissions) return
+        if (!view.hasPermissions) {
+            Log.e(TAG, "No camera permission granted")
+            return
+        }
 
         pendingLifecycle = lifecycle
 
@@ -130,7 +136,10 @@ internal class CameraXModule(private val view: CameraView) {
     @MainThread
     @RequiresPermission(permission.CAMERA)
     fun bindToLifecycleAfterViewMeasured() {
-        if (!view.hasPermissions) return
+        if (!view.hasPermissions) {
+            Log.e(TAG, "No camera permission granted")
+            return
+        }
 
         pendingLifecycle ?: return
 
@@ -183,7 +192,10 @@ internal class CameraXModule(private val view: CameraView) {
      */
     @MainThread
     fun cleanCurrentLifecycle() {
-        if (!view.hasPermissions) return
+        if (!view.hasPermissions) {
+            Log.e(TAG, "No camera permission granted")
+            return
+        }
 
         val toUnbind = with(mutableListOf<UseCase>()) {
             preview?.let { add(it) }
@@ -206,7 +218,10 @@ internal class CameraXModule(private val view: CameraView) {
 
     // update view related information used by the use cases
     private fun updateViewInfo() {
-        if (!view.hasPermissions) return
+        if (!view.hasPermissions) {
+            Log.e(TAG, "No camera permission granted")
+            return
+        }
 
         capture?.let {
             it.setCropAspectRatio(Rational(width, height))
