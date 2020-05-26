@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.CallSuper
+import androidx.annotation.FloatRange
 import androidx.annotation.MainThread
 import androidx.annotation.RequiresPermission
 import androidx.camera.core.CameraSelector
@@ -38,7 +39,7 @@ public class CameraView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0
-) : FrameLayout(context, attrs, style), LifecycleEventListener {
+) : FrameLayout(context, attrs, style), Camera, LifecycleEventListener {
 
     // Listeners
 
@@ -147,6 +148,28 @@ public class CameraView @JvmOverloads constructor(
         get() = cameraXModule.facing
         set(value) {
             cameraXModule.facing = value
+        }
+
+    override var isTorchEnabled: Boolean
+        get() = cameraXModule.isTorchEnabled
+        set(value) {
+            cameraXModule.isTorchEnabled = value
+        }
+
+    override var rotation: Int
+        get() = 0
+        set(value) = Unit
+
+    override var facing: LensFacing
+        get() = if (CameraSelector.LENS_FACING_BACK == cameraXModule.facing) LensFacing.BACK else LensFacing.FRONT
+        set(value) {
+            cameraXModule.facing = value()
+        }
+
+    override var zoom: Float
+        get() = cameraXModule.zoom
+        set(@FloatRange(from = 0.0, to = 1.0) value) {
+            cameraXModule.zoom = value
         }
 
     // Overrides

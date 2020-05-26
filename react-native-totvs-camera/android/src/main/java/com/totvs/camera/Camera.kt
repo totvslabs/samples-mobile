@@ -1,5 +1,7 @@
 package com.totvs.camera
 
+import androidx.annotation.FloatRange
+
 /**
  * Representation of a camera device. Operations here are the one performed
  * with either an standard camera device or with outputs of such device.
@@ -32,5 +34,5 @@ public interface Camera {
      * @TODO as right now is unclear what to do with the captured image, this
      *       callback is only intended for notifications
      */
-    public fun takePicture(onTaken: OnPictureTakenCallback)
+    public fun takePicture(onTaken: OnPictureTakenCallback) { }
 }

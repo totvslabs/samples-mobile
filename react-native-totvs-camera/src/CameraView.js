@@ -216,9 +216,13 @@ export default class CameraView extends Component<PropsType, StateType> {
     return expanded;
   }
 
+  // public accessors and manipulators
+
   getState = (): State => {
-      
+
   }
+
+  
 
   /**
    * View renderization happens here
