@@ -1,7 +1,5 @@
 package com.totvs.camera
 
-import androidx.annotation.FloatRange
-
 /**
  * Representation of a camera device. Operations here are the one performed
  * with either an standard camera device or with outputs of such device.

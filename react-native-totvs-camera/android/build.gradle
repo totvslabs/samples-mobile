@@ -41,6 +41,39 @@ android {
 }
 
 repositories {
+    /*
+     *  ============= CAUTIOUSLY READ AND CHANGE THIS =============
+     *
+     * Please keep in mind that the runtime react-native library used to compile
+     * the library is different from the version resolved by gradle when used in a react-native
+     * project. The version resolved by gradle which is around 0.20.1 while the one resolved
+     * when compiling the library included in react native project depends on the version
+     * used when creating the project.
+     *
+     * It turns out that the 0.20.1 library is not compatible with the runtime found
+     * in node_modules. That said, DON'T fix the compile time errors on this file. They're there
+     * to reflect the actual signature of the runtime library with which the project is
+     * compiled.
+     *
+     * In order to allow the static errors disappear while working on this library, you can
+     * specify from where to pull the react-native library implementation by setting to true
+     * the flag [OVERRIDE_REACT_NATIVE] and setting a home directory for the node_modules.
+     *
+     * The impact that this will have on a project if the flag remain enabled, was not tested,
+     * that said, whenever you finish working on this library, please switch the flag to false
+     * back again.
+     *
+     * @see also [ReactCameraModule]
+     */
+    def OVERRIDE_REACT_NATIVE = true
+    def NODE_MODULES_HOME     = "$rootDir/react-native-totvs-camera-app/node_modules"
+
+    if (OVERRIDE_REACT_NATIVE) {
+        maven {
+            url "$NODE_MODULES_HOME/react-native/android"
+        }
+    }
+
     mavenCentral()
     google()
     jcenter()

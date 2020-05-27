@@ -322,7 +322,7 @@ export default class CameraView extends Component<PropsType, StateType> {
   /**
    * Toggle the camera lens facing
    */
-  toggleCamera = async () => {
+  toggleCamera = async () => {    
   }
 
   /**

@@ -1,16 +1,14 @@
 package com.totvs.camera
 
-
-import androidx.annotation.AnyThread
-import androidx.annotation.FloatRange
-import com.facebook.react.bridge.Promise
+import androidx.camera.core.CameraSelector
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.annotations.ReactProp
 import com.totvs.camera.events.Event
+import com.totvs.camera.utils.Constants
 
 /**
  * [CameraView] react native manager
- *
  */
 class ReactCameraManager : ViewGroupManager<CameraView>() {
 
@@ -38,40 +36,17 @@ class ReactCameraManager : ViewGroupManager<CameraView>() {
         return events
     }
 
-    // START View methods
+    // START Setters methods
 
     /**
-     * Set camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom
+     * Set the camera opening facing
      */
-    @AnyThread
-    public fun setZoom(@FloatRange(from = 0.0, to = 1.0) zoom: Float, promise: Promise) {
+    @ReactProp(name = "facing", defaultInt = Constants.CAMERA_FACING_BACK)
+    fun setFacing(cameraView: CameraView, @CameraSelector.LensFacing facing: Int) {
+        cameraView.facing = if (facing == Constants.CAMERA_FACING_FRONT) LensFacing.FRONT else LensFacing.BACK
     }
 
-    /**
-     * Enable or disable camera torch
-     */
-    @AnyThread
-    public fun enableTorch(enable: Boolean, promise: Promise) {
-    }
-
-    /**
-     * Toggle the camera. i.e if the current camera is the front one it will toggle to back
-     * camera as vice versa.
-     */
-    @AnyThread
-    public fun toggleCamera(promise: Promise) {
-
-    }
-
-    /**
-     * Change the camera lens display. This is related to [toggleCamera] in the sence
-     * that this method indicate explicitly which lens to use for the camera.
-     */
-    @AnyThread
-    public fun setLensFacing(promise: Promise) {
-
-    }
-    // END View methods
+    // END Setters methods
 
     companion object {
         /**
