@@ -1,64 +1,69 @@
-package com.totvs.camera.view
+package com.totvs.camera
 
 import android.Manifest
+import android.Manifest.permission
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.display.DisplayManager
+import android.hardware.display.DisplayManager.DisplayListener
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.DisplayMetrics
-import android.util.Log
-import androidx.camera.core.*
-import androidx.camera.lifecycle.ProcessCameraProvider
+import android.view.Surface
+import android.view.SurfaceView
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.annotation.CallSuper
+import androidx.annotation.FloatRange
+import androidx.annotation.MainThread
+import androidx.annotation.RequiresPermission
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraX
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
-import com.totvs.camera.*
-import com.totvs.camera.Camera
-import com.totvs.camera.ReactLifecycleOwner
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-
-typealias CoreCamera = androidx.camera.core.Camera
 
 /**
- * Main view where the camera preview is rendered. It conform the set of camera operations
- * that supported through [Camera]. Other operations invoked in this view apart from the
- * one stated in the [Camera] contract, are not guaranteed to be available in future versions
- * of this view.
+ * A [android.view.View] that display a camera preview and has the [Camera] capabilities.
  *
- * @author Jansel Valentin
+ * This component is lifecycle aware and must be bound a lifecycle in order to render
+ * and perform camera's operations. The lifecycle open/close of the camera is handled
+ * automatically and is directly tied to the provided lifecycle.
  */
 public class CameraView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0
-) : PreviewView(context, attrs, style), Camera, LifecycleObserver, LifecycleEventListener {
+) : FrameLayout(context, attrs, style), Camera, LifecycleEventListener {
 
-    // [Camera] contract
-    override var isFlashEnabled: Boolean
-        get() = camera!!.cameraInfo.torchState.value == TorchState.ON
-        set(value) {
-            camera!!.cameraControl.enableTorch(value)
+    // Listeners
+
+    /** Display listener */
+    private val displayListener = object : DisplayListener {
+        override fun onDisplayAdded(displayId: Int) = Unit
+        override fun onDisplayRemoved(displayId: Int) = Unit
+        override fun onDisplayChanged(displayId: Int) {
+            cameraXModule.invalidateView()
         }
-
-    private var displayId: Int? = -1
-    private var lensFacing = CameraSelector.LENS_FACING_BACK
-    private var preview: Preview? = null
-    private var imageCapture: ImageCapture? = null
-    private var camera: CoreCamera? = null
-
-
-    private val displayManager by lazy {
-        context.applicationContext.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     }
+
+    /** [ViewGroup.OnHierarchyChangeListener] to be installed on [previewView] */
+    private val viewHierarchyListener = object : OnHierarchyChangeListener {
+        override fun onChildViewRemoved(parent: View?, child: View?) = Unit
+        override fun onChildViewAdded(parent: View?, child: View?) {
+            parent?.measure(
+                MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
+            )
+            parent?.layout(0, 0, parent.measuredWidth, parent.measuredHeight)
+        }
+    }
+
 
     /**
      * Lifecycle owner to control [CameraX] lifecycle.
@@ -77,162 +82,228 @@ public class CameraView @JvmOverloads constructor(
      *
      * @see also [ReactLifecycleOwner]
      */
-    private val lifecycleOwner: LifecycleOwner =
-        ((context as? LifecycleOwner) ?: ReactLifecycleOwner)
+    private val lifecycle: LifecycleOwner = when (context) {
+        is LifecycleOwner -> context
+        is ThemedReactContext -> ReactLifecycleOwner
             .also {
-                require(context is LifecycleOwner || context is ThemedReactContext) {
-                    "Invalid context type. You must use this view with a LifecycleOwner or ThemedReactContext context"
-                }
-
-                when (context) {
-                    is LifecycleOwner -> context.lifecycle.addObserver(this)
-                    is ThemedReactContext -> context.addLifecycleEventListener(this)
-                }
+                context.addLifecycleEventListener(this)
             }
+        else -> throw IllegalArgumentException("Invalid context type. You must use this view with a LifecycleOwner or ThemedReactContext context")
+    }
 
-    /** Blocking camera operations are performed using this executor */
-    private lateinit var cameraExecutor: ExecutorService
+
+    /** Preview view where the camera is gonna be displayed */
+    internal val previewView: PreviewView = PreviewView(context).apply {
+        installHierarchyFitter(this)
+    }
+
+    /** CameraX implementation manipulator */
+    private val cameraXModule: CameraXModule
+
+    /** [DisplayManager] */
+    private val displayManager by lazy {
+        context.applicationContext.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    }
+
+    /** Initialization */
+    init {
+        addView(previewView, 0)
+        cameraXModule = CameraXModule(this).apply {
+            @Suppress("MissingPermission") bindToLifecycle(lifecycle)
+        }
+        setBackgroundResource(android.R.color.black)
+    }
+
+    // Computed properties
+    /**
+     * Returns one of the [android.view.Surface.ROTATION_0] [android.view.Surface.ROTATION_180]
+     * [android.view.Surface.ROTATION_90] [android.view.Surface.ROTATION_270] constants
+     */
+    internal val displaySurfaceRotation: Int
+        get() {
+            // Null when the view is detached. If we were in the middle of a background operation
+            // when it resumes we might found out that this view is not displayed anymore.
+            // and the camera was closed
+            return display?.rotation ?: 0
+        }
 
     /**
-     * We need a display listener for orientation changes that do not trigger configuration
-     * changes, for example if we choose to override config change in manifest or for 180 degree
-     * orientation change
+     * Returns the [displaySurfaceRotation] value converted in degrees
      */
-    private val displayListener = object : DisplayManager.DisplayListener {
-        override fun onDisplayAdded(displayId: Int) = Unit
-        override fun onDisplayRemoved(displayId: Int) = Unit
-        override fun onDisplayChanged(displayId: Int) {
-            if (displayId == displayId) {
-                imageCapture?.targetRotation = display.rotation
-            }
-            Unit
+    internal val displayRotationDegrees: Int
+        get() = when (displaySurfaceRotation) {
+            Surface.ROTATION_0 -> 0
+            Surface.ROTATION_180 -> 180
+            Surface.ROTATION_90 -> 90
+            Surface.ROTATION_270 -> 270
+            else -> throw IllegalArgumentException("Unsupported surface rotation")
+        }
+
+    internal val hasPermissions: Boolean get() = PERMISSIONS_REQUIRED.all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    // [Camera] contract
+    private var lensFacing: Int
+        get() = cameraXModule.facing
+        set(value) {
+            cameraXModule.facing = value
+        }
+
+    override var isTorchEnabled: Boolean
+        get() = cameraXModule.isTorchEnabled
+        set(value) {
+            cameraXModule.isTorchEnabled = value
+        }
+
+    override var rotation: Int
+        get() = 0
+        set(value) = Unit
+
+    override var facing: LensFacing
+        get() = if (CameraSelector.LENS_FACING_BACK == cameraXModule.facing) LensFacing.BACK else LensFacing.FRONT
+        set(value) {
+            cameraXModule.facing = value()
+        }
+
+    override var zoom: Float
+        get() = cameraXModule.zoom
+        set(@FloatRange(from = 0.0, to = 1.0) value) {
+            cameraXModule.zoom = value
+        }
+
+    override fun toggleCamera() = cameraXModule.toggleCamera()
+
+    // Overrides
+    override fun generateDefaultLayoutParams() = LayoutParams(
+        LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
+    )
+
+    @CallSuper
+    override fun onSaveInstanceState(): Parcelable? {
+        super.onSaveInstanceState()
+        return Bundle().apply {
+            putInt(
+                EXTRA_CAMERA_FACING,
+                if (CameraSelector.LENS_FACING_BACK == lensFacing) EXTRA_FACING_BACK else EXTRA_FACING_FRONT
+            )
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    private fun onStart() {
-        if (!hasPermissions(context)) return
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
-
-        displayManager.registerDisplayListener(displayListener, null)
-        // wait for this view to render properly
-        post {
-            displayId = display.displayId
-            bindCamerasUseCases()
+    @CallSuper
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is Bundle) {
+            lensFacing = state.getInt(EXTRA_CAMERA_FACING, EXTRA_FACING_BACK)
+        } else {
+            super.onRestoreInstanceState(state)
         }
+        super.onRestoreInstanceState(null) // compensate for kotlin call super requirement
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private fun onStop() = Unit
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        displayManager.registerDisplayListener(displayListener, Handler(Looper.getMainLooper()))
+    }
 
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private fun onDestroy() {
-        if (!::cameraExecutor.isInitialized) return
-
-        cameraExecutor.shutdown()
-
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
         displayManager.unregisterDisplayListener(displayListener)
     }
 
-
-    /** Here we declare and bind capture and preview use cases */
-    private fun bindCamerasUseCases() {
-        val metrics = DisplayMetrics().also { display.getRealMetrics(it) }
-
-        val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
-
-        val rotation = display.rotation
-
-        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-        val futureProvider = ProcessCameraProvider.getInstance(context)
-        futureProvider.addListener(Runnable {
-
-            // [CameraProvider]
-            val provider = futureProvider.get()
-
-            // [Preview]
-            preview = Preview.Builder()
-                .setTargetAspectRatio(screenAspectRatio)
-                .setTargetRotation(rotation)
-                .build()
-
-            // [ImageCapture]
-            imageCapture = ImageCapture.Builder()
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                .setTargetAspectRatio(screenAspectRatio)
-                .setTargetRotation(rotation)
-                .build()
-
-            // [ImageAnalysis]
-            // @TODO When time comes, don't forget schedule the analyzer on a different
-            //       executor than [cameraExecutor] this way you don't interfere with
-            //       [imageCapture] use case.
-
-            // must unbind all the previous use cases before binding them again
-            provider.unbindAll()
-            try {
-                camera = provider.bindToLifecycle(
-                    lifecycleOwner, cameraSelector, preview, imageCapture
-                )
-                // Attach the preview surface provider to preview use case
-                preview?.setSurfaceProvider(createSurfaceProvider(camera?.cameraInfo))
-            } catch (ex: Exception) {
-                Log.e(TAG, "Use case binding failed", ex)
-            }
-        }, ContextCompat.getMainExecutor(context))
-    }
-
-    private fun aspectRatio(width: Int, height: Int): Int {
-        val previewRatio = max(width, height).toDouble() / min(width, height).toDouble()
-        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
-            return AspectRatio.RATIO_4_3
+    @Suppress("MissingPermission")
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        // since bindToLifecycle depends on view dimensions, let's not call it
+        // when the dimensions are 0x0
+        if (0 < measuredWidth && 0 < measuredHeight) {
+            cameraXModule.bindToLifecycleAfterViewMeasured()
         }
-        return AspectRatio.RATIO_16_9
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
-    // [Camera] contracts
-    override fun takePicture(onTaken: OnPictureTakenCallback) {
-        imageCapture!!.testPictureTake(context, cameraExecutor, lensFacing, onTaken)
-    }
-
-    override fun setTargetRotation(rotation: Int) {
-        // @TODO confirm if this is really necessary after this implementation
-    }
-
-    override fun setFacing(facing: LensFacing) {
-        if (facing() == lensFacing) {
-            return
+    @Suppress("MissingPermission")
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        // In case the [CameraView] is always set as 0x0 we still need to trigger to
+        // cause the lifecycle binding
+        cameraXModule.apply {
+            bindToLifecycleAfterViewMeasured()
+            invalidateView()
         }
-        lensFacing = facing()
-        bindCamerasUseCases()
+        super.onLayout(changed, left, top, right, bottom)
     }
 
-    override fun zoom(zoom: Float) {
-        camera!!.cameraControl.setLinearZoom(zoom.coerceIn(0.0f, 1.0f))
+    // [Camera] contract
+
+    // Interface methods
+    /**
+     * Bind this view related camera preview to the [lifecycle]. If at the bind
+     * moment the lifecycle is on [androidx.lifecycle.Lifecycle.State.DESTROYED] then
+     * the bind fail with a [IllegalArgumentException] otherwise the camera preview will
+     * transition to a valid state according to the [lifecycle] state.
+     *
+     * Most of the time the binding is automatically at this view creation, but if a rebind
+     * is needed, then this method can be used.
+     */
+    @MainThread
+    @RequiresPermission(permission.CAMERA)
+    public fun bindToLifecycle(lifecycle: LifecycleOwner) {
+        cameraXModule.bindToLifecycle(lifecycle)
     }
 
-    // React Native [LifecycleEventListener] events
-    override fun onHostResume() =
-        (ReactLifecycleOwner.onHostResume() ?: Unit).also { onStart() }
+    /**
+     * CameraX add to [previewView] a camera [SurfaceView] which render the camera preview.
+     * The [SurfaceView] is added to [previewView] as a posted task on the main thread by
+     * [CameraX].
+     * It turns out that under an Android native environment the view hierarchy of this view
+     * (including [previewView] of course) triggers a [onMeasure] and [onLayout] calls
+     * that force this view and it whole hierarchy to update which in turn will cause the
+     * camera preview to show because of the render of the [SurfaceView] added to [previewView],
+     * but under a react-native environment, after the first pass of [onMeasure] and [onLayout]
+     * any changes made to this view hierarchy won't be reflected because no recalculation or
+     * re-layout would be performed.
+     * e.g
+     * if during a layout pass on this view we add a view on [onMeasure] method, then all the views
+     * added will be displayed and correctly rendered, in both environments, react-native and
+     * Android, but if instead we postpone by [post] an addition of a new child to this view or
+     * [previewView] then on an Android environment, any action of parent.addView(child) will
+     * trigger on a parent a re-layout request and cause to create another pass of [onMeasure]
+     * and [onLayout] which will effectively render the childrens appropriately, but under
+     * react-native after the first pass any view added on a new task that is not the one
+     * running the current pass, wont trigger another pass. i.e no children will be visible
+     * if we add parent.addView(child) in a posted task.
+     *
+     * This brought as a consequence that under an Android environment, we could see the camera
+     * preview but under react-native we couldn't because [CameraX] postpone the addition of the
+     * surface to [previewView] way after the first pass on this view has ended.
+     *
+     * The purpose of this method is install a [ViewGroup.OnHierarchyChangeListener] to [previewView] so
+     * we detect when a view is added to it so we trigger manually the pass for re-layout
+     * on [previewView]. We do this selectively only when the app is running under a react-native
+     * environment.
+     *
+     * @see also these issues:
+     * 1. https://groups.google.com/a/android.com/forum/#!topic/camerax-developers/G9jKs1Bo_CE
+     * 2. https://github.com/facebook/react-native/issues/17968
+     */
+    private fun installHierarchyFitter(view: ViewGroup) {
+        if (context is ThemedReactContext) { // only react-native setup
+            view.setOnHierarchyChangeListener(viewHierarchyListener)
+        }
+    }
 
-    override fun onHostPause() =
-        (ReactLifecycleOwner.onHostPause() ?: Unit).also { onStop() }
+    // Bridge lifecycle event listeners
+    override fun onHostResume()  = (lifecycle as? ReactLifecycleOwner)?.onHostResume() ?: Unit
+    override fun onHostPause()   = (lifecycle as? ReactLifecycleOwner)?.onHostPause() ?: Unit
+    override fun onHostDestroy() = (lifecycle as? ReactLifecycleOwner)?.onHostDestroy() ?: Unit
 
-    override fun onHostDestroy() =
-        (ReactLifecycleOwner.onHostDestroy() ?: Unit).also { onDestroy() }
 
-    // Companion & Objects
     companion object {
-        private val TAG = CameraView::class.java.simpleName
-        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-        private const val RATIO_16_9_VALUE = 16.0 / 9.0
+        private const val TAG = "CameraView"
 
-        private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
+        private const val EXTRA_CAMERA_FACING = "camera_facing"
+        private const val EXTRA_FACING_BACK = CameraSelector.LENS_FACING_BACK
+        private const val EXTRA_FACING_FRONT = CameraSelector.LENS_FACING_FRONT
 
-        fun hasPermissions(context: Context) = PERMISSIONS_REQUIRED.all {
-            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
-        }
+        private val PERMISSIONS_REQUIRED = arrayOf(permission.CAMERA)
     }
 }

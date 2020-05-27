@@ -50,7 +50,7 @@ public class JavaMainActivity extends AppCompatActivity {
         });
 
         controls.findViewById(R.id.camera_flash_button).setOnClickListener(view -> {
-            camera.setFlashEnabled(camera.isFlashEnabled());
+            camera.setTorchEnabled(camera.isTorchEnabled());
 //            camera.zoom(0.5f)
 //            camera.setTargetRotation(90) // under revision
         });

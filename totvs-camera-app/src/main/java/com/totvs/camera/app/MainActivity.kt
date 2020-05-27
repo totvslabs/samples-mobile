@@ -56,11 +56,11 @@ class MainActivity : AppCompatActivity() {
 
         controls.findViewById<ImageButton>(R.id.camera_switch_button).setOnClickListener {
             facing = if (facing == LensFacing.BACK) LensFacing.FRONT else LensFacing.BACK
-            camera.setFacing(facing)
+            camera.facing = facing
         }
 
         controls.findViewById<ImageButton>(R.id.camera_flash_button).setOnClickListener {
-            camera.isFlashEnabled = !camera.isFlashEnabled
+            camera.isTorchEnabled = !camera.isTorchEnabled
 //            camera.zoom(0.5f)
 //            camera.setTargetRotation(90) // under revision
         }

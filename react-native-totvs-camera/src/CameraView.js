@@ -108,6 +108,17 @@ export const Constants = {
  */
 const isAbsent = value => null === value || undefined == value;
 
+/**
+ * Sanitize a value to a pure number or null 
+ */
+const toFiniteFloatOrNull = value => {
+  const isNumeric = value => !isNaN(value) && isFinite(value);
+  try { 
+    const e = parseFloat(value);
+    return isNumeric(e) ? e : null;
+  } catch (e) { return null; }
+};
+
 
 /////////////////////////////
 // Components
@@ -307,6 +318,59 @@ export default class CameraView extends Component<PropsType, StateType> {
   }
 
   // Camera Contract
+
+  /**
+   * Toggle the camera lens facing
+   */
+  toggleCamera = async () => {
+  }
+
+  /**
+   * Set camera facing. Possible values are one of Constants.LENS_FACING, two possible 
+   * values can be passed:
+   * 1. Constants.LENS_FACING.BACK
+   * 2. Constants.LENS_FACING.FRONT
+   */
+  setFacing = async facing => {
+    const {
+      FRONT, BACK
+    } = Constants.LENS_FACING;
+
+    if (FRONT !== facing && BACK !== facing) {
+      return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
+    }
+
+  }
+
+  /**
+   * Set the camera zoom. possible values are encoded in 
+   * [Constants.ZOOM_LIMITS.MIN, Constants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
+   */
+  setZoom = async zoom => {
+    const {
+      MIN, MAX
+    } = Constants.ZOOM_LIMITS;
+
+    const z = toFiniteFloatOrNull(zoom);
+
+    if (!isAbsent(z) && !(MIN <= z && z <= MAX)) {
+      return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
+    }
+
+  }
+
+  /**
+   * Enable/Disable the torch (flash light) on this camera
+   */
+  enableTorch = async enable => {
+  }
+
+  /**
+   * Handy function to enable the camera torch. If there's difference between OS to enable the
+   * flash light, this function can be modified to selectively enable the flash light 
+   * accordingly.
+   */
+  enableFlash = async enable => await this.enableTorch(enable);
   
 
   /**
