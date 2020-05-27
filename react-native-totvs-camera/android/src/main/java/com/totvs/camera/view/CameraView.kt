@@ -254,7 +254,6 @@ public class CameraView @JvmOverloads constructor(
     override fun takePicture(onCaptured: OnImageCaptured) =
         cameraXModule.takePicture(onCaptured)
 
-    // Interface methods
     /**
      * Bind this view related camera preview to the [lifecycle]. If at the bind
      * moment the lifecycle is on [androidx.lifecycle.Lifecycle.State.DESTROYED] then
