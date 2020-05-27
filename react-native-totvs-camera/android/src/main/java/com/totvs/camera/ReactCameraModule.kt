@@ -56,16 +56,23 @@ public class ReactCameraModule(
 
     /**
      * Utility function to reduce boilerplate code at executing a block of code
-     * on the ui manager
+     * on the ui manager. If [autoResolve] is set to true, then the promise will be
+     * resolved with the value returned from the block, otherwise the caller must
+     * resolve the promise
      */
-    private fun <T> Promise.withCamera(viewTag: Int, block: CameraView.() -> T) {
-        reactApplicationContext.uiManager {
-            addUIBlock { manager ->
-                try {
-                    resolve(manager.cameraViewOrThrow(viewTag).block())
-                } catch (ex: Exception) {
-                    reject(ex)
+    private fun <T> Promise.withCamera(
+        viewTag: Int,
+        autoResolve: Boolean = true,
+        block: CameraView.(promise: Promise) -> T
+    ) = reactApplicationContext.uiManager {
+        addUIBlock { manager ->
+            try {
+                val result = manager.cameraViewOrThrow(viewTag).block(this@withCamera)
+                if (autoResolve) {
+                    resolve(result)
                 }
+            } catch (ex: Exception) {
+                reject(ex)
             }
         }
     }
@@ -163,9 +170,11 @@ public class ReactCameraModule(
     @AnyThread
     @ReactMethod
     public fun takePicture(viewTag: Int, promise: Promise) =
-        promise.withCamera(viewTag) {
-            takePicture { file -> }
-            "Your photo has been saved, check logcat for the path"
+        promise.withCamera(viewTag, autoResolve = false) { promise ->
+            takePicture { file ->
+                promise.resolve(file.absolutePath)
+            }
+            true
         }
 
     // END View methods
