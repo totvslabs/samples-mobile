@@ -63,7 +63,6 @@ const App = () => {
       <CameraView
         ref={ref => setCameraView(ref)}
         style={styles.camera}
-        facing={BACK}
         zoom={MIN}
         cameraPermissionOptions={rationale}> 
         {childFunction} 

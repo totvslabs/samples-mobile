@@ -381,7 +381,7 @@ export default class CameraView extends Component<PropsType, StateType> {
    */
   render = () => {
     const { style, ...properties } = this._expandProps(this.props);
-
+    
     // if we were authorized or there's a possibly handler function, let's render the camera
     if (this.state.isAuthorized || this.hasFaCC()) {
       return (
