@@ -172,8 +172,6 @@ public class CameraView @JvmOverloads constructor(
             cameraXModule.zoom = value
         }
 
-    override fun toggleCamera() = cameraXModule.toggleCamera()
-
     // Overrides
     override fun generateDefaultLayoutParams() = LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
@@ -233,6 +231,13 @@ public class CameraView @JvmOverloads constructor(
     }
 
     // [Camera] contract
+
+    override fun toggleCamera() = cameraXModule.toggleCamera()
+
+    // experimental API
+    override fun takePicture(onTaken: OnPictureTakenCallback) {
+        cameraXModule.takePicture(onTaken)
+    }
 
     // Interface methods
     /**

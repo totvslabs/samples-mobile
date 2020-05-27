@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import java.util.concurrent.Executors
 
 
 /**
@@ -73,6 +74,9 @@ internal class CameraXModule(private val view: CameraView) {
 
     /** camera instance bound to this module */
     private var camera: Camera? = null
+
+    /** Capture Executor */
+    private val captureExecutor = Executors.newSingleThreadExecutor()
 
     /**
      * This values keep track of when the settings of the camera are
@@ -218,13 +222,6 @@ internal class CameraXModule(private val view: CameraView) {
         currentLifecycle = null
     }
 
-    fun toggleCamera() {
-        facing = if (CameraSelector.LENS_FACING_BACK == facing)
-            CameraSelector.LENS_FACING_FRONT
-        else
-            CameraSelector.LENS_FACING_BACK
-    }
-
     fun invalidateView() = updateViewInfo()
 
     // update view related information used by the use cases
@@ -247,6 +244,18 @@ internal class CameraXModule(private val view: CameraView) {
         // clean them all
         prematureZoom = null
         prematureTorch = null
+    }
+
+    fun toggleCamera() {
+        facing = if (CameraSelector.LENS_FACING_BACK == facing)
+            CameraSelector.LENS_FACING_FRONT
+        else
+            CameraSelector.LENS_FACING_BACK
+    }
+
+    // experimental API
+    fun takePicture(onTaken: OnPictureTakenCallback) {
+        capture?.testPictureTake(view.context, captureExecutor, facing, onTaken)
     }
 
     companion object {

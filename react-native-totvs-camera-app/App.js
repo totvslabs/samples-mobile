@@ -46,7 +46,10 @@ const App = () => {
     // cameraView && cameraView.setZoom(0.5);
     // cameraView && cameraView.toggleCamera()
     // cameraView && cameraView.enableFlash(false);
-    cameraView && cameraView.enableTorch(false); // synonyms for the previous
+    // cameraView && cameraView.enableTorch(true); // synonyms for the previous
+    cameraView && cameraView.takePicture()
+      .then(console.log)
+      .catch(console.warn);
   };
 
 
@@ -69,7 +72,7 @@ const App = () => {
       </CameraView>
 
       <TouchableOpacity style={styles.touchableOpacity} onPress={performAction}>
-        <Text style={styles.actionButtonText}>{"Torch/Flash"}</Text>
+        <Text style={styles.actionButtonText}>{"Take picture"}</Text>
       </TouchableOpacity>
 
     </SafeAreaView>

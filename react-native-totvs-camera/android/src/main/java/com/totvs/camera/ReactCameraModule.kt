@@ -158,6 +158,16 @@ public class ReactCameraModule(
                 Constants.CAMERA_FACING_BACK
         }
 
+
+    // experimental api
+    @AnyThread
+    @ReactMethod
+    public fun takePicture(viewTag: Int, promise: Promise) =
+        promise.withCamera(viewTag) {
+            takePicture { file -> }
+            "Your photo has been saved, check logcat for the path"
+        }
+
     // END View methods
 
     companion object {

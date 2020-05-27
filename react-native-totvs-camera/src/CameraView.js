@@ -346,6 +346,11 @@ export default class CameraView extends Component<PropsType, StateType> {
   }
 
   /**
+   * Returns the current camera facing
+   */
+  getFacing = async () => CameraModule.getLensFacing(this._cameraHandle);
+
+  /**
    * Set the camera zoom. possible values are encoded in 
    * [Constants.ZOOM_LIMITS.MIN, Constants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
@@ -364,9 +369,19 @@ export default class CameraView extends Component<PropsType, StateType> {
   }
 
   /**
+   * Returns current zoom
+   */
+  getZoom = async () => CameraModule.getZoom(this._cameraHandle);
+
+  /**
    * Enable/Disable the torch (flash light) on this camera
    */
   enableTorch = async enable => CameraModule.enableTorch(enable, this._cameraHandle);
+
+  /**
+   *  Whether the camera flash/torch is enabled
+   */
+  isTorchEnabled = async () => CameraModule.isTorchEnabled(this._cameraHandle);
 
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
@@ -375,6 +390,13 @@ export default class CameraView extends Component<PropsType, StateType> {
    */
   enableFlash = async enable => this.enableTorch(enable);
   
+   /**
+   *  Whether the camera flash/torch is enabled
+   */
+  isTorchEnabled = async () => this.isTorchEnabled(); 
+
+  // experimental API
+  takePicture = async () => CameraModule.takePicture(this._cameraHandle);
 
   /**
    * View renderization happens here
