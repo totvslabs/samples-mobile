@@ -413,7 +413,7 @@ export default class CameraView extends Component<PropsType, StateType> {
             ref={this._setReference}
             style={styles.cameraView.camera}
           />
-          {Children({ camera: this, ...this.props })}
+          {Children({ camera: this, ...this.props, ...properties })}
         </View>
       );
     }
@@ -421,7 +421,7 @@ export default class CameraView extends Component<PropsType, StateType> {
     if (!this.state.isAuthorizationRequested) {
       return this.props.pendingAuthorizationView;
     }
-    // otherwise
+    // otherwises
     return this.props.unauthorizedView;
   }
 }
