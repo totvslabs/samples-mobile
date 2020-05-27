@@ -6,7 +6,9 @@ import androidx.camera.core.CameraSelector
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.uimanager.NativeViewHierarchyManager
 import com.facebook.react.uimanager.UIManagerModule
+import com.totvs.camera.utils.Constants
 import com.totvs.camera.utils.ExportableConstants
 
 
@@ -57,10 +59,19 @@ public class ReactCameraModule(
      * Set camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom
      */
     @AnyThread
-    public fun setZoom(@FloatRange(from = 0.0, to = 1.0) zoom: Float, viewTag: Int, promise: Promise) {
+    public fun setZoom(
+        @FloatRange(from = 0.0, to = 1.0) zoom: Float,
+        viewTag: Int,
+        promise: Promise
+    ) {
         reactApplicationContext.uiManager {
-            addUIBlock {
-                
+            addUIBlock { manager ->
+                try {
+                    manager.cameraViewOrThrow(viewTag).zoom = zoom
+                    promise.resolve(true)
+                } catch (ex: Exception) {
+                    promise.reject(ex)
+                }
             }
         }
     }
@@ -70,6 +81,16 @@ public class ReactCameraModule(
      */
     @AnyThread
     public fun enableTorch(enable: Boolean, viewTag: Int, promise: Promise) {
+        reactApplicationContext.uiManager {
+            addUIBlock { manager ->
+                try {
+                    manager.cameraViewOrThrow(viewTag).isTorchEnabled = enable
+                    promise.resolve(true)
+                } catch (ex: Exception) {
+                    promise.reject(ex)
+                }
+            }
+        }
     }
 
     /**
@@ -78,6 +99,16 @@ public class ReactCameraModule(
      */
     @AnyThread
     public fun toggleCamera(viewTag: Int, promise: Promise) {
+        reactApplicationContext.uiManager {
+            addUIBlock { manager ->
+                try {
+                    manager.cameraViewOrThrow(viewTag).toggleCamera()
+                    promise.resolve(true)
+                } catch (ex: Exception) {
+                    promise.reject(ex)
+                }
+            }
+        }
     }
 
     /**
@@ -85,8 +116,25 @@ public class ReactCameraModule(
      * that this method indicate explicitly which lens to use for the camera.
      */
     @AnyThread
-    public fun setLensFacing(@CameraSelector.LensFacing facing: Int, viewTag: Int, promise: Promise) {
-
+    public fun setLensFacing(
+        @CameraSelector.LensFacing facing: Int,
+        viewTag: Int,
+        promise: Promise
+    ) {
+        reactApplicationContext.uiManager {
+            addUIBlock { manager ->
+                try {
+                    manager.cameraViewOrThrow(viewTag).facing =
+                        if (Constants.CAMERA_FACING_BACK == facing)
+                            LensFacing.BACK
+                        else
+                            LensFacing.FRONT
+                    promise.resolve(true)
+                } catch (ex: Exception) {
+                    promise.reject(ex)
+                }
+            }
+        }
     }
     // END View methods
 
@@ -96,8 +144,20 @@ public class ReactCameraModule(
          */
         private const val NAME = "CameraModule"
 
+        /**
+         * Extension method on [ReactApplicationContext] to get the ui manager module
+         */
         private fun ReactApplicationContext.uiManager(block: UIManagerModule.() -> Unit) {
             (getNativeModule(UIManagerModule::class.java) as UIManagerModule).block()
         }
+
+        /**
+         * Extension method on [NativeViewHierarchyManager] to get the [CameraView] or
+         * throw if no view can be get for the specified viewTag
+         */
+        private fun NativeViewHierarchyManager.cameraViewOrThrow(viewTag: Int) =
+            checkNotNull(resolveView(viewTag) as? CameraView) {
+                "Not possible to resolve CameraView($viewTag)"
+            }
     }
 }
