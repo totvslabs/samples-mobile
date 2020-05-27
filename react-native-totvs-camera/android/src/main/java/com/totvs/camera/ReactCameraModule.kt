@@ -9,7 +9,9 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.uimanager.NativeViewHierarchyManager
 import com.facebook.react.uimanager.UIManagerModule
 import com.totvs.camera.annotations.CameraFacing
+import com.totvs.camera.core.Camera
 import com.totvs.camera.core.LensFacing
+import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.utils.Constants
 import com.totvs.camera.utils.ExportableConstants
 import com.totvs.camera.view.CameraView
@@ -65,7 +67,7 @@ public class ReactCameraModule(
     private fun <T> Promise.withCamera(
         viewTag: Int,
         autoResolve: Boolean = true,
-        block: CameraView.(promise: Promise) -> T
+        block: Camera.(promise: Promise) -> T
     ) = reactApplicationContext.uiManager {
         addUIBlock { manager ->
             try {
@@ -167,14 +169,29 @@ public class ReactCameraModule(
                 Constants.CAMERA_FACING_BACK
         }
 
-
-    // experimental api
+    // Experimental API. still needs to determine the output location and how/who/when
+    // to pass it down to this library. in the meantime is going to be saved in the data directory
+    // of the app.
+    /**
+     * Even though the [Camera] interface offers two variation of [takePicture]
+     * here we only expose what's relevant to a react-native app at this moment. The
+     * one that save the image into an specified location.
+     *
+     * This doesn't restrict from exposing the counter part capture method, we only need
+     * to figure out how/what to send up to the app as a representation of the captured
+     * image.
+     */
     @AnyThread
     @ReactMethod
     public fun takePicture(viewTag: Int, promise: Promise) =
-        promise.withCamera(viewTag, autoResolve = false) { promise ->
-            takePicture { file ->
-                promise.resolve(file.absolutePath)
+        promise.withCamera(viewTag, autoResolve = false) {
+            takePicture(options = OutputFileOptions.NULL) { file, throwable ->
+                throwable?.let {
+                    promise.reject(it)
+                }
+                file?.let {
+                    promise.resolve(it.absolutePath)
+                }
             }
             true
         }

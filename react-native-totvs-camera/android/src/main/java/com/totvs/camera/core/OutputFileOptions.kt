@@ -7,7 +7,7 @@ import java.io.File
  */
 data class OutputFileOptions(
     /** output file for a taken picture */
-    val file: File,
+    val file: File?,
     /**
      * Indicate whether the saved taken image is reversed horizontally.
      *
@@ -20,4 +20,8 @@ data class OutputFileOptions(
      * * Indicate whether the saved taken image is reversed vertically.
      */
     val isReversedVertical: Boolean
-)
+) {
+    companion object {
+        val NULL = OutputFileOptions(file = null, isReversedHorizontal = false, isReversedVertical = true)
+    }
+}

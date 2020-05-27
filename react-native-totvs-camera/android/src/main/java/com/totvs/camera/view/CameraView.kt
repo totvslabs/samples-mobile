@@ -25,9 +25,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
 import com.totvs.camera.*
+import com.totvs.camera.core.*
 import com.totvs.camera.lifecycle.ReactLifecycleOwner
-import com.totvs.camera.core.Camera
-import com.totvs.camera.core.LensFacing
 import com.totvs.camera.utils.Constants
 
 /**
@@ -249,10 +248,11 @@ public class CameraView @JvmOverloads constructor(
 
     override fun toggleCamera() = cameraXModule.toggleCamera()
 
-    // experimental API
-    override fun takePicture(onTaken: OnPictureTakenCallback) {
-        cameraXModule.takePicture(onTaken)
-    }
+    override fun takePicture(options: OutputFileOptions, onSaved: OnImageSaved) =
+        cameraXModule.takePicture(options, onSaved)
+
+    override fun takePicture(onCaptured: OnImageCaptured) =
+        cameraXModule.takePicture(onCaptured)
 
     // Interface methods
     /**

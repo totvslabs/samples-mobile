@@ -16,8 +16,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import com.totvs.camera.OnPictureTakenCallback
 import com.totvs.camera.annotations.CameraFacing
+import com.totvs.camera.core.OnImageCaptured
+import com.totvs.camera.core.OnImageSaved
+import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.testPictureTake
 import java.util.concurrent.Executors
 
@@ -255,9 +257,12 @@ internal class CameraXModule(private val view: CameraView) {
             CameraSelector.LENS_FACING_BACK
     }
 
-    // experimental API
-    fun takePicture(onTaken: OnPictureTakenCallback) {
-        capture?.testPictureTake(view.context, captureExecutor, facing, onTaken)
+    fun takePicture(options: OutputFileOptions, onSaved: OnImageSaved) {
+        capture?.testPictureTake(view.context, captureExecutor, facing, options, onSaved)
+    }
+
+    fun takePicture(onCaptured: OnImageCaptured) {
+        capture?.testPictureTake(captureExecutor, onCaptured)
     }
 
     companion object {

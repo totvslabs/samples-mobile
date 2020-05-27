@@ -3,11 +3,12 @@ package com.totvs.camera
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.view.CameraView
+import androidx.annotation.experimental.UseExperimental
+import androidx.camera.core.*
+import com.totvs.camera.core.OnImageCaptured
+import com.totvs.camera.core.OnImageSaved
+import com.totvs.camera.core.OutputFileOptions
+import com.totvs.camera.impl.ImageProxyImpl
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,7 +21,13 @@ import java.util.concurrent.Executor
  *      once the right approach is determine to handle photos taken
  *      this must be removed
  */
-internal fun ImageCapture.testPictureTake(context: Context, executor: Executor, lensFacing: Int, callback: OnPictureTakenCallback) {
+internal fun ImageCapture.testPictureTake(
+    context: Context,
+    executor: Executor,
+    lensFacing: Int,
+    options: OutputFileOptions,
+    onSaved: OnImageSaved
+) {
     val file = createFile(context)
 
     val metadata = ImageCapture.Metadata().apply {
@@ -34,18 +41,30 @@ internal fun ImageCapture.testPictureTake(context: Context, executor: Executor, 
     takePicture(outputOptions, executor, object : ImageCapture.OnImageSavedCallback {
         override fun onImageSaved(output: ImageCapture.OutputFileResults) {
             Log.e("CameraView", "Photo saved to ${output.savedUri ?: Uri.fromFile(file)}")
-            callback(file)
+            onSaved(file, null)
         }
 
         override fun onError(exception: ImageCaptureException) {
             Log.e("CameraView", "Photo capture failed ${exception.message}", exception)
+            onSaved(null, exception)
         }
     })
+}
 
-     takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
-         override fun onCaptureSuccess(image: ImageProxy) {
-         }
-     })
+@UseExperimental(markerClass = ExperimentalGetImage::class)
+internal fun ImageCapture.testPictureTake(
+    executor: Executor,
+    onCaptured: OnImageCaptured
+) {
+    takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
+        override fun onCaptureSuccess(image: ImageProxy) {
+            onCaptured(ImageProxyImpl(image.image, image.imageInfo.rotationDegrees), null)
+        }
+
+        override fun onError(exception: ImageCaptureException) {
+            onCaptured(null, exception)
+        }
+    })
 }
 
 private fun createFile(context: Context, extension: String = ".jpg") : File {
