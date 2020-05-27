@@ -65,7 +65,7 @@ repositories {
      *
      * @see also [ReactCameraModule]
      */
-    def OVERRIDE_REACT_NATIVE = true
+    def OVERRIDE_REACT_NATIVE = false
     def NODE_MODULES_HOME     = "$rootDir/react-native-totvs-camera-app/node_modules"
 
     if (OVERRIDE_REACT_NATIVE) {
