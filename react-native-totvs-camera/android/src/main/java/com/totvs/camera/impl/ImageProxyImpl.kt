@@ -42,5 +42,5 @@ internal class ImageProxyImpl(
         image?.close()
     }
 
-    class PlaneProxyImpl(override val buffer: ByteBuffer) : ImageProxy.PlaneProxy
+    private class PlaneProxyImpl(override val buffer: ByteBuffer) : ImageProxy.PlaneProxy
 }
