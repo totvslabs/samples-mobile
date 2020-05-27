@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,6 +40,11 @@ internal fun ImageCapture.testPictureTake(context: Context, executor: Executor, 
             Log.e("CameraView", "Photo capture failed ${exception.message}", exception)
         }
     })
+
+     takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
+         override fun onCaptureSuccess(image: ImageProxy) {
+         }
+     })
 }
 
 private fun createFile(context: Context, extension: String = ".jpg") : File {

@@ -1,4 +1,4 @@
-package com.totvs.camera
+package com.totvs.camera.view
 
 import android.Manifest.permission
 import android.util.Log
@@ -10,13 +10,15 @@ import androidx.annotation.RequiresPermission
 import androidx.annotation.RestrictTo
 import androidx.camera.core.*
 import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector.LensFacing
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.totvs.camera.OnPictureTakenCallback
+import com.totvs.camera.annotations.CameraFacing
+import com.totvs.camera.testPictureTake
 import java.util.concurrent.Executors
 
 
@@ -86,7 +88,7 @@ internal class CameraXModule(private val view: CameraView) {
     private var prematureTorch: Boolean? = null
 
     // Internal manipulators
-    @LensFacing
+    @CameraFacing
     var facing: Int = CameraSelector.LENS_FACING_BACK
         set(value) {
             if (field == value) return // no-op

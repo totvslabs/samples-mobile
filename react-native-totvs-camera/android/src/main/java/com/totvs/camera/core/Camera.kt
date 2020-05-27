@@ -1,4 +1,6 @@
-package com.totvs.camera
+package com.totvs.camera.core
+
+import com.totvs.camera.OnPictureTakenCallback
 
 /**
  * Representation of a camera device. Operations here are the one performed

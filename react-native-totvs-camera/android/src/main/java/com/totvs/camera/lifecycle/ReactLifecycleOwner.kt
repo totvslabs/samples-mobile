@@ -1,4 +1,4 @@
-package com.totvs.camera
+package com.totvs.camera.lifecycle
 
 import androidx.annotation.RestrictTo
 import androidx.lifecycle.Lifecycle
@@ -16,7 +16,8 @@ internal object ReactLifecycleOwner : LifecycleOwner, LifecycleEventListener {
 
     private val registry = LifecycleRegistry(this)
 
-    override fun getLifecycle(): Lifecycle = registry
+    override fun getLifecycle(): Lifecycle =
+        registry
 
     override fun onHostResume() = registry.handleLifecycleEvent(Lifecycle.Event.ON_START)
 

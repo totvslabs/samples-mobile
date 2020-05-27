@@ -2,15 +2,17 @@ package com.totvs.camera
 
 import androidx.annotation.AnyThread
 import androidx.annotation.FloatRange
-import androidx.camera.core.CameraSelector
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.uimanager.NativeViewHierarchyManager
 import com.facebook.react.uimanager.UIManagerModule
+import com.totvs.camera.annotations.CameraFacing
+import com.totvs.camera.core.LensFacing
 import com.totvs.camera.utils.Constants
 import com.totvs.camera.utils.ExportableConstants
+import com.totvs.camera.view.CameraView
 
 
 /**
@@ -142,7 +144,7 @@ public class ReactCameraModule(
     @AnyThread
     @ReactMethod
     public fun setLensFacing(
-        @CameraSelector.LensFacing facing: Int,
+        @CameraFacing facing: Int,
         viewTag: Int,
         promise: Promise
     ) = promise.withCamera(viewTag) {
