@@ -196,13 +196,7 @@ internal class CameraXModule(private val view: CameraView) {
             Log.e(TAG, "No camera permission granted")
             return
         }
-
-        val toUnbind = with(mutableListOf<UseCase>()) {
-            preview?.let { add(it) }
-            capture?.let { add(it) }
-            toTypedArray()
-        }
-        cameraProvider?.unbind(*toUnbind)
+        cameraProvider?.unbindAll()
         camera = null
         currentLifecycle = null
     }

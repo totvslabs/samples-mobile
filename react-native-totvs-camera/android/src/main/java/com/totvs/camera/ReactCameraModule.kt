@@ -6,6 +6,7 @@ import androidx.camera.core.CameraSelector
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.uimanager.NativeViewHierarchyManager
 import com.facebook.react.uimanager.UIManagerModule
 import com.totvs.camera.utils.Constants
@@ -53,89 +54,110 @@ public class ReactCameraModule(
         }
     }
 
+    /**
+     * Utility function to reduce boilerplate code at executing a block of code
+     * on the ui manager
+     */
+    private fun <T> Promise.withCamera(viewTag: Int, block: CameraView.() -> T) {
+        reactApplicationContext.uiManager {
+            addUIBlock { manager ->
+                try {
+                    resolve(manager.cameraViewOrThrow(viewTag).block())
+                } catch (ex: Exception) {
+                    reject(ex)
+                }
+            }
+        }
+    }
+
     // START View methods
 
     /**
      * Set camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom
      */
     @AnyThread
+    @ReactMethod
     public fun setZoom(
         @FloatRange(from = 0.0, to = 1.0) zoom: Float,
         viewTag: Int,
         promise: Promise
-    ) {
-        reactApplicationContext.uiManager {
-            addUIBlock { manager ->
-                try {
-                    manager.cameraViewOrThrow(viewTag).zoom = zoom
-                    promise.resolve(true)
-                } catch (ex: Exception) {
-                    promise.reject(ex)
-                }
-            }
-        }
+    ) = promise.withCamera(viewTag) {
+        this.zoom = zoom
+        true
     }
+
+    /**
+     * Get camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom
+     */
+    @AnyThread
+    @ReactMethod
+    public fun getZoom(viewTag: Int, promise: Promise) =
+        promise.withCamera(viewTag) { zoom }
 
     /**
      * Enable or disable camera torch
      */
     @AnyThread
-    public fun enableTorch(enable: Boolean, viewTag: Int, promise: Promise) {
-        reactApplicationContext.uiManager {
-            addUIBlock { manager ->
-                try {
-                    manager.cameraViewOrThrow(viewTag).isTorchEnabled = enable
-                    promise.resolve(true)
-                } catch (ex: Exception) {
-                    promise.reject(ex)
-                }
-            }
-        }
+    @ReactMethod
+    public fun enableTorch(
+        enable: Boolean,
+        viewTag: Int,
+        promise: Promise
+    ) = promise.withCamera(viewTag) {
+        isTorchEnabled = enable
+        true
     }
+
+    /**
+     * whether or not the camera torch is enabled
+     */
+    @AnyThread
+    @ReactMethod
+    public fun isTorchEnabled(viewTag: Int, promise: Promise) =
+        promise.withCamera(viewTag) { isTorchEnabled }
 
     /**
      * Toggle the camera. i.e if the current camera is the front one it will toggle to back
      * camera as vice versa.
      */
     @AnyThread
-    public fun toggleCamera(viewTag: Int, promise: Promise) {
-        reactApplicationContext.uiManager {
-            addUIBlock { manager ->
-                try {
-                    manager.cameraViewOrThrow(viewTag).toggleCamera()
-                    promise.resolve(true)
-                } catch (ex: Exception) {
-                    promise.reject(ex)
-                }
-            }
+    @ReactMethod
+    public fun toggleCamera(viewTag: Int, promise: Promise) =
+        promise.withCamera(viewTag) {
+            toggleCamera()
+            true
         }
-    }
 
     /**
      * Change the camera lens display. This is related to [toggleCamera] in the sence
      * that this method indicate explicitly which lens to use for the camera.
      */
     @AnyThread
+    @ReactMethod
     public fun setLensFacing(
         @CameraSelector.LensFacing facing: Int,
         viewTag: Int,
         promise: Promise
-    ) {
-        reactApplicationContext.uiManager {
-            addUIBlock { manager ->
-                try {
-                    manager.cameraViewOrThrow(viewTag).facing =
-                        if (Constants.CAMERA_FACING_BACK == facing)
-                            LensFacing.BACK
-                        else
-                            LensFacing.FRONT
-                    promise.resolve(true)
-                } catch (ex: Exception) {
-                    promise.reject(ex)
-                }
-            }
-        }
+    ) = promise.withCamera(viewTag) {
+        this.facing = if (Constants.CAMERA_FACING_BACK == facing)
+            LensFacing.BACK
+        else
+            LensFacing.FRONT
     }
+
+    /**
+     * Get current camera facing
+     */
+    @AnyThread
+    @ReactMethod
+    public fun getLensFacing(viewTag: Int, promise: Promise) =
+        promise.withCamera(viewTag) {
+            if (facing == LensFacing.FRONT)
+                Constants.CAMERA_FACING_FRONT
+            else
+                Constants.CAMERA_FACING_BACK
+        }
+
     // END View methods
 
     companion object {
@@ -143,6 +165,7 @@ public class ReactCameraModule(
          * Exported name of the module representing this library
          */
         private const val NAME = "CameraModule"
+
 
         /**
          * Extension method on [ReactApplicationContext] to get the ui manager module

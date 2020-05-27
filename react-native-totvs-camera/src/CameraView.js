@@ -128,6 +128,9 @@ const toFiniteFloatOrNull = value => {
  * Render appropriately a child component based on the type. 
  * We use this in case we need to have a child function component that 
  * need access to the camera component.
+ * 
+ * Bear in mind that if `children` is a function child, then it must return a 
+ * react component.
  */
 const Children = ({ camera, ...props }) => {
   const isFunction = e => typeof e === 'function';
@@ -191,7 +194,7 @@ export default class CameraView extends Component<PropsType, StateType> {
     onCameraStateChanged: () => { },    
   };
 
-  _cameraId;
+  _cameraHandle;
   _cameraRef;
   _isMounted;
 
@@ -211,7 +214,7 @@ export default class CameraView extends Component<PropsType, StateType> {
    */
   _setReference = (ref: Object) => {
     this._cameraRef = ref;
-    this._cameraId  = ref && findNodeHandle(ref);
+    this._cameraHandle  = ref && findNodeHandle(ref);
   }
 
   /**
@@ -322,8 +325,7 @@ export default class CameraView extends Component<PropsType, StateType> {
   /**
    * Toggle the camera lens facing
    */
-  toggleCamera = async () => {    
-  }
+  toggleCamera = async () => CameraModule.toggleCamera(this._cameraHandle);
 
   /**
    * Set camera facing. Possible values are one of Constants.LENS_FACING, two possible 
@@ -340,6 +342,7 @@ export default class CameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
+    return CameraModule.setLensFacing(facing, this._cameraHandle);
   }
 
   /**
@@ -357,20 +360,20 @@ export default class CameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
+    return CameraModule.setZoom(z, this._cameraHandle);
   }
 
   /**
    * Enable/Disable the torch (flash light) on this camera
    */
-  enableTorch = async enable => {
-  }
+  enableTorch = async enable => CameraModule.enableTorch(enable, this._cameraHandle);
 
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
    * flash light, this function can be modified to selectively enable the flash light 
    * accordingly.
    */
-  enableFlash = async enable => await this.enableTorch(enable);
+  enableFlash = async enable => this.enableTorch(enable);
   
 
   /**
