@@ -361,7 +361,7 @@ export default class CameraView extends Component<PropsType, StateType> {
 
     const z = toFiniteFloatOrNull(zoom);
 
-    if (!isAbsent(z) && !(MIN <= z && z <= MAX)) {
+    if (isAbsent(z) || !(MIN <= z && z <= MAX)) {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
