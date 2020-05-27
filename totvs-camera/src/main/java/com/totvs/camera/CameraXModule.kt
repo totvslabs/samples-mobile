@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import java.util.concurrent.Executors
 
 
 /**
@@ -74,6 +75,16 @@ internal class CameraXModule(private val view: CameraView) {
     /** camera instance bound to this module */
     private var camera: Camera? = null
 
+    /** Capture Executor */
+    private val captureExecutor = Executors.newSingleThreadExecutor()
+
+    /**
+     * This values keep track of when the settings of the camera are
+     * tried to be changed before even the camera finish being configured.
+     */
+    private var prematureZoom: Float? = null
+    private var prematureTorch: Boolean? = null
+
     // Internal manipulators
     @LensFacing
     var facing: Int = CameraSelector.LENS_FACING_BACK
@@ -89,15 +100,23 @@ internal class CameraXModule(private val view: CameraView) {
         }
 
     var zoom: Float
-        get() = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 1.0f
+        get() = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0.0f
         set(@FloatRange(from = 0.0, to = 1.0) value) {
-            camera!!.cameraControl.setLinearZoom(value.coerceIn(0.0f, 1.0f))
+            try {
+                camera!!.cameraControl.setLinearZoom(value.coerceIn(0.0f, 1.0f))
+            } catch (ex: Exception) {
+                prematureZoom = value
+            }
         }
 
     var isTorchEnabled: Boolean
         get() = camera?.cameraInfo?.torchState?.value == TorchState.ON
         set(value) {
-            camera?.cameraControl?.enableTorch(value)
+            try {
+                camera!!.cameraControl.enableTorch(value)
+            } catch (ex: Exception) {
+                prematureTorch = value
+            }
         }
 
     // Listeners
@@ -184,6 +203,8 @@ internal class CameraXModule(private val view: CameraView) {
             .build()
 
         camera = cameraProvider!!.bindToLifecycle(currentLifecycle!!, selector, preview, capture)
+            .apply(this::updatePrematureSettings)
+
         currentLifecycle!!.lifecycle.addObserver(currentLifecycleObserver)
     }
 
@@ -196,22 +217,9 @@ internal class CameraXModule(private val view: CameraView) {
             Log.e(TAG, "No camera permission granted")
             return
         }
-
-        val toUnbind = with(mutableListOf<UseCase>()) {
-            preview?.let { add(it) }
-            capture?.let { add(it) }
-            toTypedArray()
-        }
-        cameraProvider?.unbind(*toUnbind)
+        cameraProvider?.unbindAll()
         camera = null
         currentLifecycle = null
-    }
-
-    fun toggleCamera() {
-        facing = if (CameraSelector.LENS_FACING_BACK == facing)
-            CameraSelector.LENS_FACING_FRONT
-        else
-            CameraSelector.LENS_FACING_BACK
     }
 
     fun invalidateView() = updateViewInfo()
@@ -227,6 +235,27 @@ internal class CameraXModule(private val view: CameraView) {
             it.setCropAspectRatio(Rational(width, height))
             it.targetRotation = view.displaySurfaceRotation
         }
+    }
+
+    private fun updatePrematureSettings(camera: Camera) {
+        // set them all
+        prematureZoom?.let(this::zoom::set)
+        prematureTorch?.let(this::isTorchEnabled::set)
+        // clean them all
+        prematureZoom = null
+        prematureTorch = null
+    }
+
+    fun toggleCamera() {
+        facing = if (CameraSelector.LENS_FACING_BACK == facing)
+            CameraSelector.LENS_FACING_FRONT
+        else
+            CameraSelector.LENS_FACING_BACK
+    }
+
+    // experimental API
+    fun takePicture(onTaken: OnPictureTakenCallback) {
+        capture?.testPictureTake(view.context, captureExecutor, facing, onTaken)
     }
 
     companion object {
