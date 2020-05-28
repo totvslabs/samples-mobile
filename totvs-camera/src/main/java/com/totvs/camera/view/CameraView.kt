@@ -1,6 +1,5 @@
-package com.totvs.camera
+package com.totvs.camera.view
 
-import android.Manifest
 import android.Manifest.permission
 import android.content.Context
 import android.content.pm.PackageManager
@@ -20,13 +19,15 @@ import androidx.annotation.CallSuper
 import androidx.annotation.FloatRange
 import androidx.annotation.MainThread
 import androidx.annotation.RequiresPermission
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.CameraX
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
+import com.totvs.camera.*
+import com.totvs.camera.core.*
+import com.totvs.camera.lifecycle.ReactLifecycleOwner
+import com.totvs.camera.utils.Constants
 
 /**
  * A [android.view.View] that display a camera preview and has the [Camera] capabilities.
@@ -77,7 +78,7 @@ public class CameraView @JvmOverloads constructor(
      * a custom one is used.
      *
      * This view obtain its lifecycle events from react-native mapping lifecycle events
-     * when running on a reac-native environment, otherwise throught a subscription
+     * when running on a react-native environment, otherwise through a subscription
      * to the holder context.
      *
      * @see also [ReactLifecycleOwner]
@@ -88,7 +89,11 @@ public class CameraView @JvmOverloads constructor(
             .also {
                 context.addLifecycleEventListener(this)
             }
-        else -> throw IllegalArgumentException("Invalid context type. You must use this view with a LifecycleOwner or ThemedReactContext context")
+        else -> throw IllegalArgumentException(
+            """ Invalid context type. You must use this view with a LifecycleOwner 
+                or ThemedReactContext context 
+            """.trimIndent()
+        )
     }
 
 
@@ -139,9 +144,10 @@ public class CameraView @JvmOverloads constructor(
             else -> throw IllegalArgumentException("Unsupported surface rotation")
         }
 
-    internal val hasPermissions: Boolean get() = PERMISSIONS_REQUIRED.all {
-        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
-    }
+    internal val hasPermissions: Boolean
+        get() = PERMISSIONS_REQUIRED.all {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
 
     // [Camera] contract
     private var lensFacing: Int
@@ -161,7 +167,10 @@ public class CameraView @JvmOverloads constructor(
         set(value) = Unit
 
     override var facing: LensFacing
-        get() = if (CameraSelector.LENS_FACING_BACK == cameraXModule.facing) LensFacing.BACK else LensFacing.FRONT
+        get() = if (Constants.CAMERA_FACING_BACK == cameraXModule.facing)
+            LensFacing.BACK
+        else
+            LensFacing.FRONT
         set(value) {
             cameraXModule.facing = value()
         }
@@ -181,9 +190,11 @@ public class CameraView @JvmOverloads constructor(
     override fun onSaveInstanceState(): Parcelable? {
         super.onSaveInstanceState()
         return Bundle().apply {
-            putInt(
-                EXTRA_CAMERA_FACING,
-                if (CameraSelector.LENS_FACING_BACK == lensFacing) EXTRA_FACING_BACK else EXTRA_FACING_FRONT
+            putInt(EXTRA_CAMERA_FACING,
+                if (Constants.CAMERA_FACING_BACK == lensFacing)
+                    EXTRA_FACING_BACK
+                else
+                    EXTRA_FACING_FRONT
             )
         }
     }
@@ -191,7 +202,10 @@ public class CameraView @JvmOverloads constructor(
     @CallSuper
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
-            lensFacing = state.getInt(EXTRA_CAMERA_FACING, EXTRA_FACING_BACK)
+            lensFacing = state.getInt(
+                EXTRA_CAMERA_FACING,
+                EXTRA_FACING_BACK
+            )
         } else {
             super.onRestoreInstanceState(state)
         }
@@ -234,12 +248,12 @@ public class CameraView @JvmOverloads constructor(
 
     override fun toggleCamera() = cameraXModule.toggleCamera()
 
-    // experimental API
-    override fun takePicture(onTaken: OnPictureTakenCallback) {
-        cameraXModule.takePicture(onTaken)
-    }
+    override fun takePicture(options: OutputFileOptions, onSaved: OnImageSaved) =
+        cameraXModule.takePicture(options, onSaved)
 
-    // Interface methods
+    override fun takePicture(onCaptured: OnImageCaptured) =
+        cameraXModule.takePicture(onCaptured)
+
     /**
      * Bind this view related camera preview to the [lifecycle]. If at the bind
      * moment the lifecycle is on [androidx.lifecycle.Lifecycle.State.DESTROYED] then
@@ -281,10 +295,10 @@ public class CameraView @JvmOverloads constructor(
      * preview but under react-native we couldn't because [CameraX] postpone the addition of the
      * surface to [previewView] way after the first pass on this view has ended.
      *
-     * The purpose of this method is install a [ViewGroup.OnHierarchyChangeListener] to [previewView] so
-     * we detect when a view is added to it so we trigger manually the pass for re-layout
-     * on [previewView]. We do this selectively only when the app is running under a react-native
-     * environment.
+     * The purpose of this method is install a [ViewGroup.OnHierarchyChangeListener] to
+     * [previewView] so we detect when a view is added to it so we trigger manually the pass
+     * for re-layout on [previewView]. We do this selectively only when the app is running
+     * under a react-native environment.
      *
      * @see also these issues:
      * 1. https://groups.google.com/a/android.com/forum/#!topic/camerax-developers/G9jKs1Bo_CE
@@ -297,17 +311,17 @@ public class CameraView @JvmOverloads constructor(
     }
 
     // Bridge lifecycle event listeners
-    override fun onHostResume()  = (lifecycle as? ReactLifecycleOwner)?.onHostResume() ?: Unit
-    override fun onHostPause()   = (lifecycle as? ReactLifecycleOwner)?.onHostPause() ?: Unit
-    override fun onHostDestroy() = (lifecycle as? ReactLifecycleOwner)?.onHostDestroy() ?: Unit
+    override fun onHostResume()  = ReactLifecycleOwner.onHostResume()
+    override fun onHostPause()   = ReactLifecycleOwner.onHostPause()
+    override fun onHostDestroy() = ReactLifecycleOwner.onHostDestroy()
 
 
     companion object {
         private const val TAG = "CameraView"
 
         private const val EXTRA_CAMERA_FACING = "camera_facing"
-        private const val EXTRA_FACING_BACK = CameraSelector.LENS_FACING_BACK
-        private const val EXTRA_FACING_FRONT = CameraSelector.LENS_FACING_FRONT
+        private const val EXTRA_FACING_BACK = Constants.CAMERA_FACING_BACK
+        private const val EXTRA_FACING_FRONT = Constants.CAMERA_FACING_FRONT
 
         private val PERMISSIONS_REQUIRED = arrayOf(permission.CAMERA)
     }
