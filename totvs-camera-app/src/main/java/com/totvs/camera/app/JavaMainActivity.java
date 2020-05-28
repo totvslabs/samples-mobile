@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.totvs.camera.Camera;
-import com.totvs.camera.LensFacing;
+import com.totvs.camera.core.Camera;
+import com.totvs.camera.core.LensFacing;
 
 /**
  * Use as alternative to MainActivity. must be registered in the manifest first

@@ -1,5 +1,6 @@
-package com.totvs.camera
+package com.totvs.camera.lifecycle
 
+import androidx.annotation.RestrictTo
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -8,14 +9,15 @@ import com.facebook.react.bridge.LifecycleEventListener
 /**
  * LifecycleOwner to bridge with react-native environment
  *
- * @author Jansel Valentin
- * @see also [CameraView.lifecycleOwner]
+ * @see also [CameraView.lifecycle]
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal object ReactLifecycleOwner : LifecycleOwner, LifecycleEventListener {
 
     private val registry = LifecycleRegistry(this)
 
-    override fun getLifecycle(): Lifecycle = registry
+    override fun getLifecycle(): Lifecycle =
+        registry
 
     override fun onHostResume() = registry.handleLifecycleEvent(Lifecycle.Event.ON_START)
 

@@ -12,9 +12,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.totvs.camera.Camera
-import com.totvs.camera.CameraView
-import com.totvs.camera.LensFacing
+import com.totvs.camera.core.Camera
+import com.totvs.camera.core.LensFacing
+import com.totvs.camera.view.CameraView
 
 private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         val controls = View.inflate(this, R.layout.camera_ui_controls, container)
 
         controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
-            camera.takePicture { file ->
+            camera.takePicture { file, ex ->
                 Log.e("**", "file saved")
             }
         }
