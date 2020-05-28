@@ -7,6 +7,8 @@
       <module fileurl="file://$PROJECT_DIR$/samples-mobile.iml" filepath="$PROJECT_DIR$/samples-mobile.iml" group="samples-mobile" />
       <module fileurl="file://$PROJECT_DIR$/totvs-camera/totvs-camera.iml" filepath="$PROJECT_DIR$/totvs-camera/totvs-camera.iml" group="samples-mobile/totvs-camera" />
       <module fileurl="file://$PROJECT_DIR$/totvs-camera-app/totvs-camera-app.iml" filepath="$PROJECT_DIR$/totvs-camera-app/totvs-camera-app.iml" group="samples-mobile/totvs-camera-app" />
+      <module fileurl="file://$PROJECT_DIR$/totvs-vision/totvs-vision.iml" filepath="$PROJECT_DIR$/totvs-vision/totvs-vision.iml" group="samples-mobile/totvs-vision" />
+      <module fileurl="file://$PROJECT_DIR$/totvs-vision-app/totvs-vision-app.iml" filepath="$PROJECT_DIR$/totvs-vision-app/totvs-vision-app.iml" group="samples-mobile/totvs-vision-app" />
     </modules>
   </component>
 </project>

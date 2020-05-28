@@ -42,7 +42,7 @@ dependencies {
     // lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
 
-    def camerax_version = '1.0.0-beta03'
+    def camerax_version = '1.0.0-beta04'
     // CameraX core
     implementation "androidx.camera:camera-core:$camerax_version"
 
@@ -53,7 +53,7 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
 
     // CameraX View class
-    implementation 'androidx.camera:camera-view:1.0.0-alpha10'
+    implementation 'androidx.camera:camera-view:1.0.0-alpha11'
 
     // Rect Native
     implementation 'com.facebook.react:react-native:+'

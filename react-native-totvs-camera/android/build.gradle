@@ -65,7 +65,7 @@ repositories {
      *
      * @see also [ReactCameraModule]
      */
-    def OVERRIDE_REACT_NATIVE = false
+    def OVERRIDE_REACT_NATIVE = true
     def NODE_MODULES_HOME     = "$rootDir/react-native-totvs-camera-app/node_modules"
 
     if (OVERRIDE_REACT_NATIVE) {
@@ -89,7 +89,7 @@ dependencies {
     // lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
 
-    def camerax_version = '1.0.0-beta03'
+    def camerax_version = '1.0.0-beta04'
     // CameraX core
     implementation "androidx.camera:camera-core:$camerax_version"
 
@@ -100,7 +100,7 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
 
     // CameraX View class
-    implementation 'androidx.camera:camera-view:1.0.0-alpha10'
+    implementation 'androidx.camera:camera-view:1.0.0-alpha11'
 
     // React Native
     implementation 'com.facebook.react:react-native:+' // from node_modules
