@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.totvs.camera.core.Camera
-import com.totvs.camera.core.LensFacing
 import com.totvs.camera.view.CameraView
 
 private const val PERMISSIONS_REQUEST_CODE = 10

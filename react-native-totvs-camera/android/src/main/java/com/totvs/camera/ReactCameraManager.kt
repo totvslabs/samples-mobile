@@ -4,10 +4,9 @@ import androidx.annotation.FloatRange
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.totvs.camera.annotations.CameraFacing
-import com.totvs.camera.core.LensFacing
+import com.totvs.camera.annotations.LensFacing
 import com.totvs.camera.events.Event
-import com.totvs.camera.utils.Constants
+import com.totvs.camera.utils.CameraFacing
 import com.totvs.camera.view.CameraView
 
 /**
@@ -44,12 +43,9 @@ class ReactCameraManager : ViewGroupManager<CameraView>() {
     /**
      * Set the camera opening facing
      */
-    @ReactProp(name = "facing", defaultInt = Constants.CAMERA_FACING_BACK)
-    fun setFacing(cameraView: CameraView, @CameraFacing facing: Int) {
-        cameraView.facing = if (facing == Constants.CAMERA_FACING_FRONT)
-            LensFacing.FRONT
-        else
-            LensFacing.BACK
+    @ReactProp(name = "facing", defaultInt = CameraFacing.BACK)
+    fun setFacing(cameraView: CameraView, @LensFacing facing: Int) {
+        cameraView.facing = facing
     }
 
     /**

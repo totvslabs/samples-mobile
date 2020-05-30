@@ -24,10 +24,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
-import com.totvs.camera.*
-import com.totvs.camera.core.*
+import com.totvs.camera.core.Camera
+import com.totvs.camera.core.OnImageCaptured
+import com.totvs.camera.core.OnImageSaved
+import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.lifecycle.ReactLifecycleOwner
-import com.totvs.camera.utils.Constants
+import com.totvs.camera.utils.CameraFacing
 
 /**
  * A [android.view.View] that display a camera preview and has the [Camera] capabilities.
@@ -150,29 +152,16 @@ public class CameraView @JvmOverloads constructor(
         }
 
     // [Camera] contract
-    private var lensFacing: Int
-        get() = cameraXModule.facing
-        set(value) {
-            cameraXModule.facing = value
-        }
-
     override var isTorchEnabled: Boolean
         get() = cameraXModule.isTorchEnabled
         set(value) {
             cameraXModule.isTorchEnabled = value
         }
 
-    override var rotation: Int
-        get() = 0
-        set(value) = Unit
-
-    override var facing: LensFacing
-        get() = if (Constants.CAMERA_FACING_BACK == cameraXModule.facing)
-            LensFacing.BACK
-        else
-            LensFacing.FRONT
+    override var facing: Int
+        get() = cameraXModule.facing
         set(value) {
-            cameraXModule.facing = value()
+            cameraXModule.facing = value
         }
 
     override var zoom: Float
@@ -190,8 +179,9 @@ public class CameraView @JvmOverloads constructor(
     override fun onSaveInstanceState(): Parcelable? {
         super.onSaveInstanceState()
         return Bundle().apply {
-            putInt(EXTRA_CAMERA_FACING,
-                if (Constants.CAMERA_FACING_BACK == lensFacing)
+            putInt(
+                EXTRA_CAMERA_FACING,
+                if (CameraFacing.BACK == facing)
                     EXTRA_FACING_BACK
                 else
                     EXTRA_FACING_FRONT
@@ -202,7 +192,7 @@ public class CameraView @JvmOverloads constructor(
     @CallSuper
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
-            lensFacing = state.getInt(
+            facing = state.getInt(
                 EXTRA_CAMERA_FACING,
                 EXTRA_FACING_BACK
             )
@@ -311,8 +301,8 @@ public class CameraView @JvmOverloads constructor(
     }
 
     // Bridge lifecycle event listeners
-    override fun onHostResume()  = ReactLifecycleOwner.onHostResume()
-    override fun onHostPause()   = ReactLifecycleOwner.onHostPause()
+    override fun onHostResume() = ReactLifecycleOwner.onHostResume()
+    override fun onHostPause() = ReactLifecycleOwner.onHostPause()
     override fun onHostDestroy() = ReactLifecycleOwner.onHostDestroy()
 
 
@@ -320,8 +310,8 @@ public class CameraView @JvmOverloads constructor(
         private const val TAG = "CameraView"
 
         private const val EXTRA_CAMERA_FACING = "camera_facing"
-        private const val EXTRA_FACING_BACK = Constants.CAMERA_FACING_BACK
-        private const val EXTRA_FACING_FRONT = Constants.CAMERA_FACING_FRONT
+        private const val EXTRA_FACING_BACK = CameraFacing.BACK
+        private const val EXTRA_FACING_FRONT = CameraFacing.FRONT
 
         private val PERMISSIONS_REQUIRED = arrayOf(permission.CAMERA)
     }

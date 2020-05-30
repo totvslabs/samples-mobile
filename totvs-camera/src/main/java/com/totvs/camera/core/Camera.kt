@@ -15,7 +15,7 @@ public interface Camera {
     /**
      * Set facing of the camera device
      */
-    var facing: LensFacing
+    var facing: Int
 
     /**
      * Set zoom for the camera

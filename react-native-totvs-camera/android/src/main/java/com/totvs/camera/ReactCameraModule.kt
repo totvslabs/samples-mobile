@@ -8,12 +8,10 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.uimanager.NativeViewHierarchyManager
 import com.facebook.react.uimanager.UIManagerModule
-import com.totvs.camera.annotations.CameraFacing
+import com.totvs.camera.annotations.LensFacing
 import com.totvs.camera.core.Camera
-import com.totvs.camera.core.LensFacing
 import com.totvs.camera.core.OutputFileOptions
-import com.totvs.camera.utils.Constants
-import com.totvs.camera.utils.ExportableConstants
+import com.totvs.camera.utils.ExportableConstant
 import com.totvs.camera.view.CameraView
 
 
@@ -52,7 +50,7 @@ public class ReactCameraModule(
      */
     public override fun getConstants(): MutableMap<String, Any> {
         return mutableMapOf<String, Any>().apply {
-            ExportableConstants.forEach { set ->
+            ExportableConstant.forEach { set ->
                 put(set.name, set.export())
             }
         }
@@ -146,14 +144,12 @@ public class ReactCameraModule(
     @AnyThread
     @ReactMethod
     public fun setLensFacing(
-        @CameraFacing facing: Int,
+        @LensFacing facing: Int,
         viewTag: Int,
         promise: Promise
     ) = promise.withCamera(viewTag) {
-        this.facing = if (Constants.CAMERA_FACING_BACK == facing)
-            LensFacing.BACK
-        else
-            LensFacing.FRONT
+        this.facing = facing
+        true
     }
 
     /**
@@ -162,12 +158,7 @@ public class ReactCameraModule(
     @AnyThread
     @ReactMethod
     public fun getLensFacing(viewTag: Int, promise: Promise) =
-        promise.withCamera(viewTag) {
-            if (facing == LensFacing.FRONT)
-                Constants.CAMERA_FACING_FRONT
-            else
-                Constants.CAMERA_FACING_BACK
-        }
+        promise.withCamera(viewTag) { facing }
 
     // Experimental API. still needs to determine the output location and how/who/when
     // to pass it down to this library. in the meantime is going to be saved in the data directory

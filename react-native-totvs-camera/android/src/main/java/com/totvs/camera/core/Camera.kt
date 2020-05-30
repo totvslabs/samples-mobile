@@ -13,14 +13,9 @@ public interface Camera {
     var isTorchEnabled: Boolean
 
     /**
-     * Set target rotation for the camera preview
-     */
-    var rotation: Int
-
-    /**
      * Set facing of the camera device
      */
-    var facing: LensFacing
+    var facing: Int
 
     /**
      * Set zoom for the camera

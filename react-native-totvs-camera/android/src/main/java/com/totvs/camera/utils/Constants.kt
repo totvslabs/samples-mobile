@@ -5,7 +5,7 @@ import androidx.camera.core.CameraSelector
 /**
  * Exportable constants
  */
-internal sealed class ExportableConstants {
+internal sealed class ExportableConstant {
     abstract val name: String
 
     abstract fun export(): Map<String, Any>
@@ -17,44 +17,37 @@ internal sealed class ExportableConstants {
 
         operator fun iterator() = all.iterator()
 
-        fun forEach(block: (ExportableConstants) -> Unit) = iterator().forEach(block)
+        fun forEach(block: (ExportableConstant) -> Unit) = iterator().forEach(block)
     }
 }
 
 /**
  * Constants for camera facing
  */
-internal object CameraFacing : ExportableConstants() {
+internal object CameraFacing : ExportableConstant() {
     override val name = "LENS_FACING"
 
+    const val FRONT = CameraSelector.LENS_FACING_FRONT
+    const val BACK = CameraSelector.LENS_FACING_BACK
+
     override fun export(): Map<String, Any> = mapOf(
-        "FRONT" to Constants.CAMERA_FACING_FRONT,
-        "BACK" to Constants.CAMERA_FACING_BACK
+        "FRONT" to FRONT,
+        "BACK" to BACK
     )
 }
+
 
 /**
  * Constants for limit the zoom values, zoom values must be on [MIN, MAX]
  */
-internal object ZoomLimits : ExportableConstants() {
+internal object ZoomLimits : ExportableConstant() {
     override val name = "ZOOM_LIMITS"
 
+    const val MIN = 0.0
+    const val MAX = 1.0
+
     override fun export(): Map<String, Any> = mapOf(
-        "MAX" to Constants.ZOOM_MAX,
-        "MIN" to Constants.ZOOM_MIN
+        "MAX" to MAX,
+        "MIN" to MIN
     )
-}
-
-
-/**
- * General unnamed constants
- */
-internal object Constants {
-    // camera lens facing
-    const val CAMERA_FACING_FRONT = CameraSelector.LENS_FACING_FRONT
-    const val CAMERA_FACING_BACK = CameraSelector.LENS_FACING_BACK
-
-    // camera zoom limit values
-    const val ZOOM_MIN = 0.0
-    const val ZOOM_MAX = 1.0
 }

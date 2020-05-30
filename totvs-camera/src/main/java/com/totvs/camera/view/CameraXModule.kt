@@ -16,11 +16,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import com.totvs.camera.annotations.CameraFacing
+import com.totvs.camera.annotations.LensFacing
 import com.totvs.camera.core.OnImageCaptured
 import com.totvs.camera.core.OnImageSaved
 import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.testPictureTake
+import com.totvs.camera.utils.CameraFacing
 import java.util.concurrent.Executors
 
 
@@ -90,8 +91,8 @@ internal class CameraXModule(private val view: CameraView) {
     private var prematureTorch: Boolean? = null
 
     // Internal manipulators
-    @CameraFacing
-    var facing: Int = CameraSelector.LENS_FACING_BACK
+    @LensFacing
+    var facing: Int = CameraFacing.BACK
         set(value) {
             if (field == value) return // no-op
             // If we're not bound to a lifecycle, let's keep the facing
