@@ -162,10 +162,6 @@ public class CameraView @JvmOverloads constructor(
             cameraXModule.isTorchEnabled = value
         }
 
-    override var rotation: Int
-        get() = 0
-        set(value) = Unit
-
     override var facing: LensFacing
         get() = if (Constants.CAMERA_FACING_BACK == cameraXModule.facing)
             LensFacing.BACK
