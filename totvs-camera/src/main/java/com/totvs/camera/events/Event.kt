@@ -5,7 +5,6 @@ package com.totvs.camera.events
  *
  * Events emitted to the JS side are advised to implement this interface
  *
- * @author Jansel Valentin
  */
 interface Event : () -> Unit {
 

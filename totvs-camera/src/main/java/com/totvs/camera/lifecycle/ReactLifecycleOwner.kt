@@ -5,6 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.facebook.react.bridge.LifecycleEventListener
+import com.totvs.camera.view.CameraView
 
 /**
  * LifecycleOwner to bridge with react-native environment

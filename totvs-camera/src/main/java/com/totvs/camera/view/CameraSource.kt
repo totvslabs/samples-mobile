@@ -29,7 +29,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 /**
- * CameraX use case ope
+ * This controller is backed fully by [CameraX] implementation, in order to change the
+ * source of the camera device, this is the class that needs to be checked for.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class CameraSource(private val view: CameraView) {

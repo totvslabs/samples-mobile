@@ -3,6 +3,7 @@ package com.totvs.camera
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.RestrictTo
 import androidx.annotation.experimental.UseExperimental
 import androidx.camera.core.*
 import com.totvs.camera.core.OnImageCaptured
@@ -21,6 +22,7 @@ import java.util.concurrent.Executor
  *      once the right approach is determine to handle photos taken
  *      this must be removed
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal fun ImageCapture.testPictureTake(
     context: Context,
     executor: Executor,
@@ -52,6 +54,7 @@ internal fun ImageCapture.testPictureTake(
 }
 
 @UseExperimental(markerClass = ExperimentalGetImage::class)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal fun ImageCapture.testPictureTake(
     executor: Executor,
     onCaptured: OnImageCaptured

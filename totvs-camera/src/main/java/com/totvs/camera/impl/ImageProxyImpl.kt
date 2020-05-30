@@ -3,10 +3,15 @@ package com.totvs.camera.impl
 import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.media.Image
+import androidx.annotation.RestrictTo
 import com.totvs.camera.core.ImageInfo
 import com.totvs.camera.core.ImageProxy
 import java.nio.ByteBuffer
 
+/**
+ * Concrete implementation of [ImageProxy]
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class ImageProxyImpl(
     override val image: Image?,
     private  val rotationDegrees: Int

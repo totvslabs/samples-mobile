@@ -1,10 +1,12 @@
 package com.totvs.camera.utils
 
+import androidx.annotation.RestrictTo
 import androidx.camera.core.CameraSelector
 
 /**
  * Exportable constants
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal sealed class ExportableConstant {
     abstract val name: String
 
@@ -24,6 +26,7 @@ internal sealed class ExportableConstant {
 /**
  * Constants for camera facing
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal object CameraFacing : ExportableConstant() {
     override val name = "LENS_FACING"
 
@@ -40,6 +43,7 @@ internal object CameraFacing : ExportableConstant() {
 /**
  * Constants for limit the zoom values, zoom values must be on [MIN, MAX]
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal object ZoomLimits : ExportableConstant() {
     override val name = "ZOOM_LIMITS"
 
