@@ -23,6 +23,18 @@ public interface Camera {
     var zoom: Float
 
     /**
+     * Image analyzer for the camera previews.
+     *
+     * The camera implementation is free to choose the preview strategy based on the value of
+     * the analyzer. i.e it can chose to delay the preview analysis until it receive
+     * a non null analyzer.
+     *
+     * This property is made nullable because an analyzer is an optional part of the camera
+     * device. The implementation can even chose to not have analysis overall.
+     */
+    var analyzer: ImageAnalyzer?
+
+    /**
      * Toggle camera facing, works the same as requesting the opposite of the current
      * facing.
      */

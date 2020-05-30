@@ -8,28 +8,31 @@ import androidx.annotation.FloatRange
 import androidx.annotation.MainThread
 import androidx.annotation.RequiresPermission
 import androidx.annotation.RestrictTo
+import androidx.annotation.experimental.UseExperimental
 import androidx.camera.core.*
-import androidx.camera.core.Camera
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnAttach
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.totvs.camera.annotations.LensFacing
+import com.totvs.camera.core.ImageAnalyzer
 import com.totvs.camera.core.OnImageCaptured
 import com.totvs.camera.core.OnImageSaved
 import com.totvs.camera.core.OutputFileOptions
+import com.totvs.camera.impl.ImageProxyImpl
 import com.totvs.camera.testPictureTake
 import com.totvs.camera.utils.CameraFacing
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
 
 /**
  * CameraX use case ope
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-internal class CameraXModule(private val view: CameraView) {
+internal class CameraSource(private val view: CameraView) {
 
     init {
         @Suppress("MissingPermission")
@@ -77,11 +80,17 @@ internal class CameraXModule(private val view: CameraView) {
     /** use case for capture */
     private var capture: ImageCapture? = null
 
+    /** use case for image analysis */
+    private var analysis: ImageAnalysis? = null
+
     /** camera instance bound to this module */
     private var camera: Camera? = null
 
     /** Capture Executor */
-    private val captureExecutor = Executors.newSingleThreadExecutor()
+    private lateinit var captureExecutor: ExecutorService
+
+    /** Image Analysis Executor */
+    private lateinit var analysisExecutor: ExecutorService
 
     /**
      * This values keep track of when the settings of the camera are
@@ -130,6 +139,7 @@ internal class CameraXModule(private val view: CameraView) {
         @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         fun onDestroy(lifecycle: LifecycleOwner) {
             if (lifecycle == currentLifecycle) {
+                turnDownExecutors()
                 cleanCurrentLifecycle()
                 preview?.setSurfaceProvider(null)
             }
@@ -182,6 +192,9 @@ internal class CameraXModule(private val view: CameraView) {
 
         cameraProvider ?: return // let's try later when the provider is not null
 
+        // let's install the executors
+        turnUpExecutors()
+
         val isDisplayPortrait =
             view.displayRotationDegrees == 0 || view.displayRotationDegrees == 180
 
@@ -203,12 +216,32 @@ internal class CameraXModule(private val view: CameraView) {
             setSurfaceProvider(view.previewView.createSurfaceProvider())
         }
 
+        // we will use half of the preview size for analysis. we seek for fast analysis here
+        if (null != view.analyzer) {
+            val analysisOutSize = Size(measuredWidth / 2, height / 2)
+            Log.e(TAG, "Installing preview analyzer with image output of size=$analysisOutSize")
+
+            analysis = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setTargetRotation(view.displaySurfaceRotation)
+                .setTargetResolution(analysisOutSize)
+                .setTargetName(ANALYSIS_NAME)
+                .build()
+                .also {
+                    it.setAnalyzer(analysisExecutor, ForwardAnalyzer(view.analyzer!!))
+                }
+        }
+
         val selector = CameraSelector
             .Builder()
             .requireLensFacing(facing)
             .build()
 
-        camera = cameraProvider!!.bindToLifecycle(currentLifecycle!!, selector, preview, capture)
+        val useCases = mutableListOf(preview, capture).apply {
+            analysis?.let { add(it) }
+        }.toTypedArray()
+
+        camera = cameraProvider!!.bindToLifecycle(currentLifecycle!!, selector, *useCases)
             .apply(this::updatePrematureSettings)
 
         currentLifecycle!!.lifecycle.addObserver(currentLifecycleObserver)
@@ -241,6 +274,9 @@ internal class CameraXModule(private val view: CameraView) {
             it.setCropAspectRatio(Rational(width, height))
             it.targetRotation = view.displaySurfaceRotation
         }
+        analysis?.let {
+            it.targetRotation = view.displaySurfaceRotation
+        }
     }
 
     private fun updatePrematureSettings(camera: Camera) {
@@ -250,6 +286,21 @@ internal class CameraXModule(private val view: CameraView) {
         // clean them all
         prematureZoom = null
         prematureTorch = null
+    }
+
+    // take proper care of executors lifecycle
+    private fun turnUpExecutors() {
+        if (::captureExecutor.isInitialized && !captureExecutor.isShutdown) {
+            return // this suffix to not initialize more than once the executors
+        }
+        captureExecutor = Executors.newSingleThreadExecutor()
+        captureExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    // take proper care of executors lifecycle
+    fun turnDownExecutors() {
+        captureExecutor.shutdownNow()
+        analysisExecutor.shutdownNow()
     }
 
     fun toggleCamera() {
@@ -267,12 +318,23 @@ internal class CameraXModule(private val view: CameraView) {
         capture?.testPictureTake(captureExecutor, onCaptured)
     }
 
+    /**
+     * [ImageAnalysis.Analyzer] that forward call to out [ImageAnalyzer] interface
+     */
+    internal class ForwardAnalyzer(private val analyzer: ImageAnalyzer) : ImageAnalysis.Analyzer {
+        @UseExperimental(markerClass = ExperimentalGetImage::class)
+        override fun analyze(image: ImageProxy) {
+            analyzer.analyze(ImageProxyImpl(image.image, image.imageInfo.rotationDegrees))
+        }
+    }
+
     companion object {
-        private const val TAG = "CameraXModule(totvs)"
+        private const val TAG = "CameraSource"
 
         // use case names
         private const val PREVIEW_NAME = "Preview"
         private const val CAPTURE_NAME = "Capture"
+        private const val ANALYSIS_NAME = "Analysis"
 
         // aspect ratios
         private val ASPECT_RATIO_16_9 = Rational(16, 9)

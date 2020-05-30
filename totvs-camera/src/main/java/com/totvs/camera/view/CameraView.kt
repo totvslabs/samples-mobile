@@ -24,10 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
-import com.totvs.camera.core.Camera
-import com.totvs.camera.core.OnImageCaptured
-import com.totvs.camera.core.OnImageSaved
-import com.totvs.camera.core.OutputFileOptions
+import com.totvs.camera.core.*
 import com.totvs.camera.lifecycle.ReactLifecycleOwner
 import com.totvs.camera.utils.CameraFacing
 
@@ -38,7 +35,7 @@ import com.totvs.camera.utils.CameraFacing
  * and perform camera's operations. The lifecycle open/close of the camera is handled
  * automatically and is directly tied to the provided lifecycle.
  */
-public class CameraView @JvmOverloads constructor(
+open class CameraView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0
@@ -51,7 +48,7 @@ public class CameraView @JvmOverloads constructor(
         override fun onDisplayAdded(displayId: Int) = Unit
         override fun onDisplayRemoved(displayId: Int) = Unit
         override fun onDisplayChanged(displayId: Int) {
-            cameraXModule.invalidateView()
+            cameraSource.invalidateView()
         }
     }
 
@@ -105,17 +102,28 @@ public class CameraView @JvmOverloads constructor(
     }
 
     /** CameraX implementation manipulator */
-    private val cameraXModule: CameraXModule
+    private val cameraSource: CameraSource
 
     /** [DisplayManager] */
     private val displayManager by lazy {
         context.applicationContext.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     }
 
+    /**
+     * [GraphicOverlay] offered by the [CameraView] so that graphics can be rendered on top
+     * of the preview images
+     */
+    val graphicOverlay by lazy {
+        GraphicOverlay(context).also {
+            it.host = this
+        }
+    }
+
     /** Initialization */
     init {
         addView(previewView, 0)
-        cameraXModule = CameraXModule(this).apply {
+        addView(graphicOverlay, 0)
+        cameraSource = CameraSource(this).apply {
             @Suppress("MissingPermission") bindToLifecycle(lifecycle)
         }
         setBackgroundResource(android.R.color.black)
@@ -137,7 +145,7 @@ public class CameraView @JvmOverloads constructor(
     /**
      * Returns the [displaySurfaceRotation] value converted in degrees
      */
-    internal val displayRotationDegrees: Int
+    val displayRotationDegrees: Int
         get() = when (displaySurfaceRotation) {
             Surface.ROTATION_0 -> 0
             Surface.ROTATION_180 -> 180
@@ -146,28 +154,40 @@ public class CameraView @JvmOverloads constructor(
             else -> throw IllegalArgumentException("Unsupported surface rotation")
         }
 
-    internal val hasPermissions: Boolean
+    /**
+     * Check Camera permissions
+     */
+    val hasPermissions: Boolean
         get() = PERMISSIONS_REQUIRED.all {
             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
 
     // [Camera] contract
     override var isTorchEnabled: Boolean
-        get() = cameraXModule.isTorchEnabled
+        get() = cameraSource.isTorchEnabled
         set(value) {
-            cameraXModule.isTorchEnabled = value
+            cameraSource.isTorchEnabled = value
         }
+
 
     override var facing: Int
-        get() = cameraXModule.facing
+        get() = cameraSource.facing
         set(value) {
-            cameraXModule.facing = value
+            cameraSource.facing = value
         }
 
+
     override var zoom: Float
-        get() = cameraXModule.zoom
+        get() = cameraSource.zoom
         set(@FloatRange(from = 0.0, to = 1.0) value) {
-            cameraXModule.zoom = value
+            cameraSource.zoom = value
+        }
+
+
+    override var analyzer: ImageAnalyzer? = null
+        set(value) {
+            field = value
+            @Suppress("MissingPermission") bindToLifecycle(lifecycle) // we need to rebind again.
         }
 
     // Overrides
@@ -217,7 +237,7 @@ public class CameraView @JvmOverloads constructor(
         // since bindToLifecycle depends on view dimensions, let's not call it
         // when the dimensions are 0x0
         if (0 < measuredWidth && 0 < measuredHeight) {
-            cameraXModule.bindToLifecycleAfterViewMeasured()
+            cameraSource.bindToLifecycleAfterViewMeasured()
         }
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -227,7 +247,7 @@ public class CameraView @JvmOverloads constructor(
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         // In case the [CameraView] is always set as 0x0 we still need to trigger to
         // cause the lifecycle binding
-        cameraXModule.apply {
+        cameraSource.apply {
             bindToLifecycleAfterViewMeasured()
             invalidateView()
         }
@@ -236,13 +256,13 @@ public class CameraView @JvmOverloads constructor(
 
     // [Camera] contract
 
-    override fun toggleCamera() = cameraXModule.toggleCamera()
+    override fun toggleCamera() = cameraSource.toggleCamera()
 
     override fun takePicture(options: OutputFileOptions, onSaved: OnImageSaved) =
-        cameraXModule.takePicture(options, onSaved)
+        cameraSource.takePicture(options, onSaved)
 
     override fun takePicture(onCaptured: OnImageCaptured) =
-        cameraXModule.takePicture(onCaptured)
+        cameraSource.takePicture(onCaptured)
 
     /**
      * Bind this view related camera preview to the [lifecycle]. If at the bind
@@ -256,7 +276,7 @@ public class CameraView @JvmOverloads constructor(
     @MainThread
     @RequiresPermission(permission.CAMERA)
     public fun bindToLifecycle(lifecycle: LifecycleOwner) {
-        cameraXModule.bindToLifecycle(lifecycle)
+        cameraSource.bindToLifecycle(lifecycle)
     }
 
     /**
