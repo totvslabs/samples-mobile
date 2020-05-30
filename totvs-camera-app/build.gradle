@@ -54,9 +54,6 @@ dependencies {
     // CameraX Lifecycle library
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
 
-    // CameraX View class
-    implementation 'androidx.camera:camera-view:1.0.0-alpha11'
-
     // Rect Native
     implementation 'com.facebook.react:react-native:+'
 }

@@ -191,6 +191,7 @@ internal class CameraXModule(private val view: CameraView) {
         capture = captureBuilder.apply {
             setTargetRotation(view.displaySurfaceRotation)
             setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
         }.build()
 
         // adjust preview resolution based on measured size and aspect ratio
@@ -198,7 +199,7 @@ internal class CameraXModule(private val view: CameraView) {
         preview = previewBuilder.apply {
             setTargetResolution(Size(measuredWidth, height))
         }.build().apply {
-            setSurfaceProvider(view.previewView.createSurfaceProvider(null))
+            setSurfaceProvider(view.previewView.createSurfaceProvider())
         }
 
         val selector = CameraSelector
