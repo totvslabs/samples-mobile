@@ -1,10 +1,8 @@
 package com.totvs.camera.vision.stream
 
-import com.totvs.camera.vision.VisionObject
-
 /**
- * This interface models the reception of [VisionObject] from an stream.
+ * This interface models the reception of [T] from an stream.
  */
-interface VisionReceiver<T : VisionObject> {
+interface VisionReceiver<T> {
     fun send(entity: T)
 }

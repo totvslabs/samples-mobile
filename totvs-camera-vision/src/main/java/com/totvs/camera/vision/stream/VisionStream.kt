@@ -1,8 +1,5 @@
 package com.totvs.camera.vision.stream
 
-import com.totvs.camera.vision.VisionObject
-import com.totvs.camera.vision.NullVisionObject
-
 /**
  * [VisionStream] model a stream of vision object passing through a processing pipe
  * that can transform the object as it goes until it reaches the end of the pipe.
@@ -18,17 +15,10 @@ import com.totvs.camera.vision.NullVisionObject
  * that we can chain as many _Intermediate operators_ as we want without actually connecting
  * to the upstream stream, but once the caller decides to connect with [connect], then
  * the chain of transformation by the operators connect to the upstream.
- *
- * [VisionStream] doesn't work on null values, in order to represent an absence of value
- * use [NullVisionObject]
- *
- * As side note, we could make this interface along with the companions, a generic one
- * by not restricting it use to only [VisionObject] but since the purpose of this
- * library is to handle such objects we impose that constraint into the types.
  */
-interface VisionStream<T : VisionObject> {
+interface VisionStream<T> {
     /**
-     * Connect to this stream a [VisionReceiver] that manipulate the incoming [VisionObject]
+     * Connect to this stream a [VisionReceiver] that manipulate the incoming [T]
      * and returns a [Connection] that the caller can use to stop receiving objects from this
      * stream.
      */

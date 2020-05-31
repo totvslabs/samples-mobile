@@ -1,6 +1,5 @@
 package com.totvs.camera.vision.stream
 
-import com.totvs.camera.vision.VisionObject
 import kotlin.experimental.ExperimentalTypeInference
 
 /**
@@ -15,7 +14,7 @@ import kotlin.experimental.ExperimentalTypeInference
  * }.connect { ... do something with the objects }
  */
 @OptIn(ExperimentalTypeInference::class)
-fun <T : VisionObject> visionStream(@BuilderInference block: VisionReceiver<T>.() -> Unit): VisionStream<T> =
+fun <T> visionStream(@BuilderInference block: VisionReceiver<T>.() -> Unit): VisionStream<T> =
     BlockStream(block)
 
 /**
@@ -28,7 +27,7 @@ private class IgnoreConnection : Connection {
 /**
  * Simple [VisionStream] that ignore [Connection.disconnect] tokens.
  */
-private class BlockStream<T : VisionObject>(
+private class BlockStream<T>(
     private val block: VisionReceiver<T>.() -> Unit
 ) : VisionStream<T> {
     override fun connect(receiver: VisionReceiver<T>): Connection =

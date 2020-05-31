@@ -4,16 +4,14 @@ import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.ALL_CLASSIFICATIONS
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.ACCURATE
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.ALL_LANDMARKS
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.*
 import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.core.annotations.NeedsProfiling
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
 import com.totvs.camera.vision.core.SelectionStrategy
-import com.totvs.camera.vision.utils.toFirebaseVisionRotation
 import com.totvs.camera.vision.face.FaceSelection.MOST_PROMINENT
+import com.totvs.camera.vision.utils.toFirebaseVisionRotation
 
 /**
  * Detector dedicated to identity faces. This detector is a _Single emission_ detector.
@@ -49,7 +47,6 @@ open class FaceDetector(
             .addOnSuccessListener { faces ->
                 // we close the used image: MUST DO
                 closeImage(image)
-                // @TODO we might be choosing the wrong face here. we need to have an strategy
                 // to chose the best face.
                 onDetected(mapToFaceObject(selectFace(faces)))
             }

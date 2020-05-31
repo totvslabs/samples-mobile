@@ -1,20 +1,18 @@
 package com.totvs.camera.vision
 
 import android.util.Log
-import android.util.Size
 import androidx.annotation.GuardedBy
 import com.totvs.camera.core.ImageAnalyzer
 import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.vision.stream.BroadcastVisionStream
 import com.totvs.camera.vision.stream.VisionStream
-import java.lang.Exception
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Immutable detection analyzer that keep a registry of [VisionDetector]. By default detectors
- * are disabled until they're manually enabled.
+ * are enabled until they're manually disabled.
  *
  * This analyzer models a set of detectors that have the potential to be all enabled at the
  * same time or only some of them.
@@ -130,7 +128,7 @@ open class DetectionAnalyzer(
 
     protected data class EnabledDetector(
         val detector: VisionDetector<*>,
-        var enabled: Boolean = false
+        var enabled: Boolean = true
     )
 
     companion object {
