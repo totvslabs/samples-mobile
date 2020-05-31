@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.totvs.camera.core.Camera
+import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.view.CameraView
 
 private const val PERMISSIONS_REQUEST_CODE = 10
@@ -21,7 +22,7 @@ private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 class MainActivity : AppCompatActivity() {
 
     // matching that of [CameraView]
-    private var facing: LensFacing = LensFacing.BACK
+    private var facing: Int = CameraFacing.BACK
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         controls.findViewById<ImageButton>(R.id.camera_switch_button).setOnClickListener {
-            facing = if (facing == LensFacing.BACK) LensFacing.FRONT else LensFacing.BACK
+            facing = if (facing == CameraFacing.BACK) CameraFacing.FRONT else CameraFacing.BACK
             camera.facing = facing
         }
 

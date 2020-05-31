@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.GuardedBy
-import com.totvs.camera.utils.CameraFacing
+import com.totvs.camera.core.CameraFacing
 
 /**
  * Overlay view rendered on top of the [CameraView] so we can offer the ability to draw on

@@ -10,21 +10,18 @@ import androidx.annotation.RequiresPermission
 import androidx.annotation.RestrictTo
 import androidx.annotation.experimental.UseExperimental
 import androidx.camera.core.*
+import androidx.camera.core.Camera
+import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.view.doOnAttach
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.totvs.camera.annotations.LensFacing
-import com.totvs.camera.core.ImageAnalyzer
-import com.totvs.camera.core.OnImageCaptured
-import com.totvs.camera.core.OnImageSaved
-import com.totvs.camera.core.OutputFileOptions
+import com.totvs.camera.core.*
 import com.totvs.camera.impl.ImageProxyImpl
 import com.totvs.camera.testPictureTake
-import com.totvs.camera.utils.CameraFacing
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

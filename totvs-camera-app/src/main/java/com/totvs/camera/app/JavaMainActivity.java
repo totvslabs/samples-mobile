@@ -8,14 +8,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.totvs.camera.core.Camera;
-import com.totvs.camera.core.LensFacing;
+import com.totvs.camera.core.CameraFacing;
 
 /**
  * Use as alternative to MainActivity. must be registered in the manifest first
  */
 public class JavaMainActivity extends AppCompatActivity {
 
-    private LensFacing facing = LensFacing.BACK;
+    private int facing = CameraFacing.BACK;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,10 +41,10 @@ public class JavaMainActivity extends AppCompatActivity {
         });
 
         controls.findViewById(R.id.camera_switch_button).setOnClickListener(view -> {
-            if (facing == LensFacing.BACK) {
-                facing = LensFacing.FRONT;
+            if (facing == CameraFacing.BACK) {
+                facing = CameraFacing.FRONT;
             } else {
-                facing = LensFacing.BACK;
+                facing = CameraFacing.BACK;
             }
             camera.setFacing(facing);
         });

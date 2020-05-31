@@ -26,7 +26,6 @@ import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
 import com.totvs.camera.core.*
 import com.totvs.camera.lifecycle.ReactLifecycleOwner
-import com.totvs.camera.utils.CameraFacing
 
 /**
  * A [android.view.View] that display a camera preview and has the [Camera] capabilities.
