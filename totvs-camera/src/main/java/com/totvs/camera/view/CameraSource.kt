@@ -291,8 +291,8 @@ internal class CameraSource(private val view: CameraView) {
         if (::captureExecutor.isInitialized && !captureExecutor.isShutdown) {
             return // this suffix to not initialize more than once the executors
         }
-        captureExecutor = Executors.newSingleThreadExecutor()
-        captureExecutor = Executors.newSingleThreadExecutor()
+        captureExecutor  = Executors.newSingleThreadExecutor()
+        analysisExecutor = Executors.newSingleThreadExecutor()
     }
 
     // take proper care of executors lifecycle
