@@ -29,7 +29,17 @@ import java.util.concurrent.atomic.AtomicBoolean
  * This analyzer post individual detection tasks on [executor] which means that if the
  * executor can ony run less than the number of detectors passed to this analyzer, the
  * executor will halt until previous detection finishes. It's highly recommended that the
- * executor capacity is at least as the number of detectors passed to this analyzer
+ * executor capacity is at least as the number of detectors passed to this analyzer.
+ *
+ * By nature this analyzer expect the detectors to emit only one detection, thus is a
+ * requirement on the detector to identify the appropriate measure to detect the most
+ * prominent detection and report it. The behavior is undefined if multiple detections
+ * are emitted by a single detection phase.
+ *
+ * For cases in which multiple emission are allowed from the detectors on a single phase
+ * one can subclass this analyzer and override [analyze] then the detectors can post
+ * a kind of [VisionObject] that pack multiple results and having the new analyzer
+ * coordinate the detectors emissions.
  */
 open class DetectionAnalyzer(
     private val executor: ExecutorService,

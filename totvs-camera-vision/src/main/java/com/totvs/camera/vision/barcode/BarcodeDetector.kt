@@ -9,16 +9,23 @@ import com.totvs.camera.core.annotations.NeedsProfiling
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
 import com.totvs.camera.vision.annotations.BarcodeFormat
+import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.core.VisionBarcodeFormat
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
+import com.totvs.camera.vision.barcode.BarcodeSelection.MOST_PROMINENT
 
 /**
- * Detector dedicated to identity barcode. This barcode detector detect [primaryType]
- * as mandatory code. Firebase forces us to chose at least one code to detect.
+ * Detector dedicated to identity barcode. This detector is a _Single emission_ detector.
+ *
+ * This barcode detector detect [primaryType] as mandatory code. Firebase
+ * forces us to chose at least one code to detect.
+ *
+ * @see [VisionDetector]
  */
 class BarcodeDetector(
     @BarcodeFormat private val primaryType: Int,
-    @BarcodeFormat private vararg val types: Int
+    @BarcodeFormat private vararg val types: Int,
+    private val selectBarcode: SelectionStrategy<FirebaseVisionBarcode> = MOST_PROMINENT
 ) : AbstractVisionDetector<BarcodeObject>(BarcodeDetector) {
 
     @NeedsProfiling(
@@ -32,32 +39,42 @@ class BarcodeDetector(
         if (image.image == null) {
             return onDetected(NullBarcodeObject)
         }
-        val detector = FirebaseVision.getInstance()
-            .getVisionBarcodeDetector(
-                FirebaseVisionBarcodeDetectorOptions
-                    .Builder()
-                    .setBarcodeFormats(primaryType, *mapBarcodeFormats(*types))
-                    .build()
-            )
+        val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(getDetectorOptions())
+
         val visionImage = FirebaseVisionImage.fromMediaImage(
             image.image!!,
             image.imageInfo.rotationDegrees.toFirebaseVisionRotation()
         )
         detector.detectInImage(visionImage)
             .addOnSuccessListener { barcodes ->
+                // we close the used image: MUST DO
+                closeImage(image)
                 // chose the first one.
-                with(barcodes.first()) {
-                    onDetected(BarcodeObject(
-                        format = format,
-                        boundingBox = boundingBox,
-                        displayValue = displayValue ?: ""
-                    ))
-                }
+                onDetected(mapToBarcodeObject(selectBarcode(barcodes)))
             }
             .addOnFailureListener {
+                // we close the used image: MUST DO
+                closeImage(image)
+
                 onDetected(NullBarcodeObject)
             }
     }
+
+    /**
+     * Map the firebase vision object to face object
+     */
+    private fun mapToBarcodeObject(barcode: FirebaseVisionBarcode) = BarcodeObject(
+        format = barcode.format,
+        boundingBox = barcode.boundingBox,
+        displayValue = barcode.displayValue ?: ""
+    )
+
+    /**
+     * Map the firebase vision object to barcode object
+     */
+    private fun getDetectorOptions() = FirebaseVisionBarcodeDetectorOptions.Builder()
+        .setBarcodeFormats(primaryType, *mapBarcodeFormats(*types))
+        .build()
 
     companion object : VisionDetector.Key<BarcodeDetector> {
         /**
