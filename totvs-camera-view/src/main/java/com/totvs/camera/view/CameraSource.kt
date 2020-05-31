@@ -52,6 +52,8 @@ internal class CameraSource(private val view: CameraView) {
     private val width: Int get() = view.width
     private val height: Int get() = view.height
 
+    internal var previewSize = Size(width, height)
+
     /** The provider of the camera for the process this module is used in (the app) */
     private var cameraProvider: ProcessCameraProvider? = null
 
@@ -207,15 +209,20 @@ internal class CameraSource(private val view: CameraView) {
 
         // adjust preview resolution based on measured size and aspect ratio
         val height = (measuredWidth.toDouble() / targetAspectRatio.toDouble()).toInt()
+        // we set the appropriate preview size
+        previewSize = Size(measuredWidth, height)
+        Log.e(TAG, "Using size=$previewSize as preview size")
+
         preview = previewBuilder.apply {
-            setTargetResolution(Size(measuredWidth, height))
+            setTargetResolution(previewSize)
         }.build().apply {
             setSurfaceProvider(view.previewView.createSurfaceProvider())
         }
 
         // we will use half of the preview size for analysis. we seek for fast analysis here
         if (null != view.analyzer) {
-            val analysisOutSize = Size(measuredWidth / 2, height / 2)
+            val analysisOutSize = view.analyzer!!.desiredOutputImageSize(previewSize)
+
             Log.e(TAG, "Installing preview analyzer with image output of size=$analysisOutSize")
 
             analysis = ImageAnalysis.Builder()

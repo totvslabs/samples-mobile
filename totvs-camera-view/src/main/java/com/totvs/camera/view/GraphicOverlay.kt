@@ -15,19 +15,23 @@ import com.totvs.camera.core.CameraFacing
  * This view is an aggregation of [Graphic] views.
  *
  * Since the [GraphicOverlay] and preview images might be in different coordinate system,
- * we must offer some capabilities to [Graphic] childrens to transform values to this
+ * we must offer some capabilities to [Graphic] children to transform values to this
  * [GraphicOverlay] coordinate. we do that by computing some scale factors
  */
-class GraphicOverlay @JvmOverloads constructor(
+class GraphicOverlay @JvmOverloads internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0
 ) : View(context, attrs, style) {
 
-    internal var host: CameraView? = null
+    lateinit var host: CameraView
 
-    private val scaleFactorX: Float get() = 0f // calculated from host
-    private val scaleFactorY: Float get() = 0f // calculated from host
+    /**
+     * We compute the scale factors by which we need to scale point from the preview to this
+     * overlay view coordinate system.
+     */
+    private val scaleFactorX: Float get() = host.width  / host.previewSize.width.toFloat()
+    private val scaleFactorY: Float get() = host.height / host.previewSize.height.toFloat()
 
     @GuardedBy("this")
     private val graphics = mutableListOf<Graphic>()
@@ -71,6 +75,7 @@ class GraphicOverlay @JvmOverloads constructor(
         fun onAttached(overlay: GraphicOverlay) {
             this.overlay = overlay
         }
+
         /**
          * Callback to draw the graphic on the [canvas]
          */
@@ -96,7 +101,7 @@ class GraphicOverlay @JvmOverloads constructor(
         /**
          * Translate [x] into the host [GraphicOverlay] coordinate system
          */
-        fun translateX(x: Float) = if (overlay.host?.facing == CameraFacing.FRONT) {
+        fun translateX(x: Float) = if (overlay.host.facing == CameraFacing.FRONT) {
             overlay.width - scaleX(x) // if front camera, we need to mirror
         } else scaleX(x)
 

@@ -161,6 +161,11 @@ open class CameraView @JvmOverloads constructor(
             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
 
+    /**
+     * Offer the preview size
+     */
+    val previewSize get() = cameraSource.previewSize
+
     // [Camera] contract
     override var isTorchEnabled: Boolean
         get() = cameraSource.isTorchEnabled
