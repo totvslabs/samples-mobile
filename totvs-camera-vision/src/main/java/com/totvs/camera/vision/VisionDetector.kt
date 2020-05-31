@@ -5,7 +5,7 @@ import com.totvs.camera.core.ImageProxy
 /**
  * Interface for detectors
  */
-interface VisionDetector<T : VisionObject> {
+interface VisionDetector<T: VisionObject> {
     /**
      * Key of this detector
      */

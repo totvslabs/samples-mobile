@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * executor will halt until previous detection finishes. It's highly recommended that the
  * executor capacity is at least as the number of detectors passed to this analyzer
  */
-class DetectionAnalyzer(
+open class DetectionAnalyzer(
     private val executor: ExecutorService,
     vararg detectors: VisionDetector<*>
 ) : ImageAnalyzer {
@@ -39,7 +39,7 @@ class DetectionAnalyzer(
      * Registry of all detectors
      */
     @GuardedBy("this")
-    private val registry = mutableMapOf<VisionDetector.Key<*>, EnabledDetector>()
+    protected val registry = mutableMapOf<VisionDetector.Key<*>, EnabledDetector>()
         .apply {
             detectors.forEach { detector ->
                 put(detector.key, EnabledDetector(detector))
@@ -63,28 +63,34 @@ class DetectionAnalyzer(
      * Returns whether the detector for the [key] is enabled or not
      */
     @Synchronized
-    fun isEnabled(key: VisionDetector.Key<*>) = registry[key]?.enabled ?: false
+    open fun isEnabled(key: VisionDetector.Key<*>) = registry[key]?.enabled ?: false
 
     /**
      * Enable the detector corresponding to [key]
      */
     @Synchronized
-    fun enable(key: VisionDetector.Key<*>) = registry[key]?.let {
-        it.enabled = true
+    open fun enable(key: VisionDetector.Key<*>) {
+        registry[key]?.let { it.enabled = true }
     }
 
     /**
      * Disable the detector corresponding to [key]
      */
     @Synchronized
-    fun disable(key: VisionDetector.Key<*>) = registry[key]?.let {
-        it.enabled = false
+    open fun disable(key: VisionDetector.Key<*>) {
+        registry[key]?.let { it.enabled = false }
     }
+
+    /**
+     * Get the detector corresponding to [key]
+     */
+    @Synchronized
+    open operator fun get(key: VisionDetector.Key<*>): VisionDetector<*>? = registry[key]?.detector
 
     /**
      * After detection let's post this object to the stream
      */
-    private fun post(entity: VisionObject) {
+    open fun post(entity: VisionObject) {
         (detections as BroadcastVisionStream).broadcast(entity)
     }
 
@@ -112,7 +118,7 @@ class DetectionAnalyzer(
         }
     }
 
-    private data class EnabledDetector(
+    protected data class EnabledDetector(
         val detector: VisionDetector<*>,
         var enabled: Boolean = false
     )

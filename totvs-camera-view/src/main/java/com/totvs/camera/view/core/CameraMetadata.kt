@@ -4,7 +4,7 @@ import androidx.annotation.RestrictTo
 import androidx.camera.core.CameraSelector
 
 /**
- * Exportable constants
+ * Exported constants of this module
  */
 sealed class ExportableConstant {
     abstract val name: String

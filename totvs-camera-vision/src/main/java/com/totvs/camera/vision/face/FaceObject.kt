@@ -8,3 +8,8 @@ import com.totvs.camera.vision.VisionObject
  * Encoded information on this object, depends on the kind of detector used
  */
 class FaceObject : VisionObject()
+
+/**
+ * Null representation of a null face object
+ */
+val NullFaceObject = FaceObject()
