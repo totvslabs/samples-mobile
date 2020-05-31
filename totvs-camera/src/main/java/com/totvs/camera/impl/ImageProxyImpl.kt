@@ -14,7 +14,10 @@ import java.nio.ByteBuffer
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class ImageProxyImpl(
     override val image: Image?,
-    private  val rotationDegrees: Int
+    private  val rotationDegrees: Int,
+    // we allow custom resource close, if the callback returns false, we'll try
+    // to close the resource ourselves
+    private val onClose: (image: Image?) -> Boolean = { false }
 ) : ImageProxy {
 
     override var cropRect: Rect
@@ -44,7 +47,9 @@ internal class ImageProxyImpl(
         }
 
     override fun close() {
-        image?.close()
+        if (!onClose(image)) {
+            image?.close()
+        }
     }
 
     private class PlaneProxyImpl(override val buffer: ByteBuffer) : ImageProxy.PlaneProxy

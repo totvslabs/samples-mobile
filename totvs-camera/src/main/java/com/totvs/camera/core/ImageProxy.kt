@@ -12,7 +12,10 @@ import java.nio.ByteBuffer
  */
 public interface ImageProxy : AutoCloseable {
     /**
-     * Close this resource. This will close the underlying [image] field
+     * Close this resource. This will close the underlying [image] field.
+     *
+     * Failure to close the proxy after use might lead to not receiving more images.
+     * It's mandatory to close this image after use.
      */
     override fun close()
 

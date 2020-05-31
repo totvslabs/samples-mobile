@@ -14,6 +14,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.totvs.camera.core.Camera
 import com.totvs.camera.core.CameraFacing
+import com.totvs.camera.core.ImageAnalyzer
+import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.view.CameraView
 
 private const val PERMISSIONS_REQUEST_CODE = 10
@@ -32,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         if (!hasPermissions(this)) {
             requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
         }
-
+        
         addCameraControls()
     }
 

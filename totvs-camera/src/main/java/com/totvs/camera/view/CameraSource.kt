@@ -291,7 +291,7 @@ internal class CameraSource(private val view: CameraView) {
         if (::captureExecutor.isInitialized && !captureExecutor.isShutdown) {
             return // this suffix to not initialize more than once the executors
         }
-        captureExecutor  = Executors.newSingleThreadExecutor()
+        captureExecutor = Executors.newSingleThreadExecutor()
         analysisExecutor = Executors.newSingleThreadExecutor()
     }
 
@@ -322,7 +322,10 @@ internal class CameraSource(private val view: CameraView) {
     internal class ForwardAnalyzer(private val analyzer: ImageAnalyzer) : ImageAnalysis.Analyzer {
         @UseExperimental(markerClass = ExperimentalGetImage::class)
         override fun analyze(image: ImageProxy) {
-            analyzer.analyze(ImageProxyImpl(image.image, image.imageInfo.rotationDegrees))
+            analyzer.analyze(ImageProxyImpl(image.image, image.imageInfo.rotationDegrees) {
+                image.close()
+                true // indicate that we've closed properly the resource
+            })
         }
     }
 
