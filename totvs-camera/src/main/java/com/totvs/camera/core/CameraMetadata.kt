@@ -1,6 +1,5 @@
 package com.totvs.camera.core
 
-import androidx.annotation.RestrictTo
 import androidx.camera.core.CameraSelector
 
 /**
