@@ -52,8 +52,6 @@ internal class CameraSource(private val view: CameraView) {
     private val width: Int get() = view.width
     private val height: Int get() = view.height
 
-    internal var previewSize = Size(width, height)
-
     /** The provider of the camera for the process this module is used in (the app) */
     private var cameraProvider: ProcessCameraProvider? = null
 
@@ -194,13 +192,6 @@ internal class CameraSource(private val view: CameraView) {
         // let's install the executors
         turnUpExecutors()
 
-        val isDisplayPortrait =
-            view.displayRotationDegrees == 0 || view.displayRotationDegrees == 180
-
-        // we set the preferred aspect ratio to 4:3
-        val targetAspectRatio =
-            if (isDisplayPortrait) ASPECT_RATIO_4_3.inverse else ASPECT_RATIO_4_3
-
         capture = captureBuilder.apply {
             setTargetRotation(view.displaySurfaceRotation)
             setTargetAspectRatio(AspectRatio.RATIO_4_3)
@@ -208,10 +199,10 @@ internal class CameraSource(private val view: CameraView) {
         }.build()
 
         // adjust preview resolution based on measured size and aspect ratio
-        val height = (measuredWidth.toDouble() / targetAspectRatio.toDouble()).toInt()
         // we set the appropriate preview size
-        previewSize = Size(measuredWidth, height)
-        Log.e(TAG, "Using size=$previewSize as preview size")
+        val previewSize = computePreviewSize().also {
+            Log.e(TAG, "Using size=$it as preview size")
+        }
 
         preview = previewBuilder.apply {
             setTargetResolution(previewSize)
@@ -263,6 +254,19 @@ internal class CameraSource(private val view: CameraView) {
         cameraProvider?.unbindAll()
         camera = null
         currentLifecycle = null
+    }
+
+    fun computePreviewSize() : Size {
+        val isDisplayPortrait =
+            view.displayRotationDegrees == 0 || view.displayRotationDegrees == 180
+
+        // we set the preferred aspect ratio to 4:3
+        val targetAspectRatio =
+            if (isDisplayPortrait) ASPECT_RATIO_4_3.inverse else ASPECT_RATIO_4_3
+
+        val height = (measuredWidth.toDouble() / targetAspectRatio.toDouble()).toInt()
+
+        return Size(measuredWidth, height)
     }
 
     fun invalidateView() = updateViewInfo()

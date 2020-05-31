@@ -162,9 +162,10 @@ open class CameraView @JvmOverloads constructor(
         }
 
     /**
-     * Offer the preview size
+     * Offer the preview size. Do notice that the actual preview size depends on this view size
+     * if you want to get an effective size, wait for this view to be properly laid out.
      */
-    val previewSize get() = cameraSource.previewSize
+    val previewSize get() = cameraSource.computePreviewSize()
 
     // [Camera] contract
     override var isTorchEnabled: Boolean
