@@ -12,10 +12,10 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/deep-linking" />
             <option value="$PROJECT_DIR$/react-native-totvs-camera/android" />
-            <option value="$PROJECT_DIR$/totvs-camera" />
             <option value="$PROJECT_DIR$/totvs-camera-app" />
-            <option value="$PROJECT_DIR$/totvs-vision" />
-            <option value="$PROJECT_DIR$/totvs-vision-app" />
+            <option value="$PROJECT_DIR$/totvs-camera-core" />
+            <option value="$PROJECT_DIR$/totvs-camera-view" />
+            <option value="$PROJECT_DIR$/totvs-camera-vision" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

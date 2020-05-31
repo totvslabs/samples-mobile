@@ -5,10 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/deep-linking/deep-linking.iml" filepath="$PROJECT_DIR$/deep-linking/deep-linking.iml" group="samples-mobile/deep-linking" />
       <module fileurl="file://$PROJECT_DIR$/react-native-totvs-camera/android/react-native-totvs-camera.iml" filepath="$PROJECT_DIR$/react-native-totvs-camera/android/react-native-totvs-camera.iml" group="samples-mobile/react-native-totvs-camera" />
       <module fileurl="file://$PROJECT_DIR$/samples-mobile.iml" filepath="$PROJECT_DIR$/samples-mobile.iml" group="samples-mobile" />
-      <module fileurl="file://$PROJECT_DIR$/totvs-camera/totvs-camera.iml" filepath="$PROJECT_DIR$/totvs-camera/totvs-camera.iml" group="samples-mobile/totvs-camera" />
       <module fileurl="file://$PROJECT_DIR$/totvs-camera-app/totvs-camera-app.iml" filepath="$PROJECT_DIR$/totvs-camera-app/totvs-camera-app.iml" group="samples-mobile/totvs-camera-app" />
-      <module fileurl="file://$PROJECT_DIR$/totvs-vision/totvs-vision.iml" filepath="$PROJECT_DIR$/totvs-vision/totvs-vision.iml" group="samples-mobile/totvs-vision" />
-      <module fileurl="file://$PROJECT_DIR$/totvs-vision-app/totvs-vision-app.iml" filepath="$PROJECT_DIR$/totvs-vision-app/totvs-vision-app.iml" group="samples-mobile/totvs-vision-app" />
+      <module fileurl="file://$PROJECT_DIR$/totvs-camera-core/totvs-camera-core.iml" filepath="$PROJECT_DIR$/totvs-camera-core/totvs-camera-core.iml" group="samples-mobile/totvs-camera-core" />
+      <module fileurl="file://$PROJECT_DIR$/totvs-camera-view/totvs-camera-view.iml" filepath="$PROJECT_DIR$/totvs-camera-view/totvs-camera-view.iml" group="samples-mobile/totvs-camera-view" />
+      <module fileurl="file://$PROJECT_DIR$/totvs-camera-vision/totvs-camera-vision.iml" filepath="$PROJECT_DIR$/totvs-camera-vision/totvs-camera-vision.iml" group="samples-mobile/totvs-camera-vision" />
     </modules>
   </component>
 </project>

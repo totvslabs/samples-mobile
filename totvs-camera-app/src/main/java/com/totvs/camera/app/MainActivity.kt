@@ -3,7 +3,6 @@ package com.totvs.camera.app
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Canvas
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,13 +12,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.doOnLayout
-import com.totvs.camera.core.Camera
 import com.totvs.camera.core.CameraFacing
-import com.totvs.camera.core.ImageAnalyzer
-import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.view.CameraView
-import com.totvs.camera.view.GraphicOverlay
 
 private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
@@ -27,7 +21,7 @@ private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 class MainActivity : AppCompatActivity() {
 
     // matching that of [CameraView]
-    private var facing: Int = CameraFacing.BACK
+    private var facing: CameraFacing = CameraFacing.BACK
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {

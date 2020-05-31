@@ -15,7 +15,7 @@ import com.totvs.camera.core.CameraFacing;
  */
 public class JavaMainActivity extends AppCompatActivity {
 
-    private int facing = CameraFacing.BACK;
+    private CameraFacing facing = CameraFacing.BACK;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
