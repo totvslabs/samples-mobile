@@ -30,6 +30,10 @@ import com.totvs.camera.view.lifecycle.ReactLifecycleOwner
 /**
  * A [android.view.View] that display a camera preview and has the [Camera] capabilities.
  *
+ * Apart from offering the capabilities of a [Camera] interface, this view also expose
+ * a [GraphicOverlay] interface so that uses can draw on top of the camera. This is one of the
+ * required interface that a camera view must provide.
+ *
  * This component is lifecycle aware and must be bound a lifecycle in order to render
  * and perform camera's operations. The lifecycle open/close of the camera is handled
  * automatically and is directly tied to the provided lifecycle.
