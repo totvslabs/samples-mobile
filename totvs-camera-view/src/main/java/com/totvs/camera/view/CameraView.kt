@@ -313,6 +313,18 @@ open class CameraView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Add a [GraphicOverlay.Graphic] to [graphicOverlay] view
+     */
+    open fun addOverlayGraphic(graphic: GraphicOverlay.Graphic) =
+        graphicOverlay.add(graphic)
+
+    /**
+     * Remove a [GraphicOverlay.Graphic] from [graphicOverlay] view
+     */
+    open fun removeOverlayGraphic(graphic: GraphicOverlay.Graphic) =
+        graphicOverlay.remove(graphic)
+
     // Bridge lifecycle event listeners
     override fun onHostResume() = ReactLifecycleOwner.onHostResume()
     override fun onHostPause() = ReactLifecycleOwner.onHostPause()
