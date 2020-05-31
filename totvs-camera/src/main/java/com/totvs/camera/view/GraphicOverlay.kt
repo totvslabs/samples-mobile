@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroupOverlay
 import androidx.annotation.GuardedBy
 import com.totvs.camera.core.CameraFacing
 
@@ -41,6 +42,7 @@ class GraphicOverlay @JvmOverloads constructor(
             remove(graphic)
             add(graphic)
         }
+        graphic.onAttached(this)
         invalidate()
     }
 
@@ -63,7 +65,12 @@ class GraphicOverlay @JvmOverloads constructor(
         graphics.forEach { it.onDraw(canvas) }
     }
 
-    abstract class Graphic(protected val overlay: GraphicOverlay) {
+    abstract class Graphic {
+        protected lateinit var overlay: GraphicOverlay
+
+        fun onAttached(overlay: GraphicOverlay) {
+            this.overlay = overlay
+        }
         /**
          * Callback to draw the graphic on the [canvas]
          */

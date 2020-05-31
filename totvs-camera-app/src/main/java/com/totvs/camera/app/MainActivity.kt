@@ -3,6 +3,7 @@ package com.totvs.camera.app
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Canvas
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.core.ImageAnalyzer
 import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.view.CameraView
+import com.totvs.camera.view.GraphicOverlay
 
 private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
@@ -34,14 +36,14 @@ class MainActivity : AppCompatActivity() {
         if (!hasPermissions(this)) {
             requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
         }
-        
+
         addCameraControls()
     }
 
     private fun addCameraControls() {
         val container = findViewById<ConstraintLayout>(R.id.camera_container)
 
-        val camera = container.findViewById<CameraView>(R.id.camera_view) as Camera
+        val camera = container.findViewById<CameraView>(R.id.camera_view)
 
         // delete them if already attached
         findViewById<ConstraintLayout>(R.id.camera_ui_container)?.let {
