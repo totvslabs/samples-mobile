@@ -1,6 +1,6 @@
 package com.totvs.camera.annotations
 
-import com.totvs.camera.utils.CameraFacing
+import com.totvs.camera.core.CameraFacing
 
 /**
  * Possible values for properties annotated with this annotation are:
