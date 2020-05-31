@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import com.totvs.camera.core.Camera
 import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.core.ImageAnalyzer
