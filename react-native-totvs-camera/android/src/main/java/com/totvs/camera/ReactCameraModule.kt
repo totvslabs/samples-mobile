@@ -8,11 +8,12 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.uimanager.NativeViewHierarchyManager
 import com.facebook.react.uimanager.UIManagerModule
-import com.totvs.camera.annotations.LensFacing
 import com.totvs.camera.core.Camera
 import com.totvs.camera.core.OutputFileOptions
-import com.totvs.camera.utils.ExportableConstant
+import com.totvs.camera.core.annotations.LensFacing
 import com.totvs.camera.view.CameraView
+import com.totvs.camera.view.core.ExportableConstant
+import com.totvs.camera.view.toCameraFacing
 
 
 /**
@@ -148,7 +149,7 @@ public class ReactCameraModule(
         viewTag: Int,
         promise: Promise
     ) = promise.withCamera(viewTag) {
-        this.facing = facing
+        this.facing = facing.toCameraFacing
         true
     }
 

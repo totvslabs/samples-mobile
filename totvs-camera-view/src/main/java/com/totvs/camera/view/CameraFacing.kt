@@ -6,7 +6,7 @@ import com.totvs.camera.core.CameraFacing
 /**
  * Map a [CameraFacing] to a [CameraSelector.LensFacing]
  */
-internal val CameraFacing.toCameraXFacing
+val CameraFacing.toInt
     get() = if (this == CameraFacing.FRONT) {
         CameraSelector.LENS_FACING_FRONT
     } else {
@@ -16,7 +16,7 @@ internal val CameraFacing.toCameraXFacing
 /**
  * Map from a [CameraSelector.LensFacing] to a [CameraFacing]
  */
-internal val Int.fromCameraXFacing
+val Int.toCameraFacing
     get() = if (this == CameraSelector.LENS_FACING_FRONT) {
         CameraFacing.FRONT
     } else {

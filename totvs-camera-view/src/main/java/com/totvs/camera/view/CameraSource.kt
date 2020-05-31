@@ -231,7 +231,7 @@ internal class CameraSource(private val view: CameraView) {
 
         val selector = CameraSelector
             .Builder()
-            .requireLensFacing(facing.toCameraXFacing)
+            .requireLensFacing(facing.toInt)
             .build()
 
         val useCases = mutableListOf(preview, capture).apply {

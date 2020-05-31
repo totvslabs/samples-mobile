@@ -4,10 +4,11 @@ import androidx.annotation.FloatRange
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.totvs.camera.annotations.LensFacing
-import com.totvs.camera.events.Event
-import com.totvs.camera.utils.CameraFacing
+import com.totvs.camera.core.CameraFacing
+import com.totvs.camera.core.annotations.LensFacing
 import com.totvs.camera.view.CameraView
+import com.totvs.camera.view.events.Event
+import com.totvs.camera.view.toCameraFacing
 
 /**
  * [CameraView] react native manager
@@ -43,9 +44,9 @@ class ReactCameraManager : ViewGroupManager<CameraView>() {
     /**
      * Set the camera opening facing
      */
-    @ReactProp(name = "facing", defaultInt = CameraFacing.BACK)
+    @ReactProp(name = "facing")
     fun setFacing(cameraView: CameraView, @LensFacing facing: Int) {
-        cameraView.facing = facing
+        cameraView.facing = facing.toCameraFacing
     }
 
     /**

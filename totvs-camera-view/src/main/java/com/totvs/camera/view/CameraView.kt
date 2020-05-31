@@ -198,7 +198,7 @@ open class CameraView @JvmOverloads constructor(
     override fun onSaveInstanceState(): Parcelable? {
         super.onSaveInstanceState()
         return Bundle().apply {
-            putInt(EXTRA_CAMERA_FACING, facing.toCameraXFacing)
+            putInt(EXTRA_CAMERA_FACING, facing.toInt)
         }
     }
 
@@ -207,8 +207,8 @@ open class CameraView @JvmOverloads constructor(
         if (state is Bundle) {
             facing = state.getInt(
                 EXTRA_CAMERA_FACING,
-                CameraFacing.BACK.toCameraXFacing
-            ).fromCameraXFacing
+                CameraFacing.BACK.toInt
+            ).toCameraFacing
         } else {
             super.onRestoreInstanceState(state)
         }
