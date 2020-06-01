@@ -2,6 +2,8 @@ package com.totvs.camera.vision.barcode
 
 import android.os.SystemClock
 import android.util.Log
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
@@ -15,6 +17,7 @@ import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.core.VisionBarcodeFormat
 import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
+import java.util.concurrent.Executor
 
 /**
  * Detector dedicated to identity barcode. This detector is a _Single emission_ detector.
@@ -36,7 +39,7 @@ class BarcodeDetector(
         addOnSuccessListener ...
     """
     )
-    override fun detect(image: ImageProxy, onDetected: (BarcodeObject) -> Unit) {
+    override fun detect(executor: Executor, image: ImageProxy, onDetected: (BarcodeObject) -> Unit) {
         if (image.image == null) {
             return onDetected(NullBarcodeObject)
         }
@@ -52,17 +55,17 @@ class BarcodeDetector(
         }
 
         detector.detectInImage(visionImage)
-            .addOnSuccessListener { barcodes ->
+            .addOnSuccessListener(executor, OnSuccessListener { barcodes ->
                 // chose the first one.
                 onDetected(
                     if (barcodes.isEmpty()) NullBarcodeObject else mapToBarcodeObject(
                         selectBarcode(barcodes)
                     )
                 )
-            }
-            .addOnFailureListener {
+            })
+            .addOnFailureListener(executor, OnFailureListener {
                 onDetected(NullBarcodeObject)
-            }
+            })
     }
 
     /**

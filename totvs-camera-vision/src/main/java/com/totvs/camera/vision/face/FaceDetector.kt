@@ -1,6 +1,8 @@
 package com.totvs.camera.vision.face
 
 import android.util.Log
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
@@ -13,6 +15,7 @@ import com.totvs.camera.vision.VisionDetector
 import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
+import java.util.concurrent.Executor
 
 /**
  * Detector dedicated to identity faces. This detector is a _Single emission_ detector.
@@ -40,7 +43,7 @@ open class FaceDetector(
         addOnSuccessListener ...
     """
     )
-    override fun detect(image: ImageProxy, onDetected: (FaceObject) -> Unit) {
+    override fun detect(executor: Executor, image: ImageProxy, onDetected: (FaceObject) -> Unit) {
         if (null == image.image) {
             return onDetected(NullFaceObject)
         }
@@ -57,17 +60,17 @@ open class FaceDetector(
         }
 
         detector.detectInImage(visionImage)
-            .addOnSuccessListener { faces ->
+            .addOnSuccessListener(executor, OnSuccessListener { faces ->
                 // to chose the best face.
                 onDetected(
                     if (faces.isEmpty()) NullFaceObject else mapToFaceObject(
                         selectFace(faces)
                     )
                 )
-            }
-            .addOnFailureListener {
+            })
+            .addOnFailureListener(executor, OnFailureListener {
                 onDetected(NullFaceObject)
-            }
+            })
     }
 
     /**

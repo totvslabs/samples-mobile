@@ -16,6 +16,7 @@ import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.utils.Images
 import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
+import java.util.concurrent.Executor
 
 /**
  * Detector dedicated to identity faces. This detector is a _Single emission_ detector.
@@ -39,7 +40,7 @@ class FastFaceDetector(
     private val selectFace: SelectionStrategy<Face> = MOST_PROMINENT
 ) : AbstractVisionDetector<FaceObject>(FastFaceDetector) {
 
-    override fun detect(image: ImageProxy, onDetected: (FaceObject) -> Unit) {
+    override fun detect(executor: Executor, image: ImageProxy, onDetected: (FaceObject) -> Unit) {
         if (image.image == null) {
             return onDetected(NullFaceObject)
         }
@@ -57,11 +58,13 @@ class FastFaceDetector(
                 .build()
         }
 
-        val faces = getDetector(context).detect(frame)
-        if (faces.isEmpty()) {
-            onDetected(NullFaceObject)
-        } else {
-            onDetected(FaceObject())
+        executor.execute {
+            val faces = getDetector(context).detect(frame)
+            if (faces.isEmpty()) {
+                onDetected(NullFaceObject)
+            } else {
+                onDetected(FaceObject())
+            }
         }
     }
 

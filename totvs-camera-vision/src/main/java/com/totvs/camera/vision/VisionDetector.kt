@@ -6,6 +6,7 @@ import com.totvs.camera.vision.face.FastFaceDetector
 import com.totvs.camera.vision.barcode.BarcodeDetector
 import com.totvs.camera.core.ImageAnalyzer
 import com.totvs.camera.vision.utils.exclusiveUse
+import java.util.concurrent.Executor
 
 /**
  * Interface for detectors. The nature of a detectors can be of _Single emission_ or
@@ -38,7 +39,7 @@ interface VisionDetector<T : VisionObject> {
     /**
      * Run detection on [image] and report the result back on [onDetected]
      */
-    fun detect(image: ImageProxy, onDetected: (T) -> Unit)
+    fun detect(executor: Executor, image: ImageProxy, onDetected: (T) -> Unit)
 
     /**
      * Detector key

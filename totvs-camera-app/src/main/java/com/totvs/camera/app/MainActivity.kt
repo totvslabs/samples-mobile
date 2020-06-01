@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         if (!hasPermissions(this)) {
             requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
         }
-        installDetector()
+        installAnalyzer()
         addCameraControls()
     }
 
@@ -93,14 +93,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun installDetector() {
+    private fun installAnalyzer() {
         val camera = findViewById<CameraView>(R.id.camera_view)
 
         analyzer.detections
             .filterIsInstance<FaceObject>()
             .filter { it != NullFaceObject }
             .connect {
-                Log.e("**", "Face receiving: $it - isnull=${it == NullFaceObject}")
+                Log.e("**", "Face receiving: $it - ${Thread.currentThread().name}")
             }
 
         analyzer.detections

@@ -115,12 +115,12 @@ open class DetectionAnalyzer(
                 detectors.forEach {
                     executor.execute {
                         runCatching {
-                            it.detector.detect(image) { value ->
+                            it.detector.detect(executor, image) { value ->
                                 latch.countDown()
                                 post(value) // let's post the detected value to the stream
                             }
                         }.exceptionOrNull()?.let { ex -> // if the detector failed for some reason
-                            Log.e(TAG, "Detector ${it.detector.key} failed", ex)
+                            Log.e(TAG, "Detector ${it.detector} failed", ex)
                             latch.countDown()
                         }
                     }
