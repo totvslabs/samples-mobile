@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.totvs.camera.core.CameraFacing
+import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.view.CameraView
 import com.totvs.camera.vision.DetectionAnalyzer
 import com.totvs.camera.vision.barcode.BarcodeDetector
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 //            FaceDetector(),
             BarcodeDetector()
         ).apply {
-//            disable(FastFaceDetector)
+            disable(FastFaceDetector)
         }
     }
 
@@ -78,8 +79,8 @@ class MainActivity : AppCompatActivity() {
         val controls = View.inflate(this, R.layout.camera_ui_controls, container)
 
         controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
-            camera.takePicture { image, ex ->
-                Log.e("**", "file saved")
+            camera.takePicture(OutputFileOptions.NULL) { file, ex ->
+                Log.e("**", "file saved: ${file?.absolutePath}")
             }
         }
 
