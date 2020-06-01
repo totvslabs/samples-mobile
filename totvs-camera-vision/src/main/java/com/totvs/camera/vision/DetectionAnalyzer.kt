@@ -43,6 +43,7 @@ open class DetectionAnalyzer(
     private val executor: ExecutorService,
     vararg detectors: VisionDetector<*>
 ) : ImageAnalyzer {
+
     /**
      * Registry of all detectors
      */
@@ -119,7 +120,7 @@ open class DetectionAnalyzer(
             try {
                 latch.await()
             } catch (ex: Exception) {
-                Log.e(TAG, "Await on detectors interrupted", ex)
+                Log.e(TAG, "Closing detectors")
             }
             // all detectors are done, let's set to analyze more images
             isBusy.set(false)

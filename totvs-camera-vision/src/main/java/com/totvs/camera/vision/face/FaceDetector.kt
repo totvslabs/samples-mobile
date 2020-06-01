@@ -1,16 +1,16 @@
 package com.totvs.camera.vision.face
 
+import android.os.SystemClock
+import android.util.Log
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.*
 import com.totvs.camera.core.ImageProxy
-import com.totvs.camera.core.annotations.NeedsProfiling
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
 import com.totvs.camera.vision.core.SelectionStrategy
-import com.totvs.camera.vision.face.FaceSelection.MOST_PROMINENT
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
 
 /**
@@ -25,17 +25,21 @@ import com.totvs.camera.vision.utils.toFirebaseVisionRotation
  *
  * As-is this detector keeps a singleton of a high-accuracy detector.
  *
+ * This detector relies on the new Firebase detection API.
+ *
  * @see [VisionDetector]
  */
 open class FaceDetector(
     private val selectFace: SelectionStrategy<FirebaseVisionFace> = MOST_PROMINENT
 ) : AbstractVisionDetector<FaceObject>(FaceDetector) {
 
-    @NeedsProfiling(what = "We need to profile how expensive is to create a face detector")
     override fun detect(image: ImageProxy, onDetected: (FaceObject) -> Unit) {
+        val start = SystemClock.elapsedRealtime()
+
         if (null == image.image) {
             return onDetected(NullFaceObject)
         }
+
         val detector = FirebaseVision.getInstance().getVisionFaceDetector(getDetectorOptions())
 
         val visionImage = FirebaseVisionImage.fromMediaImage(
@@ -45,10 +49,18 @@ open class FaceDetector(
 
         detector.detectInImage(visionImage)
             .addOnSuccessListener { faces ->
+                val end = SystemClock.elapsedRealtime()
+
+                if (faces.isNotEmpty())
+                    Log.e("**", "face detection spent: ${(end - start.toDouble()) / 1000.0} sec")
                 // we close the used image: MUST DO
                 closeImage(image)
                 // to chose the best face.
-                onDetected(mapToFaceObject(selectFace(faces)))
+                onDetected(
+                    if (faces.isEmpty()) NullFaceObject else mapToFaceObject(
+                        selectFace(faces)
+                    )
+                )
             }
             .addOnFailureListener {
                 // we close the used image: MUST DO
@@ -57,6 +69,7 @@ open class FaceDetector(
                 onDetected(NullFaceObject)
             }
     }
+
     /**
      * Map the firebase vision object to face object
      */
@@ -70,11 +83,17 @@ open class FaceDetector(
     open fun getDetectorOptions(): FirebaseVisionFaceDetectorOptions = highAccuracyOptions()
 
     companion object : VisionDetector.Key<FaceDetector> {
-        private fun highAccuracyOptions(): FirebaseVisionFaceDetectorOptions =
-            FirebaseVisionFaceDetectorOptions.Builder()
-                .setClassificationMode(ALL_CLASSIFICATIONS)
-                .setPerformanceMode(ACCURATE)
-                .setLandmarkMode(ALL_LANDMARKS)
-                .build()
+        private fun highAccuracyOptions(): FirebaseVisionFaceDetectorOptions = Builder()
+            .setClassificationMode(ALL_CLASSIFICATIONS)
+            .setLandmarkMode(ALL_LANDMARKS)
+            .build()
+
+        /**
+         * Strategy for selecting the most prominent face
+         */
+        val MOST_PROMINENT = object : SelectionStrategy<FirebaseVisionFace> {
+            override fun invoke(faces: List<FirebaseVisionFace>): FirebaseVisionFace =
+                faces.first()
+        }
     }
 }

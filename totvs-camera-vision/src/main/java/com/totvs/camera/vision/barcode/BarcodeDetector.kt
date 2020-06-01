@@ -12,7 +12,6 @@ import com.totvs.camera.vision.annotations.BarcodeFormat
 import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.core.VisionBarcodeFormat
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
-import com.totvs.camera.vision.barcode.BarcodeSelection.MOST_PROMINENT
 
 /**
  * Detector dedicated to identity barcode. This detector is a _Single emission_ detector.
@@ -23,7 +22,7 @@ import com.totvs.camera.vision.barcode.BarcodeSelection.MOST_PROMINENT
  * @see [VisionDetector]
  */
 class BarcodeDetector(
-    @BarcodeFormat private val primaryType: Int,
+    @BarcodeFormat private val primaryType: Int = VisionBarcodeFormat.QR_CODE,
     @BarcodeFormat private vararg val types: Int,
     private val selectBarcode: SelectionStrategy<FirebaseVisionBarcode> = MOST_PROMINENT
 ) : AbstractVisionDetector<BarcodeObject>(BarcodeDetector) {
@@ -50,7 +49,11 @@ class BarcodeDetector(
                 // we close the used image: MUST DO
                 closeImage(image)
                 // chose the first one.
-                onDetected(mapToBarcodeObject(selectBarcode(barcodes)))
+                onDetected(
+                    if (barcodes.isEmpty()) NullBarcodeObject else mapToBarcodeObject(
+                        selectBarcode(barcodes)
+                    )
+                )
             }
             .addOnFailureListener {
                 // we close the used image: MUST DO
@@ -88,6 +91,14 @@ class BarcodeDetector(
                     else -> throw IllegalArgumentException("Invalid barcode type $type")
                 }
             }.toIntArray()
+        }
+
+        /**
+         * Strategy for selecting the most prominent barcode
+         */
+        val MOST_PROMINENT = object : SelectionStrategy<FirebaseVisionBarcode> {
+            override fun invoke(barcodes: List<FirebaseVisionBarcode>): FirebaseVisionBarcode =
+                barcodes.first()
         }
     }
 }

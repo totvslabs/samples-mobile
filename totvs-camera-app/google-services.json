@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "634301047201",
+    "firebase_url": "https://totvscameraapp.firebaseio.com",
+    "project_id": "totvscameraapp",
+    "storage_bucket": "totvscameraapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634301047201:android:7aacd19e7bf600db7a2be0",
+        "android_client_info": {
+          "package_name": "com.totvs.camera.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634301047201-02tfh7gaqolf31nhfu4i9qchd5923gji.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTy-6-CQIDCxQkpOvAZl2NFImU70G2QaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634301047201-02tfh7gaqolf31nhfu4i9qchd5923gji.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

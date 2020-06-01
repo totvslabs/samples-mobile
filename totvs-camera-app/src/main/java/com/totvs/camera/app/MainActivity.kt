@@ -14,6 +14,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.view.CameraView
+import com.totvs.camera.vision.DetectionAnalyzer
+import com.totvs.camera.vision.barcode.BarcodeDetector
+import com.totvs.camera.vision.barcode.BarcodeObject
+import com.totvs.camera.vision.face.FaceDetector
+import com.totvs.camera.vision.face.FaceObject
+import com.totvs.camera.vision.face.FastFaceDetector
+import com.totvs.camera.vision.face.NullFaceObject
+import com.totvs.camera.vision.stream.connect
+import com.totvs.camera.vision.stream.filter
+import com.totvs.camera.vision.stream.filterIsInstance
+import java.util.concurrent.Executors
 
 private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
@@ -23,6 +34,16 @@ class MainActivity : AppCompatActivity() {
     // matching that of [CameraView]
     private var facing: CameraFacing = CameraFacing.BACK
 
+    private val executor = Executors.newCachedThreadPool()
+
+    private val analyzer by lazy {
+        DetectionAnalyzer(
+            executor,
+            FastFaceDetector(this),
+            BarcodeDetector()
+        )
+    }
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +52,13 @@ class MainActivity : AppCompatActivity() {
         if (!hasPermissions(this)) {
             requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
         }
-
+        installDetector()
         addCameraControls()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        executor.shutdownNow()
     }
 
     private fun addCameraControls() {
@@ -48,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         val controls = View.inflate(this, R.layout.camera_ui_controls, container)
 
         controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
-            camera.takePicture { file, ex ->
+            camera.takePicture { image, ex ->
                 Log.e("**", "file saved")
             }
         }
@@ -60,9 +86,31 @@ class MainActivity : AppCompatActivity() {
 
         controls.findViewById<ImageButton>(R.id.camera_flash_button).setOnClickListener {
             camera.isTorchEnabled = !camera.isTorchEnabled
-//            camera.zoom(0.5f)
-//            camera.setTargetRotation(90) // under revision
         }
+    }
+
+    private fun installDetector() {
+        val camera = findViewById<CameraView>(R.id.camera_view)
+
+        analyzer.disable(BarcodeDetector)
+//        camera.postDelayed({
+//            analyzer.disable(BarcodeDetector)
+//        }, 10000)
+
+        analyzer.detections
+            .filterIsInstance<FaceObject>()
+            .filter { it != NullFaceObject }
+            .connect {
+                Log.e("**", "Face receiving: $it - isnull=${it == NullFaceObject}")
+            }
+
+        analyzer.detections
+            .filterIsInstance<BarcodeObject>()
+            .connect {
+                Log.e("**", "Barcode object: $it")
+            }
+
+        camera.analyzer = analyzer
     }
 
     companion object {
