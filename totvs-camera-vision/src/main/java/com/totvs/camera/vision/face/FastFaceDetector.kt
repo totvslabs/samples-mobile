@@ -2,6 +2,8 @@ package com.totvs.camera.vision.face
 
 import android.content.Context
 import android.graphics.ImageFormat
+import android.os.SystemClock
+import android.util.Log
 import androidx.core.util.isEmpty
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
@@ -9,8 +11,10 @@ import com.google.android.gms.vision.face.FaceDetector
 import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
+import com.totvs.camera.vision.barcode.BarcodeDetector
 import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.utils.Images
+import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
 
 /**
@@ -39,9 +43,11 @@ class FastFaceDetector(
         if (image.image == null) {
             return onDetected(NullFaceObject)
         }
-
-        image.use {
-            val frame = Frame.Builder()
+        val start = SystemClock.elapsedRealtime()
+        // we require to use this image exclusively and nobody else can read the data until
+        // we're done with it.
+        val frame = image.exclusiveUse {
+            Frame.Builder()
                 .setImageData(
                     Images.YUV_420_888toNV21(image.image!!),
                     image.width,
@@ -50,13 +56,15 @@ class FastFaceDetector(
                 )
                 .setRotation(image.imageInfo.rotationDegrees.toFirebaseVisionRotation())
                 .build()
+        }
 
-            val faces = getDetector(context).detect(frame)
-            if (faces.isEmpty()) {
-                onDetected(NullFaceObject)
-            } else {
-                onDetected(FaceObject())
-            }
+        val faces = getDetector(context).detect(frame)
+        if (faces.isEmpty()) {
+            onDetected(NullFaceObject)
+        } else {
+            val end = SystemClock.elapsedRealtime()
+            Log.e(TAG, "spent: ${(end - start)/1000.0} sec")
+            onDetected(FaceObject())
         }
     }
 
@@ -72,7 +80,15 @@ class FastFaceDetector(
      */
     open fun getDetector(context: Context): FaceDetector = highAccuracyDetector(context)
 
+    /**
+     * Readable name
+     */
+    override fun toString() = TAG
+
     companion object : VisionDetector.Key<FastFaceDetector> {
+
+        private const val TAG = "FastFaceDetector"
+
         private lateinit var detector: FaceDetector
 
         /**

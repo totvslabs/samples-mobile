@@ -67,3 +67,5 @@ fun <T, R> VisionStream<T>.map(mapper: (T) -> R): VisionStream<R> =
     transform { value ->
         send(mapper(value))
     }
+
+

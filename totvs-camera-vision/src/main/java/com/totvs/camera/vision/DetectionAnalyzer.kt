@@ -38,6 +38,8 @@ import java.util.concurrent.atomic.AtomicBoolean
  * one can subclass this analyzer and override [analyze] then the detectors can post
  * a kind of [VisionObject] that pack multiple results and having the new analyzer
  * coordinate the detectors emissions.
+ *
+ * This analyzer closes the [ImageProxy] after all the detectors are done with it.
  */
 open class DetectionAnalyzer(
     private val executor: ExecutorService,
@@ -105,25 +107,32 @@ open class DetectionAnalyzer(
 
     override fun analyze(image: ImageProxy) {
         if (isBusy.compareAndSet(false, true)) {
-            val detectors = registry.values.filter { it.enabled }
-            // let's synchronize the detectors to know when we can analyze another frame
-            val latch = CountDownLatch(detectors.size)
+            image.use {
+                val detectors = registry.values.filter { it.enabled }
+                // let's synchronize the detectors to know when we can analyze another frame
+                val latch = CountDownLatch(detectors.size)
 
-            detectors.forEach {
-                executor.execute {
-                    it.detector.detect(image) { value ->
-                        latch.countDown()
-                        post(value) // let's post the detected value to the stream
+                detectors.forEach {
+                    executor.execute {
+                        runCatching {
+                            it.detector.detect(image) { value ->
+                                latch.countDown()
+                                post(value) // let's post the detected value to the stream
+                            }
+                        }.exceptionOrNull()?.let { ex -> // if the detector failed for some reason
+                            Log.e(TAG, "Detector ${it.detector.key} failed", ex)
+                            latch.countDown()
+                        }
                     }
                 }
+                try {
+                    latch.await()
+                } catch (ex: Exception) {
+                    Log.e(TAG, "Closing detectors")
+                }
+                // all detectors are done, let's set to analyze more images
+                isBusy.set(false)
             }
-            try {
-                latch.await()
-            } catch (ex: Exception) {
-                Log.e(TAG, "Closing detectors")
-            }
-            // all detectors are done, let's set to analyze more images
-            isBusy.set(false)
         }
     }
 

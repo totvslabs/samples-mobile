@@ -1,14 +1,17 @@
 package com.totvs.camera.vision.face
 
+import android.util.Log
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.*
 import com.totvs.camera.core.ImageProxy
+import com.totvs.camera.core.annotations.NeedsProfiling
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
 import com.totvs.camera.vision.core.SelectionStrategy
+import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
 
 /**
@@ -31,6 +34,12 @@ open class FaceDetector(
     private val selectFace: SelectionStrategy<FirebaseVisionFace> = MOST_PROMINENT
 ) : AbstractVisionDetector<FaceObject>(FaceDetector) {
 
+    @NeedsProfiling(
+        what = """
+        We need to check if running these callbacks on the main thread does have an impact.
+        addOnSuccessListener ...
+    """
+    )
     override fun detect(image: ImageProxy, onDetected: (FaceObject) -> Unit) {
         if (null == image.image) {
             return onDetected(NullFaceObject)
@@ -38,15 +47,17 @@ open class FaceDetector(
 
         val detector = FirebaseVision.getInstance().getVisionFaceDetector(getDetectorOptions())
 
-        val visionImage = FirebaseVisionImage.fromMediaImage(
-            image.image!!,
-            image.imageInfo.rotationDegrees.toFirebaseVisionRotation()
-        )
+        // we require to use this image exclusively and nobody else can read the data until
+        // we're done with it.
+        val visionImage = image.exclusiveUse {
+            FirebaseVisionImage.fromMediaImage(
+                image.image!!,
+                image.imageInfo.rotationDegrees.toFirebaseVisionRotation()
+            )
+        }
 
         detector.detectInImage(visionImage)
             .addOnSuccessListener { faces ->
-                // we close the used image: MUST DO
-                closeImage(image)
                 // to chose the best face.
                 onDetected(
                     if (faces.isEmpty()) NullFaceObject else mapToFaceObject(
@@ -55,9 +66,6 @@ open class FaceDetector(
                 )
             }
             .addOnFailureListener {
-                // we close the used image: MUST DO
-                closeImage(image)
-
                 onDetected(NullFaceObject)
             }
     }
@@ -74,7 +82,15 @@ open class FaceDetector(
      */
     open fun getDetectorOptions(): FirebaseVisionFaceDetectorOptions = fastModeOptions()
 
+    /**
+     * Readable name
+     */
+    override fun toString() = TAG
+
     companion object : VisionDetector.Key<FaceDetector> {
+
+        private const val TAG = "FaceDetector"
+
         private fun fastModeOptions(): FirebaseVisionFaceDetectorOptions = Builder()
             .setClassificationMode(ALL_CLASSIFICATIONS)
             .setLandmarkMode(ALL_LANDMARKS)

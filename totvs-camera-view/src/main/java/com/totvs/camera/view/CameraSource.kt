@@ -201,7 +201,7 @@ internal class CameraSource(private val view: CameraView) {
         // adjust preview resolution based on measured size and aspect ratio
         // we set the appropriate preview size
         val previewSize = computePreviewSize().also {
-            Log.e(TAG, "Using size=$it as preview size")
+            Log.e(TAG, "Using preview size=$it")
         }
 
         preview = previewBuilder.apply {

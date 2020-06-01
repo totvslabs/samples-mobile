@@ -17,6 +17,7 @@ import com.totvs.camera.view.CameraView
 import com.totvs.camera.vision.DetectionAnalyzer
 import com.totvs.camera.vision.barcode.BarcodeDetector
 import com.totvs.camera.vision.barcode.BarcodeObject
+import com.totvs.camera.vision.barcode.NullBarcodeObject
 import com.totvs.camera.vision.face.FaceDetector
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.FastFaceDetector
@@ -42,7 +43,9 @@ class MainActivity : AppCompatActivity() {
             FastFaceDetector(this),
 //            FaceDetector(),
             BarcodeDetector()
-        )
+        ).apply {
+//            disable(FastFaceDetector)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -93,12 +96,6 @@ class MainActivity : AppCompatActivity() {
     private fun installDetector() {
         val camera = findViewById<CameraView>(R.id.camera_view)
 
-        analyzer.disable(BarcodeDetector)
-//        camera.postDelayed({
-//            analyzer.disable(BarcodeDetector)
-//        }, 10000)
-
-
         analyzer.detections
             .filterIsInstance<FaceObject>()
             .filter { it != NullFaceObject }
@@ -108,6 +105,7 @@ class MainActivity : AppCompatActivity() {
 
         analyzer.detections
             .filterIsInstance<BarcodeObject>()
+            .filter { it != NullBarcodeObject }
             .connect {
                 Log.e("**", "Barcode object: $it")
             }

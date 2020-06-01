@@ -2,7 +2,10 @@ package com.totvs.camera.vision
 
 import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.vision.face.FaceDetector
+import com.totvs.camera.vision.face.FastFaceDetector
 import com.totvs.camera.vision.barcode.BarcodeDetector
+import com.totvs.camera.core.ImageAnalyzer
+import com.totvs.camera.vision.utils.exclusiveUse
 
 /**
  * Interface for detectors. The nature of a detectors can be of _Single emission_ or
@@ -16,7 +19,15 @@ import com.totvs.camera.vision.barcode.BarcodeDetector
  * Each detector have a prominent selection strategy that determines how the detector
  * select it's most prominent detection.
  *
- * @see [FaceDetector] and [BarcodeDetector]
+ * Is prohibited to a [VisionDetector] to close the [ImageProxy] it works on. It's a responsibility
+ * of an [ImageAnalyzer] to close such images, since the nature of some analyzer might be an
+ * aggregation of multiple detectors.
+ *
+ * [VisionDetector]'s are advised to use [exclusiveUse] extension method on [ImageProxy]
+ * to consume the image they receive and use it to construct the representation of the
+ * data they will ultimately use for detection.
+ *
+ * @see [FaceDetector], [FastFaceDetector] and [BarcodeDetector]
  */
 interface VisionDetector<T : VisionObject> {
     /**
