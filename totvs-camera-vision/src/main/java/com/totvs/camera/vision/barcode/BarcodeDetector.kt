@@ -40,8 +40,6 @@ class BarcodeDetector(
         if (image.image == null) {
             return onDetected(NullBarcodeObject)
         }
-
-        val start = SystemClock.elapsedRealtime()
         val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(getDetectorOptions())
 
         // we require to use this image exclusively and nobody else can read the data until
@@ -55,10 +53,6 @@ class BarcodeDetector(
 
         detector.detectInImage(visionImage)
             .addOnSuccessListener { barcodes ->
-                val end = SystemClock.elapsedRealtime()
-                if (barcodes.isNotEmpty()) {
-                    Log.e(TAG, "spent: ${(end - start)/1000.0} sec")
-                }
                 // chose the first one.
                 onDetected(
                     if (barcodes.isEmpty()) NullBarcodeObject else mapToBarcodeObject(

@@ -43,7 +43,6 @@ class FastFaceDetector(
         if (image.image == null) {
             return onDetected(NullFaceObject)
         }
-        val start = SystemClock.elapsedRealtime()
         // we require to use this image exclusively and nobody else can read the data until
         // we're done with it.
         val frame = image.exclusiveUse {
@@ -62,8 +61,6 @@ class FastFaceDetector(
         if (faces.isEmpty()) {
             onDetected(NullFaceObject)
         } else {
-            val end = SystemClock.elapsedRealtime()
-            Log.e(TAG, "spent: ${(end - start)/1000.0} sec")
             onDetected(FaceObject())
         }
     }
