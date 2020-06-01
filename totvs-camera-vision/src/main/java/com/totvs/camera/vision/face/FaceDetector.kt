@@ -80,10 +80,10 @@ open class FaceDetector(
     /**
      * Get the detector used for this instance of the face detector.
      */
-    open fun getDetectorOptions(): FirebaseVisionFaceDetectorOptions = highAccuracyOptions()
+    open fun getDetectorOptions(): FirebaseVisionFaceDetectorOptions = fastModeOptions()
 
     companion object : VisionDetector.Key<FaceDetector> {
-        private fun highAccuracyOptions(): FirebaseVisionFaceDetectorOptions = Builder()
+        private fun fastModeOptions(): FirebaseVisionFaceDetectorOptions = Builder()
             .setClassificationMode(ALL_CLASSIFICATIONS)
             .setLandmarkMode(ALL_LANDMARKS)
             .build()
