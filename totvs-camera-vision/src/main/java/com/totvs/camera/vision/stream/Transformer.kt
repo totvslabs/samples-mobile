@@ -9,8 +9,8 @@ package com.totvs.camera.vision.stream
  */
 interface Transformer<T, R> {
     /**
-     * Receives [entity] upstream value and must emit values to
+     * Receives [value] upstream value and must emit values to
      * downstream receiver
      */
-    fun transform(entity: T, receiver: VisionReceiver<R>)
+    fun transform(value: T, receiver: VisionReceiver<R>)
 }

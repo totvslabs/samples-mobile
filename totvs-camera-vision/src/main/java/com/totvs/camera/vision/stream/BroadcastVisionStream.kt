@@ -16,8 +16,8 @@ internal class BroadcastVisionStream : VisionStream<VisionObject> {
      * Broadcast to receivers the incoming [VisionObject]
      */
     @Synchronized
-    fun broadcast(entity: VisionObject) {
-        receivers.forEach { it.send(entity) }
+    fun broadcast(value: VisionObject) {
+        receivers.forEach { it.send(value) }
     }
 
     /**

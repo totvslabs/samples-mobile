@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity() {
 //            analyzer.disable(BarcodeDetector)
 //        }, 10000)
 
+
         analyzer.detections
             .filterIsInstance<FaceObject>()
             .filter { it != NullFaceObject }

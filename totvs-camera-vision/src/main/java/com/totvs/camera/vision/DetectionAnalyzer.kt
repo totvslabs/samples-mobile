@@ -99,8 +99,8 @@ open class DetectionAnalyzer(
     /**
      * After detection let's post this object to the stream
      */
-    open fun post(entity: VisionObject) {
-        (detections as BroadcastVisionStream).broadcast(entity)
+    open fun post(value: VisionObject) {
+        (detections as BroadcastVisionStream).broadcast(value)
     }
 
     override fun analyze(image: ImageProxy) {
@@ -111,9 +111,9 @@ open class DetectionAnalyzer(
 
             detectors.forEach {
                 executor.execute {
-                    it.detector.detect(image) { entity ->
+                    it.detector.detect(image) { value ->
                         latch.countDown()
-                        post(entity) // let's post the detected entity to the stream
+                        post(value) // let's post the detected value to the stream
                     }
                 }
             }

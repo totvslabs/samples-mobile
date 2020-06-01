@@ -10,7 +10,7 @@ package com.totvs.camera.vision.stream
  */
 fun <T> VisionStream<T>.connect(block: (T) -> Unit): Connection =
     connect(object : VisionReceiver<T> {
-        override fun send(entity: T) {
-            block(entity)
+        override fun send(value: T) {
+            block(value)
         }
     })
