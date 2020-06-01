@@ -2,8 +2,6 @@ package com.totvs.camera.vision.face
 
 import android.content.Context
 import android.graphics.ImageFormat
-import android.os.SystemClock
-import android.util.Log
 import androidx.core.util.isEmpty
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
@@ -43,8 +41,6 @@ class FastFaceDetector(
         }
 
         image.use {
-            val start = SystemClock.elapsedRealtime()
-
             val frame = Frame.Builder()
                 .setImageData(
                     Images.YUV_420_888toNV21(image.image!!),
@@ -59,8 +55,6 @@ class FastFaceDetector(
             if (faces.isEmpty()) {
                 onDetected(NullFaceObject)
             } else {
-                val end = SystemClock.elapsedRealtime()
-                Log.e("***", "FastDetector spent: ${(end - start.toDouble()) / 1000.0} sec")
                 onDetected(FaceObject())
             }
         }

@@ -1,7 +1,5 @@
 package com.totvs.camera.vision.face
 
-import android.os.SystemClock
-import android.util.Log
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
@@ -34,8 +32,6 @@ open class FaceDetector(
 ) : AbstractVisionDetector<FaceObject>(FaceDetector) {
 
     override fun detect(image: ImageProxy, onDetected: (FaceObject) -> Unit) {
-        val start = SystemClock.elapsedRealtime()
-
         if (null == image.image) {
             return onDetected(NullFaceObject)
         }
@@ -49,10 +45,6 @@ open class FaceDetector(
 
         detector.detectInImage(visionImage)
             .addOnSuccessListener { faces ->
-                val end = SystemClock.elapsedRealtime()
-
-                if (faces.isNotEmpty())
-                    Log.e("**", "face detection spent: ${(end - start.toDouble()) / 1000.0} sec")
                 // we close the used image: MUST DO
                 closeImage(image)
                 // to chose the best face.

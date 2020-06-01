@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         DetectionAnalyzer(
             executor,
             FastFaceDetector(this),
+//            FaceDetector(),
             BarcodeDetector()
         )
     }
