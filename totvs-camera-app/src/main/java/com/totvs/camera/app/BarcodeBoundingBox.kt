@@ -17,13 +17,13 @@ import com.totvs.camera.vision.stream.VisionReceiver
  * Graphic that display a bounding box for a detected barcode
  */
 class BarcodeBoundingBox(
-    private val context: Context
+    context: Context
 ) : GraphicOverlay.Graphic(), VisionReceiver<BarcodeObject> {
 
     // paint properties
     private val padding = context.resources.getDimension(R.dimen.barcode_bounding_box_padding)
-    private val radius  = context.resources.getDimension(R.dimen.barcode_bounding_box_corner_radius)
-    private val stroke  = context.resources.getDimension(R.dimen.barcode_bounding_box_stroke_width)
+    private val radius = context.resources.getDimension(R.dimen.barcode_bounding_box_corner_radius)
+    private val stroke = context.resources.getDimension(R.dimen.barcode_bounding_box_stroke_width)
 
     // painters
     private val strokePaint = Paint().apply {
@@ -46,8 +46,8 @@ class BarcodeBoundingBox(
 
     private fun setBoundingBoxColors() {
         strokePaint.apply {
-            color = Color.WHITE
-            alpha = 155
+            color = Color.RED
+//            alpha = 155
         }
         fillPaint.color = Color.TRANSPARENT
     }
@@ -58,13 +58,10 @@ class BarcodeBoundingBox(
         barcodeObject.boundingBox?.toRectF()?.let { box ->
             canvas.drawRoundRect(box, radius, radius, strokePaint)
             canvas.drawRoundRect(box, radius, radius, fillPaint)
-            Log.e("**", "drawing bounding box")
         }
     }
 
     override fun send(value: BarcodeObject) {
-        Log.e("***", "Receiving barcode objects: ${NullBarcodeObject == value}")
-
         barcodeObject = value
 
         val padding = this.padding.toInt()
@@ -74,9 +71,6 @@ class BarcodeBoundingBox(
             it.top -= padding
             it.bottom += padding
         }
-
-        Log.e("***", "bounding box: ${barcodeObject.boundingBox}")
-
         postInvalidate()
     }
 }

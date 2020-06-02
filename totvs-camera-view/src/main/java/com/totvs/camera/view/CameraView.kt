@@ -125,7 +125,7 @@ open class CameraView @JvmOverloads constructor(
     /** Initialization */
     init {
         addView(previewView, 0)
-        addView(graphicOverlay, 0)
+        addView(graphicOverlay)
         cameraSource = CameraSource(this).apply {
             @Suppress("MissingPermission") bindToLifecycle(lifecycle)
         }

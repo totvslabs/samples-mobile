@@ -105,13 +105,11 @@ class MainActivity : AppCompatActivity() {
     private fun installAnalyzer() {
         val camera = findViewById<CameraView>(R.id.camera_view)
 
-        camera.postDelayed({
-            executor.shutdownNow()
-        }, 2000)
 
-        val barcodeBoundingBox = BarcodeBoundingBox(this).apply {
-            camera.addOverlayGraphic(this)
-        }
+        val barcodeBoundingBox = BarcodeBoundingBox(this)
+            .apply {
+                camera.addOverlayGraphic(this)
+            }
 
         analyzer.detections
             .filterIsInstance<FaceObject>()
