@@ -15,23 +15,31 @@ import androidx.core.content.ContextCompat
 import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.view.CameraView
+import com.totvs.camera.view.core.CameraViewModuleOptions
 import com.totvs.camera.vision.DetectionAnalyzer
 import com.totvs.camera.vision.barcode.BarcodeDetector
 import com.totvs.camera.vision.barcode.BarcodeObject
-import com.totvs.camera.vision.barcode.NullBarcodeObject
-import com.totvs.camera.vision.face.FaceDetector
+import com.totvs.camera.vision.core.VisionModuleOptions
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.FastFaceDetector
 import com.totvs.camera.vision.face.NullFaceObject
 import com.totvs.camera.vision.stream.connect
 import com.totvs.camera.vision.stream.filter
 import com.totvs.camera.vision.stream.filterIsInstance
+import com.totvs.camera.vision.stream.sendOn
 import java.util.concurrent.Executors
 
 private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 
 class MainActivity : AppCompatActivity() {
+
+    init {
+        // enable debug mode for camera view module
+        CameraViewModuleOptions.DEBUG_ENABLED = true
+        // enable debug mode for vision module
+        VisionModuleOptions.DEBUG_ENABLED = true
+    }
 
     // matching that of [CameraView]
     private var facing: CameraFacing = CameraFacing.BACK
@@ -97,19 +105,26 @@ class MainActivity : AppCompatActivity() {
     private fun installAnalyzer() {
         val camera = findViewById<CameraView>(R.id.camera_view)
 
+        camera.postDelayed({
+            executor.shutdownNow()
+        }, 2000)
+
+        val barcodeBoundingBox = BarcodeBoundingBox(this).apply {
+            camera.addOverlayGraphic(this)
+        }
+
         analyzer.detections
             .filterIsInstance<FaceObject>()
             .filter { it != NullFaceObject }
+            .sendOn(ContextCompat.getMainExecutor(this))
             .connect {
                 Log.e("**", "Face receiving: $it - ${Thread.currentThread().name}")
             }
 
         analyzer.detections
             .filterIsInstance<BarcodeObject>()
-            .filter { it != NullBarcodeObject }
-            .connect {
-                Log.e("**", "Barcode object: $it")
-            }
+            .sendOn(ContextCompat.getMainExecutor(this))
+            .connect(barcodeBoundingBox)
 
         camera.analyzer = analyzer
     }

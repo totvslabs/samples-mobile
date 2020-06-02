@@ -22,4 +22,8 @@
     <dimen name="rect_button_width">80dp</dimen>
     <dimen name="rect_button_height">24dp</dimen>
     <dimen name="shutter_button_margin">80dp</dimen>
+
+    <dimen name="barcode_bounding_box_stroke_width">1dp</dimen>
+    <dimen name="barcode_bounding_box_corner_radius">8dp</dimen>
+    <dimen name="barcode_bounding_box_padding">8dp</dimen>
 </resources>

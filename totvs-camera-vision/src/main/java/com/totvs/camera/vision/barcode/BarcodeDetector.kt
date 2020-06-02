@@ -1,9 +1,6 @@
 package com.totvs.camera.vision.barcode
 
-import android.os.SystemClock
 import android.util.Log
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
@@ -15,6 +12,10 @@ import com.totvs.camera.vision.VisionDetector
 import com.totvs.camera.vision.annotations.BarcodeFormat
 import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.core.VisionBarcodeFormat
+import com.totvs.camera.vision.core.VisionModuleOptions.DEBUG_ENABLED
+import com.totvs.camera.vision.face.FaceDetector
+import com.totvs.camera.vision.face.FaceObject
+import com.totvs.camera.vision.face.NullFaceObject
 import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
 import java.util.concurrent.Executor
@@ -39,7 +40,11 @@ class BarcodeDetector(
         addOnSuccessListener ...
     """
     )
-    override fun detect(executor: Executor, image: ImageProxy, onDetected: (BarcodeObject) -> Unit) {
+    override fun detect(
+        executor: Executor,
+        image: ImageProxy,
+        onDetected: (BarcodeObject) -> Unit
+    ) {
         if (image.image == null) {
             return onDetected(NullBarcodeObject)
         }
@@ -54,18 +59,23 @@ class BarcodeDetector(
             )
         }
 
+        // we perform this manual execution instead of passing the executor to Firebase
+        // because if the executor is shut down before this callback is called,
+        // Firebase will popup the exception, here instead we log it
+
         detector.detectInImage(visionImage)
-            .addOnSuccessListener(executor, OnSuccessListener { barcodes ->
-                // chose the first one.
-                onDetected(
-                    if (barcodes.isEmpty()) NullBarcodeObject else mapToBarcodeObject(
-                        selectBarcode(barcodes)
+            .addOnSuccessListener { barcodes ->
+                executor.executeCatching(onDetected) {
+                    onDetected(
+                        if (barcodes.isEmpty()) NullBarcodeObject else mapToBarcodeObject(
+                            selectBarcode(barcodes)
+                        )
                     )
-                )
-            })
-            .addOnFailureListener(executor, OnFailureListener {
-                onDetected(NullBarcodeObject)
-            })
+                }
+            }
+            .addOnFailureListener {
+                executor.executeCatching(onDetected) { onDetected(NullBarcodeObject) }
+            }
     }
 
     /**
@@ -88,6 +98,21 @@ class BarcodeDetector(
      * Readable name
      */
     override fun toString() = TAG
+
+    /**
+     * Utility method to run safely on the executor a blocks
+     */
+    protected fun Executor.executeCatching(
+        onDetected: (BarcodeObject) -> Unit,
+        block: () -> Unit
+    ) = this.runCatching {
+        execute(block)
+    }.exceptionOrNull()?.let { ex ->
+        if (DEBUG_ENABLED) {
+            Log.e(TAG, "", ex)
+        }
+        onDetected(NullBarcodeObject)
+    }
 
     companion object : VisionDetector.Key<BarcodeDetector> {
         private const val TAG = "BarcodeDetector"

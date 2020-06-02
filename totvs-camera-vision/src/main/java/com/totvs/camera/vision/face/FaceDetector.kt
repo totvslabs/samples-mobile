@@ -1,8 +1,6 @@
 package com.totvs.camera.vision.face
 
 import android.util.Log
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
@@ -13,6 +11,7 @@ import com.totvs.camera.core.annotations.NeedsProfiling
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
 import com.totvs.camera.vision.core.SelectionStrategy
+import com.totvs.camera.vision.core.VisionModuleOptions.DEBUG_ENABLED
 import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
 import java.util.concurrent.Executor
@@ -59,18 +58,24 @@ open class FaceDetector(
             )
         }
 
+        // we perform manual executor execution instead of passing the executor to Firebase
+        // because if the executor is shut down before this callback is called,
+        // Firebase will popup the exception, here instead we log it
+
         detector.detectInImage(visionImage)
-            .addOnSuccessListener(executor, OnSuccessListener { faces ->
+            .addOnSuccessListener { faces ->
                 // to chose the best face.
-                onDetected(
-                    if (faces.isEmpty()) NullFaceObject else mapToFaceObject(
-                        selectFace(faces)
+                executor.executeCatching(onDetected) {
+                    onDetected(
+                        if (faces.isEmpty()) NullFaceObject else mapToFaceObject(
+                            selectFace(faces)
+                        )
                     )
-                )
-            })
-            .addOnFailureListener(executor, OnFailureListener {
-                onDetected(NullFaceObject)
-            })
+                }
+            }
+            .addOnFailureListener {
+                executor.executeCatching(onDetected) { onDetected(NullFaceObject) }
+            }
     }
 
     /**
@@ -89,6 +94,21 @@ open class FaceDetector(
      * Readable name
      */
     override fun toString() = TAG
+
+    /**
+     * Utility method to run safely on the executor a blocks
+     */
+    protected fun Executor.executeCatching(
+        onDetected: (FaceObject) -> Unit,
+        block: () -> Unit
+    ) = this.runCatching {
+        execute(block)
+    }.exceptionOrNull()?.let { ex ->
+        if (DEBUG_ENABLED) {
+            Log.e(TAG, "", ex)
+        }
+        onDetected(NullFaceObject)
+    }
 
     companion object : VisionDetector.Key<FaceDetector> {
 

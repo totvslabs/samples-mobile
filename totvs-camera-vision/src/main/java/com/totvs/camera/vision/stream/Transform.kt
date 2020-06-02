@@ -1,5 +1,6 @@
 package com.totvs.camera.vision.stream
 
+import java.util.concurrent.Executor
 import kotlin.experimental.ExperimentalTypeInference
 
 /**
@@ -68,4 +69,17 @@ fun <T, R> VisionStream<T>.map(mapper: (T) -> R): VisionStream<R> =
         send(mapper(value))
     }
 
+
+/**
+ * Returns an stream that send values received from upstream in the provided [executor].
+ *
+ * This allows us to, e.g have an upstream that send it's values under a worker thread
+ * but the downstream send's will be executed on [executor]. we can use this to have
+ * send operations be performed under the main thread.
+ */
+fun <T> VisionStream<T>.sendOn(executor: Executor): VisionStream<T> = transform { value ->
+    executor.execute {
+        send(value)
+    }
+}
 

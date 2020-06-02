@@ -2,7 +2,6 @@ package com.totvs.camera.vision.face
 
 import android.content.Context
 import android.graphics.ImageFormat
-import android.os.SystemClock
 import android.util.Log
 import androidx.core.util.isEmpty
 import com.google.android.gms.vision.Frame
@@ -11,8 +10,8 @@ import com.google.android.gms.vision.face.FaceDetector
 import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
-import com.totvs.camera.vision.barcode.BarcodeDetector
 import com.totvs.camera.vision.core.SelectionStrategy
+import com.totvs.camera.vision.core.VisionModuleOptions.DEBUG_ENABLED
 import com.totvs.camera.vision.utils.Images
 import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.camera.vision.utils.toFirebaseVisionRotation
@@ -58,7 +57,7 @@ class FastFaceDetector(
                 .build()
         }
 
-        executor.execute {
+        executor.executeCatching(onDetected) {
             val faces = getDetector(context).detect(frame)
             if (faces.isEmpty()) {
                 onDetected(NullFaceObject)
@@ -84,6 +83,21 @@ class FastFaceDetector(
      * Readable name
      */
     override fun toString() = TAG
+
+    /**
+     * Utility method to run safely on the executor a blocks
+     */
+    protected fun Executor.executeCatching(
+        onDetected: (FaceObject) -> Unit,
+        block: () -> Unit
+    ) = this.runCatching {
+        execute(block)
+    }.exceptionOrNull()?.let { ex ->
+        if (DEBUG_ENABLED) {
+            Log.e(TAG, "", ex)
+        }
+        onDetected(NullFaceObject)
+    }
 
     companion object : VisionDetector.Key<FastFaceDetector> {
 

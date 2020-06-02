@@ -20,11 +20,13 @@ import java.util.concurrent.Executor
  * Each detector have a prominent selection strategy that determines how the detector
  * select it's most prominent detection.
  *
- * Is prohibited to a [VisionDetector] to close the [ImageProxy] it works on. It's a responsibility
+ * Contract that every detector must meet
+ *
+ * 1. Is prohibited to a [VisionDetector] to close the [ImageProxy] it works on. It's a responsibility
  * of an [ImageAnalyzer] to close such images, since the nature of some analyzer might be an
  * aggregation of multiple detectors.
  *
- * [VisionDetector]'s are advised to use [exclusiveUse] extension method on [ImageProxy]
+ * 2. [VisionDetector]'s are advised to use [exclusiveUse] extension method on [ImageProxy]
  * to consume the image they receive and use it to construct the representation of the
  * data they will ultimately use for detection.
  *

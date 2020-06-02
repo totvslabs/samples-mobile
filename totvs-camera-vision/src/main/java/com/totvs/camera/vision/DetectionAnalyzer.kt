@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.GuardedBy
 import com.totvs.camera.core.ImageAnalyzer
 import com.totvs.camera.core.ImageProxy
+import com.totvs.camera.vision.core.VisionModuleOptions.DEBUG_ENABLED
 import com.totvs.camera.vision.stream.BroadcastVisionStream
 import com.totvs.camera.vision.stream.VisionStream
 import java.util.concurrent.CountDownLatch
@@ -29,7 +30,11 @@ import java.util.concurrent.atomic.AtomicBoolean
  * executor will halt until previous detection finishes. It's highly recommended that the
  * executor capacity is at least as the number of detectors passed to this analyzer.
  *
- * By nature this analyzer expect the detectors to emit only one detection, thus is a
+ * This analyzer closes the [ImageProxy] after all the detectors are done with it.
+ *
+ * Contract [VisionDetector] on this analyzer must meet:
+ *
+ * 1. By nature this analyzer expect the detectors to emit only one detection, thus is a
  * requirement on the detector to identify the appropriate measure to detect the most
  * prominent detection and report it. The behavior is undefined if multiple detections
  * are emitted by a single detection phase.
@@ -39,7 +44,9 @@ import java.util.concurrent.atomic.AtomicBoolean
  * a kind of [VisionObject] that pack multiple results and having the new analyzer
  * coordinate the detectors emissions.
  *
- * This analyzer closes the [ImageProxy] after all the detectors are done with it.
+ * 2. [VisionDetector] on this analyzer are required to call [onDetected] callback so the
+ * analyzer trigger that they are done performing their work. If this is not performed
+ * this analyzer will lock until the [executor] then is shut down.
  */
 open class DetectionAnalyzer(
     private val executor: ExecutorService,
@@ -106,6 +113,19 @@ open class DetectionAnalyzer(
     }
 
     override fun analyze(image: ImageProxy) {
+        if (executor.isShutdown) {
+            Log.e(TAG, "Abnormal state. Executor is shutDown")
+            /*
+             * here we might do image.use { } so we close the image and the analyzer camera
+             * keeps sending us images, but intentionally we will not do that to apply
+             * whatever rule the sender applies when the image is not released.
+             * we might be halting the preview sender and stopping from using non used
+             * resources.
+             */
+//            image.use { }
+            return
+        }
+
         if (isBusy.compareAndSet(false, true)) {
             image.use {
                 val detectors = registry.values.filter { it.enabled }
@@ -120,7 +140,9 @@ open class DetectionAnalyzer(
                                 post(value) // let's post the detected value to the stream
                             }
                         }.exceptionOrNull()?.let { ex -> // if the detector failed for some reason
-                            Log.e(TAG, "Detector ${it.detector} failed", ex)
+                            if (DEBUG_ENABLED) {
+                                Log.e(TAG, "Detector ${it.detector} failed", ex)
+                            }
                             latch.countDown()
                         }
                     }
@@ -128,7 +150,9 @@ open class DetectionAnalyzer(
                 try {
                     latch.await()
                 } catch (ex: Exception) {
-                    Log.e(TAG, "Closing detectors")
+                    if (DEBUG_ENABLED) {
+                        Log.e(TAG, "Closing detectors")
+                    }
                 }
                 // all detectors are done, let's set to analyze more images
                 isBusy.set(false)

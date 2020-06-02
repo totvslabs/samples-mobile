@@ -4,8 +4,11 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.CallSuper
 import androidx.annotation.GuardedBy
+import androidx.annotation.MainThread
 import com.totvs.camera.core.CameraFacing
+import com.totvs.camera.view.GraphicOverlay.Graphic
 
 /**
  * Overlay view rendered on top of the [CameraView] so we can offer the ability to draw on
@@ -29,7 +32,7 @@ class GraphicOverlay @JvmOverloads internal constructor(
      * We compute the scale factors by which we need to scale point from the preview to this
      * overlay view coordinate system.
      */
-    private val scaleFactorX: Float get() = host.width  / host.previewSize.width.toFloat()
+    private val scaleFactorX: Float get() = host.width / host.previewSize.width.toFloat()
     private val scaleFactorY: Float get() = host.height / host.previewSize.height.toFloat()
 
     @GuardedBy("this")
@@ -71,19 +74,24 @@ class GraphicOverlay @JvmOverloads internal constructor(
     abstract class Graphic {
         protected lateinit var overlay: GraphicOverlay
 
-        fun onAttached(overlay: GraphicOverlay) {
+        @CallSuper
+        open fun onAttached(overlay: GraphicOverlay) {
             this.overlay = overlay
         }
 
         /**
          * Callback to draw the graphic on the [canvas]
          */
+        @MainThread
         abstract fun onDraw(canvas: Canvas)
 
         /**
          * Post invalidate command onto [GraphicOverlay]
          */
         fun postInvalidate() {
+            if (!::overlay.isInitialized)
+                throw IllegalStateException("This graphic hasn't been attached to any GraphicOverlay")
+
             overlay.postInvalidate()
         }
 
