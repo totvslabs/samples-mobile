@@ -7,7 +7,6 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.*
 import com.totvs.camera.core.ImageProxy
-import com.totvs.camera.core.annotations.NeedsProfiling
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
 import com.totvs.camera.vision.core.SelectionStrategy
@@ -36,12 +35,6 @@ open class FaceDetector(
     private val selectFace: SelectionStrategy<FirebaseVisionFace> = MOST_PROMINENT
 ) : AbstractVisionDetector<FaceObject>(FaceDetector) {
 
-    @NeedsProfiling(
-        what = """
-        We need to check if running these callbacks on the main thread does have an impact.
-        addOnSuccessListener ...
-    """
-    )
     override fun detect(executor: Executor, image: ImageProxy, onDetected: (FaceObject) -> Unit) {
         if (null == image.image) {
             return onDetected(NullFaceObject)
@@ -49,12 +42,14 @@ open class FaceDetector(
 
         val detector = FirebaseVision.getInstance().getVisionFaceDetector(getDetectorOptions())
 
+        val rotation = image.imageInfo.rotationDegrees
+
         // we require to use this image exclusively and nobody else can read the data until
         // we're done with it.
         val visionImage = image.exclusiveUse {
             FirebaseVisionImage.fromMediaImage(
                 image.image!!,
-                image.imageInfo.rotationDegrees.toFirebaseVisionRotation()
+                rotation.toFirebaseVisionRotation()
             )
         }
 
@@ -68,6 +63,7 @@ open class FaceDetector(
                 executor.executeCatching(onDetected) {
                     onDetected(
                         if (faces.isEmpty()) NullFaceObject else mapToFaceObject(
+                            rotation,
                             selectFace(faces)
                         )
                     )
@@ -81,8 +77,8 @@ open class FaceDetector(
     /**
      * Map the firebase vision object to face object
      */
-    open fun mapToFaceObject(face: FirebaseVisionFace): FaceObject {
-        return FaceObject()
+    open fun mapToFaceObject(rotation: Int, face: FirebaseVisionFace): FaceObject {
+        return FaceObject(sourceRotationDegrees = rotation)
     }
 
     /**

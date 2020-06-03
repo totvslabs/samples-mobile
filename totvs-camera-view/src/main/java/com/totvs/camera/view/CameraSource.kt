@@ -51,6 +51,7 @@ internal class CameraSource(private val view: CameraView) {
     private val measuredHeight: Int get() = view.measuredHeight
     private val width: Int get() = view.width
     private val height: Int get() = view.height
+    private val isDisplayPortrait get() = view.isDisplayPortrait
 
     /** The provider of the camera for the process this module is used in (the app) */
     private var cameraProvider: ProcessCameraProvider? = null
@@ -186,23 +187,26 @@ internal class CameraSource(private val view: CameraView) {
             currentLifecycle = null
             throw IllegalArgumentException("Cannot bind to a lifecycle in a destroyed state")
         }
-
         cameraProvider ?: return // let's try later when the provider is not null
-
         // let's install the executors
         turnUpExecutors()
 
-        capture = captureBuilder.apply {
-            setTargetRotation(view.displaySurfaceRotation)
-            setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-        }.build()
-
         // adjust preview resolution based on measured size and aspect ratio
-        // we set the appropriate preview size
+        // we set the appropriate preview size. Do notice that this is only a hint
+        // to cameraX, at the end it wil pick a size from the available one that is greater
+        // than the one we request but also preserving the aspect ratio.
+        // this is the reason we don't use aspect ratio here. We don't want cameraX
+        // to chose a big size.
         val previewSize = computePreviewSize().also {
             Log.e(TAG, "Using preview size=$it")
         }
+
+        capture = captureBuilder.apply {
+            setTargetRotation(view.displaySurfaceRotation)
+            setTargetResolution(previewSize)
+            setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+        }.build()
+
 
         preview = previewBuilder.apply {
             setTargetResolution(previewSize)
@@ -212,7 +216,9 @@ internal class CameraSource(private val view: CameraView) {
 
         // we will use half of the preview size for analysis. we seek for fast analysis here
         if (null != view.analyzer) {
-            val analysisOutSize = view.analyzer!!.desiredOutputImageSize(previewSize)
+            val analysisOutSize = view.analyzer!!.desiredOutputImageSize(
+                view.displayRotationDegrees, isDisplayPortrait, previewSize, ASPECT_RATIO_4_3
+            )
 
             Log.e(TAG, "Installing preview analyzer with image output of size=$analysisOutSize")
 
@@ -256,10 +262,30 @@ internal class CameraSource(private val view: CameraView) {
         currentLifecycle = null
     }
 
-    fun computePreviewSize() : Size {
-        val isDisplayPortrait =
-            view.displayRotationDegrees == 0 || view.displayRotationDegrees == 180
-
+    /**
+     * Compute the preview size used to display the camera preview. The output size respect
+     * device orientation and the app aspect ratio, which by this time is 4:3.
+     *
+     * The preview size is calculated using the host view dimensions as base.
+     *
+     * e.g If host view dimension is WxH and the view is in portrait then the preview
+     * is calculated by making `H` as high as we can get an aspect ratio of H/W
+     * because the camera preview will run in landscape and we need to make the H of the
+     * preview size as large as we get H/W = aspect ratio because the preview will see H
+     * as it W.
+     *
+     * If on the other side we're in landscape then both, host view and preview will be aligned
+     * and then we do nothing.
+     *
+     * Here's the reasoning, let's suppose our aspect ratio is a/b = 4:3:
+     *
+     * in portrait mode: we want W/H = b/a and H = W/(b/a) because the preview will see H as
+     * width and doing this we actually guarantee that the preview see that H/W = a/b
+     *
+     * in landscape mode: we know that the device width or view is higher. We want that
+     * W/H = a/b and H = W/(a/b) because in landscape still the preview will see that W/H = a/b.
+     */
+    fun computePreviewSize(): Size {
         // we set the preferred aspect ratio to 4:3
         val targetAspectRatio =
             if (isDisplayPortrait) ASPECT_RATIO_4_3.inverse else ASPECT_RATIO_4_3
@@ -277,7 +303,6 @@ internal class CameraSource(private val view: CameraView) {
             Log.e(TAG, "No camera permission granted")
             return
         }
-
         capture?.let {
             it.setCropAspectRatio(Rational(width, height))
             it.targetRotation = view.displaySurfaceRotation

@@ -23,14 +23,12 @@ import com.totvs.camera.vision.core.VisionModuleOptions
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.FastFaceDetector
 import com.totvs.camera.vision.face.NullFaceObject
-import com.totvs.camera.vision.stream.connect
-import com.totvs.camera.vision.stream.filter
-import com.totvs.camera.vision.stream.filterIsInstance
-import com.totvs.camera.vision.stream.sendOn
+import com.totvs.camera.vision.stream.*
 import java.util.concurrent.Executors
 
 private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
+private const val IMMERSIVE_FLAG_TIMEOUT = 500L
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,6 +66,16 @@ class MainActivity : AppCompatActivity() {
         installAnalyzer()
         addCameraControls()
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        val container = findViewById<ConstraintLayout>(R.id.camera_container)
+        container.postDelayed({
+            container.systemUiVisibility = FLAGS_FULLSCREEN
+        }, IMMERSIVE_FLAG_TIMEOUT)
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -116,11 +124,12 @@ class MainActivity : AppCompatActivity() {
             .filter { it != NullFaceObject }
             .sendOn(ContextCompat.getMainExecutor(this))
             .connect {
-                Log.e("**", "Face receiving: $it - ${Thread.currentThread().name}")
+                Log.e("**", "Face receiving: $it")
             }
 
         analyzer.detections
             .filterIsInstance<BarcodeObject>()
+            .transform(TranslateBarcode(camera.graphicOverlay))
             .sendOn(ContextCompat.getMainExecutor(this))
             .connect(barcodeBoundingBox)
 

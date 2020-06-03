@@ -26,14 +26,9 @@ class GraphicOverlay @JvmOverloads internal constructor(
     style: Int = 0
 ) : View(context, attrs, style) {
 
-    lateinit var host: CameraView
+    internal lateinit var host: CameraView
 
-    /**
-     * We compute the scale factors by which we need to scale point from the preview to this
-     * overlay view coordinate system.
-     */
-    private val scaleFactorX: Float get() = host.width / host.previewSize.width.toFloat()
-    private val scaleFactorY: Float get() = host.height / host.previewSize.height.toFloat()
+    val isFrontCamera get() = host.facing == CameraFacing.FRONT
 
     @GuardedBy("this")
     private val graphics = mutableListOf<Graphic>()
@@ -94,27 +89,5 @@ class GraphicOverlay @JvmOverloads internal constructor(
 
             overlay.postInvalidate()
         }
-
-        /**
-         * Scale [x] to the host [GraphicOverlay] coordinate system
-         */
-        fun scaleX(x: Float) = x * overlay.scaleFactorX
-
-        /**
-         * Scale [y] to the host [GraphicOverlay] coordinate system
-         */
-        fun scaleY(y: Float) = y * overlay.scaleFactorY
-
-        /**
-         * Translate [x] into the host [GraphicOverlay] coordinate system
-         */
-        fun translateX(x: Float) = if (overlay.host.facing == CameraFacing.FRONT) {
-            overlay.width - scaleX(x) // if front camera, we need to mirror
-        } else scaleX(x)
-
-        /**
-         * Translate [y] into the host [GraphicOverlay] coordinate system
-         */
-        fun translateY(y: Float) = scaleY(y)
     }
 }

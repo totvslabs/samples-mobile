@@ -43,6 +43,8 @@ class FastFaceDetector(
         if (image.image == null) {
             return onDetected(NullFaceObject)
         }
+        val rotation = image.imageInfo.rotationDegrees
+
         // we require to use this image exclusively and nobody else can read the data until
         // we're done with it.
         val frame = image.exclusiveUse {
@@ -53,7 +55,7 @@ class FastFaceDetector(
                     image.height,
                     ImageFormat.NV21
                 )
-                .setRotation(image.imageInfo.rotationDegrees.toFirebaseVisionRotation())
+                .setRotation(rotation.toFirebaseVisionRotation())
                 .build()
         }
 
@@ -62,7 +64,7 @@ class FastFaceDetector(
             if (faces.isEmpty()) {
                 onDetected(NullFaceObject)
             } else {
-                onDetected(FaceObject())
+                onDetected(FaceObject(sourceRotationDegrees = rotation))
             }
         }
     }

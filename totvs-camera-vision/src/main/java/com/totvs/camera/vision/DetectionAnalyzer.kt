@@ -1,6 +1,8 @@
 package com.totvs.camera.vision
 
 import android.util.Log
+import android.util.Rational
+import android.util.Size
 import androidx.annotation.GuardedBy
 import com.totvs.camera.core.ImageAnalyzer
 import com.totvs.camera.core.ImageProxy
@@ -52,6 +54,15 @@ open class DetectionAnalyzer(
     private val executor: ExecutorService,
     vararg detectors: VisionDetector<*>
 ) : ImageAnalyzer {
+
+    // default calculated [ImageAnalyzer] values might still be way to high for our needs.
+    // Let's set a custom size for the analysis image instead.
+    override fun desiredOutputImageSize(
+        orientationDegrees: Int,
+        isPortrait: Boolean,
+        previewSize: Size,
+        previewAspectRatio: Rational
+    ): Size = if (isPortrait) Size(480, 640) else Size(640, 480)
 
     /**
      * Registry of all detectors
@@ -115,14 +126,7 @@ open class DetectionAnalyzer(
     override fun analyze(image: ImageProxy) {
         if (executor.isShutdown) {
             Log.e(TAG, "Abnormal state. Executor is shutDown")
-            /*
-             * here we might do image.use { } so we close the image and the analyzer camera
-             * keeps sending us images, but intentionally we will not do that to apply
-             * whatever rule the sender applies when the image is not released.
-             * we might be halting the preview sender and stopping from using non used
-             * resources.
-             */
-//            image.use { }
+            image.use { }
             return
         }
 

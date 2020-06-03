@@ -4,13 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.util.Log
-import androidx.annotation.ColorInt
+import android.graphics.RectF
 import androidx.annotation.MainThread
-import androidx.core.graphics.toRectF
 import com.totvs.camera.view.GraphicOverlay
 import com.totvs.camera.vision.barcode.BarcodeObject
-import com.totvs.camera.vision.barcode.NullBarcodeObject
 import com.totvs.camera.vision.stream.VisionReceiver
 
 /**
@@ -37,35 +34,36 @@ class BarcodeBoundingBox(
         isAntiAlias = true
     }
 
-    private var barcodeObject: BarcodeObject = NullBarcodeObject
+    private var boundingBox: RectF? = null
 
     init {
         setBoundingBoxColors()
     }
 
-
     private fun setBoundingBoxColors() {
         strokePaint.apply {
             color = Color.RED
-//            alpha = 155
+            alpha = 140
         }
-        fillPaint.color = Color.TRANSPARENT
+        fillPaint.apply {
+            color = Color.RED
+            alpha = 45
+        }
     }
 
     @MainThread
     override fun onDraw(canvas: Canvas) {
         // [NullBarcodeObject] has null bounding box
-        barcodeObject.boundingBox?.toRectF()?.let { box ->
+        boundingBox?.let { box ->
             canvas.drawRoundRect(box, radius, radius, strokePaint)
             canvas.drawRoundRect(box, radius, radius, fillPaint)
         }
     }
 
     override fun send(value: BarcodeObject) {
-        barcodeObject = value
+        boundingBox = value.boundingBox
 
-        val padding = this.padding.toInt()
-        barcodeObject.boundingBox?.let {
+        boundingBox?.let {
             it.left -= padding
             it.right += padding
             it.top -= padding

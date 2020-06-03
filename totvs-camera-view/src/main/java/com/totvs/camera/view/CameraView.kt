@@ -151,11 +151,17 @@ open class CameraView @JvmOverloads constructor(
     val displayRotationDegrees: Int
         get() = when (displaySurfaceRotation) {
             Surface.ROTATION_0 -> 0
-            Surface.ROTATION_180 -> 180
             Surface.ROTATION_90 -> 90
+            Surface.ROTATION_180 -> 180
             Surface.ROTATION_270 -> 270
             else -> throw IllegalArgumentException("Unsupported surface rotation")
         }
+
+    /**
+     * Returns whether the display is portrait or landscape.
+     */
+    val isDisplayPortrait: Boolean
+        get() = displayRotationDegrees == 0 || displayRotationDegrees == 180
 
     /**
      * Check Camera permissions
@@ -168,6 +174,10 @@ open class CameraView @JvmOverloads constructor(
     /**
      * Offer the preview size. Do notice that the actual preview size depends on this view size
      * if you want to get an effective size, wait for this view to be properly laid out.
+     *
+     * Bear in mind that this value is just a hint to the camera device. The camera device is
+     * free to chose another preview size with the same aspect ratio as the requested one, in case
+     * the requested one is not available.
      */
     val previewSize get() = cameraSource.computePreviewSize()
 
