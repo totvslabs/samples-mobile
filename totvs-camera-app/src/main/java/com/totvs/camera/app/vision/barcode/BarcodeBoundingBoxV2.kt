@@ -80,7 +80,7 @@ class BarcodeBoundingBoxV2(
         if (null != boundingBox) {
             // we need to rotate the source size according the rotation
             val rotatedSize = when (value.sourceRotationDegrees) {
-                0, 180 -> value.sourceSize
+                0, 180  -> value.sourceSize
                 90, 270 -> Size(value.sourceSize.height, value.sourceSize.width)
                 else -> throw IllegalArgumentException("Valid rotation are 0, 90, 180, 270")
             }

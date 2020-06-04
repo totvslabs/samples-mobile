@@ -32,7 +32,9 @@ abstract class AbstractLandmark(override val name: Landmark.Name<*>) : Landmark
  * supported. This value was specifically created for [FaceObject.get] but we there relaxed
  * the constraint in order to support generic typed return.
  */
-object NullLandmark : AbstractLandmark(NullLandmark), Landmark.Name<NullLandmark> {
+object NullLandmark : Landmark, Landmark.Name<NullLandmark> {
+    override val name: Landmark.Name<*> get() = this
+
     override val position: PointF get() = PointF(Float.MIN_VALUE, Float.MIN_VALUE)
 }
 

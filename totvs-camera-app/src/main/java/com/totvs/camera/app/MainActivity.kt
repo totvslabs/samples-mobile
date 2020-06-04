@@ -16,6 +16,8 @@ import com.totvs.camera.app.vision.barcode.AnimateBarcode
 import com.totvs.camera.app.vision.barcode.BarcodeBoundingBoxV1
 import com.totvs.camera.app.vision.barcode.BarcodeBoundingBoxV2
 import com.totvs.camera.app.vision.barcode.TranslateBarcode
+import com.totvs.camera.app.vision.face.AnimateEyes
+import com.totvs.camera.app.vision.face.FaceGraphic
 import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.view.CameraView
@@ -26,7 +28,6 @@ import com.totvs.camera.vision.barcode.BarcodeObject
 import com.totvs.camera.vision.core.VisionModuleOptions
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.FastFaceDetector
-import com.totvs.camera.vision.face.NullFaceObject
 import com.totvs.camera.vision.stream.*
 import java.util.concurrent.Executors
 
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     private var facing: CameraFacing = CameraFacing.BACK
 
     private val executor = Executors.newCachedThreadPool()
+    private val connections = mutableListOf<Connection>()
 
     private val analyzer by lazy {
         DetectionAnalyzer(
@@ -55,7 +57,8 @@ class MainActivity : AppCompatActivity() {
 //            FaceDetector(),
             BarcodeDetector()
         ).apply {
-            disable(FastFaceDetector)
+//            disable(FastFaceDetector)
+            disable(BarcodeDetector)
         }
     }
 
@@ -84,6 +87,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         executor.shutdownNow()
+        connections.forEach { it.disconnect() }
     }
 
     private fun addCameraControls() {
@@ -117,41 +121,51 @@ class MainActivity : AppCompatActivity() {
     private fun installAnalyzer() {
         val camera = findViewById<CameraView>(R.id.camera_view)
 
-        // install graphics
-        val barcodeBoundingBox = if (USE_BARCODE_BOUNDING_BOX_V1) {
-            BarcodeBoundingBoxV1(this).apply {
-                camera.addOverlayGraphic(this)
+        // install graphics: barcode
+        val barcodeBoundingBox: VisionReceiver<BarcodeObject> =
+            if (USE_BARCODE_BOUNDING_BOX_V1) {
+                BarcodeBoundingBoxV1(this).apply {
+                    camera.addOverlayGraphic(this)
+                }
+            } else {
+                BarcodeBoundingBoxV2(this).apply {
+                    camera.addOverlayGraphic(this)
+                }
             }
-        } else {
-            BarcodeBoundingBoxV2(this).apply {
-                camera.addOverlayGraphic(this)
-            }
+        // install graphics: face
+        val faceGraphics = FaceGraphic(this).apply {
+            camera.addOverlayGraphic(this)
         }
 
         // face detections
         analyzer.detections
             .filterIsInstance<FaceObject>()
-            .filter { it != NullFaceObject }
             .sendOn(ContextCompat.getMainExecutor(this))
-            .connect {
-                Log.e("**", "Face receiving: $it")
-            }
+            .transform(AnimateEyes())
+            .connect(faceGraphics)
+            .also { connections.add(it) }
 
         // barcode detections
         if (USE_BARCODE_BOUNDING_BOX_V1) {
             analyzer.detections
                 .filterIsInstance<BarcodeObject>()
-                 // install the coordinate translate transformer
+                // install the coordinate translate transformer
                 .transform(TranslateBarcode(camera.graphicOverlay))
                 .sendOn(ContextCompat.getMainExecutor(this))
                 .transform(AnimateBarcode()) // on main thread
                 .connect(barcodeBoundingBox)
+                .also {
+                    connections.add(it)
+                }
         } else {
             analyzer.detections
                 .filterIsInstance<BarcodeObject>()
                 .sendOn(ContextCompat.getMainExecutor(this))
                 .transform(AnimateBarcode()) // on main thread
                 .connect(barcodeBoundingBox)
+                .also {
+                    connections.add(it)
+                }
         }
         camera.analyzer = analyzer
     }
