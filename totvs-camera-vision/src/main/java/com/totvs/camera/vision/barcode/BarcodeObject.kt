@@ -14,11 +14,11 @@ import com.totvs.camera.vision.annotations.BarcodeFormat
  * @param format
  */
 data class BarcodeObject(
-    @BarcodeFormat val format: Int = -1,
-    val displayValue: String = "",
     override val sourceSize: Size = Size(0, 0),
     override val boundingBox: RectF? = null,
-    override val sourceRotationDegrees: Int = -1
+    override val sourceRotationDegrees: Int = -1,
+    @BarcodeFormat val format: Int = -1,
+    val displayValue: String = ""
 ) : VisionObject()
 
 /**

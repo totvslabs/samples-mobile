@@ -7,16 +7,74 @@ import com.totvs.camera.vision.VisionObject
 /**
  * Vision object that represents a detected barcode.
  *
- * Encoded information on this object, depends on the kind of detector used
+ * Encoded information on this object, depends on the kind of detector used.
+ *
+ * While designing this class we took the decision to leave [landmarks] as a data class
+ * param even though is not meant to be accessible to the exterior, because we want automatic
+ * consideration of it on copy, equals and hashCode generated code. This can lead to some
+ * interesting consequences, like the following:
+ * 1. The field is private to the caller but modifiable by the class itself
+ * 2. The caller have the power to freeze the list of landmarks in which case, any attempt
+ * to modify the landmarks won't have any effect.
  */
 data class FaceObject(
     override val sourceSize: Size = Size(0, 0),
     override val boundingBox: RectF? = null,
-    override val sourceRotationDegrees: Int = -1
-) : VisionObject()
+    override val sourceRotationDegrees: Int = -1,
+    private val landmarks: List<Landmark> = mutableListOf()
+) : VisionObject() {
+
+    /**
+     * Retrieve any landmark on this face if is present. If this face doesn't
+     * have the requested [Landmark], then null is returned, the actual
+     * landmark otherwise.
+     *
+     * If the receiver of this operation is [NullFaceObject] then
+     * null will be returned for any [name]
+     */
+    operator fun <T : Landmark> get(name: Landmark.Name<T>): T? {
+        return if (this == NullFaceObject) {
+            null
+        } else {
+            @Suppress("unchecked_cast")
+            landmarks.firstOrNull { it.name == name } as? T
+        }
+    }
+
+    /**
+     * Set any landmark on this [FaceObject]. [landmark] suffix to register
+     * the landmark into this face but is a language requirement that this
+     * operator receives at least two operands.
+     *
+     * If the receiver of this operation is [NullFaceObject] then nothing
+     * will happens and the operation won't modify the object. i.e won't register
+     * the landmark.
+     */
+    operator fun set(name: Landmark.Name<*>, landmark: Landmark) {
+        if (this == NullFaceObject) {
+            return
+        }
+        if (landmarks is MutableList<Landmark>) {
+            // drop all the landmarks with same name
+            landmarks.removeAll { it.name == name }
+            // add the fresh one
+            landmarks.add(landmark)
+        }
+    }
+
+    /**
+     * Iterate over landmarks.
+     */
+    operator fun iterator(): Iterator<Landmark> = landmarks.iterator()
+
+    /**
+     * For each construction on face landmarks
+     */
+    fun forEach(block: (Landmark) -> Unit) = iterator().forEach(block)
+}
 
 /**
- * Null representation of a null face object
+ * Null representation of a null face object.
  */
 val NullFaceObject = FaceObject()
 

@@ -2,7 +2,11 @@ package com.totvs.camera.vision.face
 
 import android.content.Context
 import android.graphics.ImageFormat
+import android.graphics.RectF
 import android.util.Log
+import android.util.Size
+import android.util.SparseArray
+import androidx.core.util.forEach
 import androidx.core.util.isEmpty
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.face.Face
@@ -34,6 +38,9 @@ import java.util.concurrent.Executor
  *
  * @see [VisionDetector]
  */
+
+private typealias GMSLandmark = com.google.android.gms.vision.face.Landmark
+
 class FastFaceDetector(
     private val context: Context,
     private val selectFace: SelectionStrategy<Face> = MOST_PROMINENT
@@ -61,30 +68,62 @@ class FastFaceDetector(
 
         executor.executeCatching(onDetected) {
             val faces = getDetector(context).detect(frame)
-            if (faces.isEmpty()) {
-                onDetected(NullFaceObject)
-            } else {
-                onDetected(FaceObject(sourceRotationDegrees = rotation))
-            }
+            onDetected(
+                if (faces.isEmpty()) NullFaceObject else mapToFaceObject(
+                    selectFace(faces.toList()),
+                    rotation,
+                    Size(image.width, image.height)
+                )
+            )
         }
     }
 
     /**
-     * Map the firebase vision object to face object
+     * Readable name
      */
-    open fun mapToFaceObject(face: Face): FaceObject {
-        return FaceObject()
-    }
+    override fun toString() = TAG
 
     /**
      * Get the detector used for this instance of the face detector.
      */
     open fun getDetector(context: Context): FaceDetector = highAccuracyDetector(context)
 
+
     /**
-     * Readable name
+     * Map the firebase vision object to face object
      */
-    override fun toString() = TAG
+    open fun mapToFaceObject(
+        face: Face,
+        rotation: Int,
+        sourceSize: Size
+    ) = FaceObject(
+        sourceSize = sourceSize,
+        boundingBox = RectF(
+            face.position.x, face.position.y,
+            face.position.x + face.width,
+            face.position.y + face.height
+        ),
+        sourceRotationDegrees = rotation,
+        landmarks = extractLandmarks(face)
+    )
+
+    /**
+     * Extract all the recognized landmarks. We consider a landmark as recognized
+     * if there's a corespondent type [Landmark] for it. If there isn't then the landmark is
+     * ignored
+     */
+    protected fun extractLandmarks(face: Face): List<Landmark> {
+        val landmarks = mutableListOf<Landmark>()
+        face.landmarks.forEach { l ->
+            if (l.type == GMSLandmark.LEFT_EYE) {
+                landmarks.add(LeftEye(l.position))
+            }
+            if (l.type == GMSLandmark.RIGHT_EYE) {
+                landmarks.add(RightEye(l.position))
+            }
+        }
+        return landmarks
+    }
 
     /**
      * Utility method to run safely on the executor a blocks
@@ -99,6 +138,14 @@ class FastFaceDetector(
             Log.e(TAG, "", ex)
         }
         onDetected(NullFaceObject)
+    }
+
+    /**
+     * Convert an sparse array to list
+     */
+    private fun <T> SparseArray<T>.toList() = mutableListOf<T>().let {
+        forEach { _, value -> it.add(value) }
+        it
     }
 
     companion object : VisionDetector.Key<FastFaceDetector> {

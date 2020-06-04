@@ -1,11 +1,16 @@
 package com.totvs.camera.vision.face
 
+import android.graphics.PointF
+import android.graphics.RectF
 import android.util.Log
+import android.util.Size
+import androidx.core.graphics.toRectF
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.*
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceLandmark
 import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
@@ -63,8 +68,9 @@ open class FaceDetector(
                 executor.executeCatching(onDetected) {
                     onDetected(
                         if (faces.isEmpty()) NullFaceObject else mapToFaceObject(
+                            selectFace(faces),
                             rotation,
-                            selectFace(faces)
+                            Size(image.width, image.height)
                         )
                     )
                 }
@@ -75,11 +81,9 @@ open class FaceDetector(
     }
 
     /**
-     * Map the firebase vision object to face object
+     * Readable name
      */
-    open fun mapToFaceObject(rotation: Int, face: FirebaseVisionFace): FaceObject {
-        return FaceObject(sourceRotationDegrees = rotation)
-    }
+    override fun toString() = TAG
 
     /**
      * Get the detector used for this instance of the face detector.
@@ -87,9 +91,36 @@ open class FaceDetector(
     open fun getDetectorOptions(): FirebaseVisionFaceDetectorOptions = fastModeOptions()
 
     /**
-     * Readable name
+     * Map the firebase vision object to face object
      */
-    override fun toString() = TAG
+    open fun mapToFaceObject(
+        face: FirebaseVisionFace,
+        rotation: Int,
+        sourceSize: Size
+    ) = FaceObject(
+        sourceSize = sourceSize,
+        boundingBox = face.boundingBox.toRectF(),
+        sourceRotationDegrees = rotation,
+        landmarks = extractLandmarks(face)
+    )
+
+    /**
+     * Extract all the recognized landmarks. We consider a landmark as recognized
+     * if there's a corespondent type [Landmark] for it. If there isn't then the landmark is
+     * ignored
+     */
+    protected fun extractLandmarks(face: FirebaseVisionFace): List<Landmark> {
+        val landmarks = mutableListOf<Landmark>()
+        // left eye
+        face.getLandmark(FirebaseVisionFaceLandmark.LEFT_EYE)?.let {
+            landmarks.add(LeftEye(PointF(it.position.x, it.position.y)))
+        }
+        // right eye
+        face.getLandmark(FirebaseVisionFaceLandmark.RIGHT_EYE)?.let {
+            landmarks.add(RightEye(PointF(it.position.x, it.position.y)))
+        }
+        return landmarks
+    }
 
     /**
      * Utility method to run safely on the executor a blocks

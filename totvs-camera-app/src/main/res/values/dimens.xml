@@ -26,4 +26,7 @@
     <dimen name="barcode_bounding_box_stroke_width">1dp</dimen>
     <dimen name="barcode_bounding_box_corner_radius">8dp</dimen>
     <dimen name="barcode_bounding_box_padding">8dp</dimen>
+
+    <dimen name="face_eyes_stroke_width">1dp</dimen>
+    <dimen name="face_eyes_radius">8dp</dimen>
 </resources>

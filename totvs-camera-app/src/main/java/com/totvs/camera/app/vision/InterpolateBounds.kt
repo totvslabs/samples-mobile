@@ -50,8 +50,8 @@ abstract class InterpolateBounds<T : VisionObject>(
                 handler.postDelayed(this::clearTracking, lostObjectDurationMs)
             }
             return receiver.send(value)
-        }
 
+        }
         // we got back the tracked object, let's remove the callback.
         handler.removeCallbacks(this::clearTracking)
 

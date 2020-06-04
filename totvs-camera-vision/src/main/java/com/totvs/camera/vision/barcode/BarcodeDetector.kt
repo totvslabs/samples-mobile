@@ -82,11 +82,11 @@ class BarcodeDetector(
         rotation: Int,
         sourceSize: Size
     ) = BarcodeObject(
-        format = fromFirebaseFormat(barcode.format),
-        displayValue = barcode.displayValue ?: "",
         sourceSize = sourceSize,
         boundingBox = barcode.boundingBox?.toRectF(),
-        sourceRotationDegrees = rotation
+        sourceRotationDegrees = rotation,
+        format = fromFirebaseFormat(barcode.format),
+        displayValue = barcode.displayValue ?: ""
     )
 
     /**
