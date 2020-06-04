@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import com.totvs.camera.app.vision.barcode.AnimateBarcode
 import com.totvs.camera.app.vision.barcode.BarcodeBoundingBoxV1
 import com.totvs.camera.app.vision.barcode.BarcodeBoundingBoxV2
-import com.totvs.camera.app.vision.TranslateBarcode
+import com.totvs.camera.app.vision.barcode.TranslateBarcode
 import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.view.CameraView

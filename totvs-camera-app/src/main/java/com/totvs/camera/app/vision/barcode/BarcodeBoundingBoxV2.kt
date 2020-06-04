@@ -86,6 +86,8 @@ class BarcodeBoundingBoxV2(
             }
 
             // The front facing image is flipped, so we need to mirror the positions on the vertical axis
+            // @TODO fix: this will introduce a bug later,, because this is more like a mirrored flip
+            //       rater than just a flip.
             val left  = if (overlay.isFrontCamera) boundingBox!!.right else boundingBox!!.left
             val right = if (overlay.isFrontCamera) boundingBox!!.left  else boundingBox!!.right
 

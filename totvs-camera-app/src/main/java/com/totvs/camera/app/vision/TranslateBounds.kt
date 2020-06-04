@@ -67,7 +67,9 @@ abstract class TranslateBounds<T : VisionObject>(
         val offsetX = (targetWidth - scaledSize.width) / 2
         val offsetY = (targetHeight - scaledSize.height) / 2
 
-        // The front facing image is flipped, so we need to mirror the positions on the vertical axis
+        // The front facing image is flipped, so we need to mirror the positions on the vertical axis.
+        // @TODO fix: this will introduce a bug later,, because this is more like a mirrored flip
+        //       rater than just a flip.
         val boundLeft =
             if (overlay.isFrontCamera) rotatedSize.width - boundingBox.right else boundingBox.left
         val boundRight =
