@@ -47,7 +47,6 @@ abstract class TranslateBounds<T : VisionObject>(
          * source size by the same ratio won't affect it aspect ratio. we use also this ratio
          * to expand the coordinates of the boundingBox.
          */
-
         val rotatedSize = when (value.sourceRotationDegrees) {
             0, 180 -> value.sourceSize
             90, 270 -> Size(value.sourceSize.height, value.sourceSize.width)
@@ -86,17 +85,4 @@ abstract class TranslateBounds<T : VisionObject>(
             boundingBox = mappedBoundingBox
         ))
     }
-}
-
-class TranslateBarcode(
-    overlay: GraphicOverlay
-) : TranslateBounds<BarcodeObject>(overlay) {
-
-    override fun BarcodeObject.clone(
-        sourceSize: Size,
-        boundingBox: RectF?
-    ): BarcodeObject = copy(
-        sourceSize = sourceSize,
-        boundingBox = boundingBox
-    )
 }

@@ -73,13 +73,26 @@ class GraphicOverlay @JvmOverloads internal constructor(
     }
 
     abstract class Graphic {
+        /**
+         * Host [GraphicOverlay] of this graphic
+         */
         protected lateinit var overlay: GraphicOverlay
 
+        /**
+         * Values by which we need to offset scaled values to center then
+         * according to this overlay.size center.
+         */
         private var offsetX: Int = 0
         private var offsetY: Int = 0
 
+        /**
+         * Scale used to scale values into source coordinates to this [overlay.size] coordinate
+         */
         private var scale: Float = 0f
 
+        /**
+         * Cached coordinates. optimization purpose
+         */
         private var lastSourceCoordinate: Size = Size(0, 0)
         private var lastOverlayCoordinate: Size = Size(0, 0)
 
@@ -141,7 +154,7 @@ class GraphicOverlay @JvmOverloads internal constructor(
          */
         fun translateY(y: Float, source: Size): Float = scaleY(y, source)
 
-        /*
+        /**
          * This function computes the required values to scale any point in [source]
          * coordinate to [overlay.size] coordinate.
          *

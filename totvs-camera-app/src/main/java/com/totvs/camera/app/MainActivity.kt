@@ -12,9 +12,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.totvs.camera.app.vision.AnimateBarcode
-import com.totvs.camera.app.vision.BarcodeBoundingBoxV1
-import com.totvs.camera.app.vision.BarcodeBoundingBoxV2
+import com.totvs.camera.app.vision.barcode.AnimateBarcode
+import com.totvs.camera.app.vision.barcode.BarcodeBoundingBoxV1
+import com.totvs.camera.app.vision.barcode.BarcodeBoundingBoxV2
 import com.totvs.camera.app.vision.TranslateBarcode
 import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.core.OutputFileOptions

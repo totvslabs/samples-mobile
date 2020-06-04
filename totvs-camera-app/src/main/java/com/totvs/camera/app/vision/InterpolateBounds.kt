@@ -94,10 +94,3 @@ abstract class InterpolateBounds<T : VisionObject>(
         it.bottom = this[3]
     }
 }
-
-
-class AnimateBarcode : InterpolateBounds<BarcodeObject>() {
-    override fun BarcodeObject.clone(
-        boundingBox: RectF?
-    ) = copy(boundingBox = boundingBox)
-}
