@@ -12,6 +12,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import com.totvs.camera.app.vision.AnimateBarcode
+import com.totvs.camera.app.vision.BarcodeBoundingBox
+import com.totvs.camera.app.vision.TranslateBarcode
 import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.view.CameraView
@@ -114,7 +117,9 @@ class MainActivity : AppCompatActivity() {
         val camera = findViewById<CameraView>(R.id.camera_view)
 
 
-        val barcodeBoundingBox = BarcodeBoundingBox(this)
+        val barcodeBoundingBox = BarcodeBoundingBox(
+            this
+        )
             .apply {
                 camera.addOverlayGraphic(this)
             }
@@ -131,6 +136,7 @@ class MainActivity : AppCompatActivity() {
             .filterIsInstance<BarcodeObject>()
             .transform(TranslateBarcode(camera.graphicOverlay))
             .sendOn(ContextCompat.getMainExecutor(this))
+            .transform(AnimateBarcode()) // on main thread
             .connect(barcodeBoundingBox)
 
         camera.analyzer = analyzer

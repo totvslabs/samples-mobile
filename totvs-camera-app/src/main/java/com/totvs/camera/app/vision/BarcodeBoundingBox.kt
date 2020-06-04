@@ -1,4 +1,4 @@
-package com.totvs.camera.app
+package com.totvs.camera.app.vision
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import androidx.annotation.MainThread
+import com.totvs.camera.app.R
 import com.totvs.camera.view.GraphicOverlay
 import com.totvs.camera.vision.barcode.BarcodeObject
 import com.totvs.camera.vision.stream.VisionReceiver

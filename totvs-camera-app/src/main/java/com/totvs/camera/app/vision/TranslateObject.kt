@@ -1,4 +1,4 @@
-package com.totvs.camera.app
+package com.totvs.camera.app.vision
 
 import android.graphics.RectF
 import android.util.Size
