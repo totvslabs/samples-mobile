@@ -81,17 +81,11 @@ abstract class Translate<T : VisionObject>(
             bottom = boundingBox.bottom * scale + offsetY
         }
 
-        receiver.send(
-            value.clone(
-                sourceSize = Size(targetWidth, targetHeight),
-                boundingBox = mappedBoundingBox
-            )
-        )
+        receiver.send(value.clone(
+            sourceSize = Size(targetWidth, targetHeight),
+            boundingBox = mappedBoundingBox
+        ))
     }
-
-    /** utility extensions */
-    private fun Size.min() = width.coerceAtMost(height)
-    private fun Size.max() = width.coerceAtLeast(height)
 }
 
 class TranslateBarcode(
