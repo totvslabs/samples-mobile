@@ -12,7 +12,7 @@ interface Landmark {
     val name: Name<*>
 
     /**
-     * Interface that name of this landmark must implement
+     * Interface that the name of this landmark must implement
      */
     interface Name<T : Landmark>
 }

@@ -14,7 +14,7 @@ import com.totvs.camera.vision.VisionObject
  * consideration of it on copy, equals and hashCode generated code. This can lead to some
  * interesting consequences, like the following:
  * 1. The field is private to the caller but modifiable by the class itself
- * 2. The caller have the power to freeze the list of landmarks in which case, any attempt
+ * 2. The caller have the power to freeze the list of landmarks. In this case, any attempt
  * to modify the landmarks won't have any effect.
  */
 data class FaceObject(
@@ -25,7 +25,7 @@ data class FaceObject(
 ) : VisionObject() {
 
     /**
-     * Retrieve any landmark on this face if is present. If this face doesn't
+     * Retrieve any landmark on this face if it is present. If this face doesn't
      * have the requested [Landmark], then null is returned, the actual
      * landmark otherwise.
      *
