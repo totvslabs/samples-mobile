@@ -15,7 +15,7 @@ import kotlin.math.max
  * Generic translate transformer that locate a certain [VisionObject] appropriately
  * into the coordinate system specified by [overlay] dimensions
  */
-abstract class Translate<T : VisionObject>(
+abstract class TranslateBounds<T : VisionObject>(
     private val overlay: GraphicOverlay
 ) : Transformer<T, T> {
 
@@ -77,7 +77,7 @@ abstract class Translate<T : VisionObject>(
         val mappedBoundingBox = RectF().apply {
             left   = boundLeft          * scale + offsetX
             right  = boundRight         * scale + offsetX
-            top    = boundingBox.top    * scale + offsetY
+            top = boundingBox.top * scale + offsetY
             bottom = boundingBox.bottom * scale + offsetY
         }
 
@@ -90,7 +90,7 @@ abstract class Translate<T : VisionObject>(
 
 class TranslateBarcode(
     overlay: GraphicOverlay
-) : Translate<BarcodeObject>(overlay) {
+) : TranslateBounds<BarcodeObject>(overlay) {
 
     override fun BarcodeObject.clone(
         sourceSize: Size,

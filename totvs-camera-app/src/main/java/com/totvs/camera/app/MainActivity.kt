@@ -13,7 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.totvs.camera.app.vision.AnimateBarcode
-import com.totvs.camera.app.vision.BarcodeBoundingBox
+import com.totvs.camera.app.vision.BarcodeBoundingBoxV1
+import com.totvs.camera.app.vision.BarcodeBoundingBoxV2
 import com.totvs.camera.app.vision.TranslateBarcode
 import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.core.OutputFileOptions
@@ -116,10 +117,18 @@ class MainActivity : AppCompatActivity() {
     private fun installAnalyzer() {
         val camera = findViewById<CameraView>(R.id.camera_view)
 
-        val barcodeBoundingBox = BarcodeBoundingBox(this).apply {
-            camera.addOverlayGraphic(this)
+        // install graphics
+        val barcodeBoundingBox = if (USE_BARCODE_BOUNDING_BOX_V1) {
+            BarcodeBoundingBoxV1(this).apply {
+                camera.addOverlayGraphic(this)
+            }
+        } else {
+            BarcodeBoundingBoxV2(this).apply {
+                camera.addOverlayGraphic(this)
+            }
         }
 
+        // face detections
         analyzer.detections
             .filterIsInstance<FaceObject>()
             .filter { it != NullFaceObject }
@@ -128,17 +137,29 @@ class MainActivity : AppCompatActivity() {
                 Log.e("**", "Face receiving: $it")
             }
 
-        analyzer.detections
-            .filterIsInstance<BarcodeObject>()
-            .transform(TranslateBarcode(camera.graphicOverlay))
-            .sendOn(ContextCompat.getMainExecutor(this))
-            .transform(AnimateBarcode()) // on main thread
-            .connect(barcodeBoundingBox)
-
+        // barcode detections
+        if (USE_BARCODE_BOUNDING_BOX_V1) {
+            analyzer.detections
+                .filterIsInstance<BarcodeObject>()
+                 // install the coordinate translate transformer
+                .transform(TranslateBarcode(camera.graphicOverlay))
+                .sendOn(ContextCompat.getMainExecutor(this))
+                .transform(AnimateBarcode()) // on main thread
+                .connect(barcodeBoundingBox)
+        } else {
+            analyzer.detections
+                .filterIsInstance<BarcodeObject>()
+                .sendOn(ContextCompat.getMainExecutor(this))
+                .transform(AnimateBarcode()) // on main thread
+                .connect(barcodeBoundingBox)
+        }
         camera.analyzer = analyzer
     }
 
+
     companion object {
+        private const val USE_BARCODE_BOUNDING_BOX_V1 = false
+
         fun hasPermissions(context: Context) = PERMISSIONS_REQUIRED.all {
             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }

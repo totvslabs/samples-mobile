@@ -5,16 +5,30 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.util.Size
 import androidx.annotation.MainThread
 import com.totvs.camera.app.R
 import com.totvs.camera.view.GraphicOverlay
+import com.totvs.camera.vision.VisionObject
 import com.totvs.camera.vision.barcode.BarcodeObject
 import com.totvs.camera.vision.stream.VisionReceiver
 
 /**
- * Graphic that display a bounding box for a detected barcode
+ * Graphic that display a bounding box for a detected barcode.
+ *
+ * This version of the boundingBox illustrates how to use the utility functions that comes
+ * with [GraphicOverlay.Graphic].
+ *
+ * A sample use of this graphic would be:
+ *
+ * analyzer.detections
+ *  .filterIsInstance<BarcodeObject>()
+ *  .sendOn(ContextCompat.getMainExecutor(this))
+ *  .transform(AnimateBarcode()) // on main thread
+ *  .connect(barcodeBoundingBox)
+ *
  */
-class BarcodeBoundingBox(
+class BarcodeBoundingBoxV2(
     context: Context
 ) : GraphicOverlay.Graphic(), VisionReceiver<BarcodeObject> {
 
@@ -64,12 +78,26 @@ class BarcodeBoundingBox(
     override fun send(value: BarcodeObject) {
         boundingBox = value.boundingBox
 
-        boundingBox?.let {
-            it.left   -= padding
-            it.right  += padding
-            it.top    -= padding
-            it.bottom += padding
+        if (null != boundingBox) {
+            // we need to rotate the source size according the rotation
+            val rotatedSize = when (value.sourceRotationDegrees) {
+                0, 180 -> value.sourceSize
+                90, 270 -> Size(value.sourceSize.height, value.sourceSize.width)
+                else -> throw IllegalArgumentException("Valid rotation are 0, 90, 180, 270")
+            }
+
+            // The front facing image is flipped, so we need to mirror the positions on the vertical axis
+            val left  = if (overlay.isFrontCamera) boundingBox!!.right else boundingBox!!.left
+            val right = if (overlay.isFrontCamera) boundingBox!!.left  else boundingBox!!.right
+
+            boundingBox?.let {
+                it.left   = translateX(left,      rotatedSize) - padding
+                it.right  = translateX(right,     rotatedSize) + padding
+                it.top    = translateY(it.top,    rotatedSize) - padding
+                it.bottom = translateY(it.bottom, rotatedSize) + padding
+            }
         }
+
         postInvalidate()
     }
 }
