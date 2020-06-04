@@ -69,6 +69,8 @@ class FaceGraphic(
                 90, 270 -> Size(value.sourceSize.height, value.sourceSize.width)
                 else -> throw IllegalArgumentException("Valid rotation are 0, 90, 180, 270")
             }
+            // @TODO special to the mirroring must be placed here. but since we're only drawing eyes.
+            //       we can skip that additional computation.
             value.copy(sourceSize = rotatedSize)
         }
         postInvalidate()
