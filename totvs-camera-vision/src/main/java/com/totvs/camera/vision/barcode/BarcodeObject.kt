@@ -25,3 +25,8 @@ data class BarcodeObject(
  * Null representation of barcode
  */
 val NullBarcodeObject = BarcodeObject()
+
+/**
+ * Accessor to know when this [VisionObject] is null
+ */
+val BarcodeObject.isNull get() = this == NullBarcodeObject

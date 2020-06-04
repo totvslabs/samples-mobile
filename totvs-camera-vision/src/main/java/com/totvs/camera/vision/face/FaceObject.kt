@@ -19,3 +19,8 @@ data class FaceObject(
  * Null representation of a null face object
  */
 val NullFaceObject = FaceObject()
+
+/**
+ * Accessor to know when this [VisionObject] is null
+ */
+val FaceObject.isNull get() = this == NullFaceObject

@@ -1,6 +1,7 @@
 package com.totvs.camera.app.vision
 
 import android.graphics.RectF
+import android.util.Log
 import android.util.Size
 import com.totvs.camera.view.GraphicOverlay
 import com.totvs.camera.vision.VisionObject
@@ -67,25 +68,25 @@ abstract class Translate<T : VisionObject>(
         val offsetX = (targetWidth - scaledSize.width) / 2
         val offsetY = (targetHeight - scaledSize.height) / 2
 
+        // The front facing image is flipped, so we need to mirror the positions on the vertical axis
+        val boundLeft =
+            if (overlay.isFrontCamera) rotatedSize.width - boundingBox.right else boundingBox.left
+        val boundRight =
+            if (overlay.isFrontCamera) rotatedSize.width - boundingBox.left  else boundingBox.right
+
         val mappedBoundingBox = RectF().apply {
-            left = boundingBox.left * scale + offsetX
-            right = boundingBox.right * scale + offsetX
-            top = boundingBox.top * scale + offsetY
+            left   = boundLeft * scale + offsetX
+            right  = boundRight * scale + offsetX
+            top    = boundingBox.top * scale + offsetY
             bottom = boundingBox.bottom * scale + offsetY
         }
 
-        // The front facing image is flipped, so we need to mirror the positions on the vertical axis (centerX)
-        if (overlay.isFrontCamera) {
-            val centerX = targetWidth / 2
-            mappedBoundingBox.left  = centerX + (centerX - mappedBoundingBox.left)
-            mappedBoundingBox.right = centerX - (mappedBoundingBox.right - centerX)
-        }
-
-        receiver.send(value.clone(
-            sourceSize = Size(targetWidth, targetHeight),
-            boundingBox = mappedBoundingBox
-
-        ))
+        receiver.send(
+            value.clone(
+                sourceSize = Size(targetWidth, targetHeight),
+                boundingBox = mappedBoundingBox
+            )
+        )
     }
 
     /** utility extensions */
