@@ -36,8 +36,12 @@ data class FaceObject(
         return if (this == NullFaceObject) {
             null
         } else {
+            val landmark = landmarks.firstOrNull {
+                it.name == name
+            }
+            // if somehow [NullLandmark] ended up here, we just return null
             @Suppress("unchecked_cast")
-            landmarks.firstOrNull { it.name == name } as? T
+            if (landmark.isNull) null else landmark as? T
         }
     }
 
@@ -49,9 +53,11 @@ data class FaceObject(
      * If the receiver of this operation is [NullFaceObject] then nothing
      * will happens and the operation won't modify the object. i.e won't register
      * the landmark.
+     *
+     * [NullLandmark] can't be registered into a face.
      */
     operator fun set(name: Landmark.Name<*>, landmark: Landmark) {
-        if (this == NullFaceObject) {
+        if (this == NullFaceObject || name == NullLandmark) {
             return
         }
         if (landmarks is MutableList<Landmark>) {
@@ -76,7 +82,7 @@ data class FaceObject(
 /**
  * Null representation of a null face object.
  */
-val NullFaceObject = FaceObject()
+val NullFaceObject = FaceObject(sourceSize = Size(Int.MIN_VALUE, Int.MIN_VALUE))
 
 /**
  * Accessor to know when this [VisionObject] is null

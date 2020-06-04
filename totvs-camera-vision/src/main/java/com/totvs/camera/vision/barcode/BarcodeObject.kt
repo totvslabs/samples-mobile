@@ -24,7 +24,7 @@ data class BarcodeObject(
 /**
  * Null representation of barcode
  */
-val NullBarcodeObject = BarcodeObject()
+val NullBarcodeObject = BarcodeObject(sourceSize = Size(Int.MIN_VALUE, Int.MIN_VALUE))
 
 /**
  * Accessor to know when this [VisionObject] is null

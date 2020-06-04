@@ -12,6 +12,11 @@ interface Landmark {
     val name: Name<*>
 
     /**
+     * Position of this landmark
+     */
+    val position: PointF
+
+    /**
      * Interface that the name of this landmark must implement
      */
     interface Name<T : Landmark>
@@ -27,13 +32,15 @@ abstract class AbstractLandmark(override val name: Landmark.Name<*>) : Landmark
  * supported. This value was specifically created for [FaceObject.get] but we there relaxed
  * the constraint in order to support generic typed return.
  */
-object NullLandmark : AbstractLandmark(NullLandmark), Landmark.Name<NullLandmark>
+object NullLandmark : AbstractLandmark(NullLandmark), Landmark.Name<NullLandmark> {
+    override val position: PointF get() = PointF(Float.MIN_VALUE, Float.MIN_VALUE)
+}
 
 /**
  * Left eye landmark
  */
 data class LeftEye(
-    val position: PointF
+    override val position: PointF
 ) : AbstractLandmark(LeftEye) {
     companion object : Landmark.Name<LeftEye>
 }
@@ -42,7 +49,7 @@ data class LeftEye(
  * Right eye landmark
  */
 data class RightEye(
-    val position: PointF
+    override val position: PointF
 ) : AbstractLandmark(RightEye) {
     companion object : Landmark.Name<RightEye>
 }
