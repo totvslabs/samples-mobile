@@ -1,0 +1,31 @@
+
+{
+  "name": "react-native-totvs-clockin-vision",
+  "version": "1.0.0",
+  "description": "A camera vision components for TOTVS Clock-In apps.",
+  "author": "TOTVS Labs <info@totvslabs.com> (https://www.totvslabs.com/)",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native",
+    "android",
+    "cameraX",
+    "camera",
+    "mlkit",
+    "vision",
+    "firebase"
+  ],
+  "files": [
+    "android/src/",
+    "android/build.gradle",
+    "src/",
+    "LICENSE",
+    "README.md"
+  ],  
+  "license": "",
+  "peerDependencies": {
+    "react-native": "^0.41.2"
+  }
+}

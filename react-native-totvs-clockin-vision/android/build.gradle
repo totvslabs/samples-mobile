@@ -6,7 +6,6 @@ buildscript {
         google()
         jcenter()
     }
-
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -86,6 +85,7 @@ dependencies {
 
     implementation project(":totvs-camera-core")
     implementation project(":totvs-camera-view")
+    implementation project(":totvs-camera-vision")
 
     // React Native
     implementation 'com.facebook.react:react-native:+' // from node_modules
