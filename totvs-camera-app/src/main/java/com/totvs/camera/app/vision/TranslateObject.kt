@@ -75,9 +75,9 @@ abstract class Translate<T : VisionObject>(
             if (overlay.isFrontCamera) rotatedSize.width - boundingBox.left  else boundingBox.right
 
         val mappedBoundingBox = RectF().apply {
-            left   = boundLeft * scale + offsetX
-            right  = boundRight * scale + offsetX
-            top    = boundingBox.top * scale + offsetY
+            left   = boundLeft          * scale + offsetX
+            right  = boundRight         * scale + offsetX
+            top    = boundingBox.top    * scale + offsetY
             bottom = boundingBox.bottom * scale + offsetY
         }
 
