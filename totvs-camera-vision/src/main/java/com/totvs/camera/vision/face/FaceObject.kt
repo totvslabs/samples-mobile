@@ -74,7 +74,7 @@ data class FaceObject(
     operator fun iterator(): Iterator<Landmark> = landmarks.iterator()
 
     /**
-     * For each construction on face landmarks
+     * ForEach construction on face landmarks
      */
     fun forEach(block: (Landmark) -> Unit) = iterator().forEach(block)
 }
