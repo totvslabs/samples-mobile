@@ -65,9 +65,9 @@ class BarcodeBoundingBox(
         boundingBox = value.boundingBox
 
         boundingBox?.let {
-            it.left -= padding
-            it.right += padding
-            it.top -= padding
+            it.left   -= padding
+            it.right  += padding
+            it.top    -= padding
             it.bottom += padding
         }
         postInvalidate()
