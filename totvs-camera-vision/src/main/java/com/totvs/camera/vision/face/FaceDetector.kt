@@ -37,7 +37,7 @@ import java.util.concurrent.Executor
  * @see [VisionDetector]
  */
 open class FaceDetector(
-    private val selectFace: SelectionStrategy<FirebaseVisionFace> = MOST_PROMINENT
+    private val selectFace: SelectionStrategy<FirebaseVisionFace> = FIRST
 ) : AbstractVisionDetector<FaceObject>(FaceDetector) {
 
     override fun detect(executor: Executor, image: ImageProxy, onDetected: (FaceObject) -> Unit) {
@@ -147,9 +147,9 @@ open class FaceDetector(
             .build()
 
         /**
-         * Strategy for selecting the most prominent face
+         * Strategy for selecting the first face
          */
-        val MOST_PROMINENT = object : SelectionStrategy<FirebaseVisionFace> {
+        val FIRST = object : SelectionStrategy<FirebaseVisionFace> {
             override fun invoke(faces: List<FirebaseVisionFace>): FirebaseVisionFace =
                 faces.first()
         }

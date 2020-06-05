@@ -29,7 +29,7 @@ import java.util.concurrent.Executor
 class BarcodeDetector(
     @BarcodeFormat private val primaryFormat: Int = VisionBarcodeFormat.QR_CODE,
     @BarcodeFormat private vararg val formats: Int,
-    private val selectBarcode: SelectionStrategy<FirebaseVisionBarcode> = MOST_PROMINENT
+    private val selectBarcode: SelectionStrategy<FirebaseVisionBarcode> = FIRST
 ) : AbstractVisionDetector<BarcodeObject>(BarcodeDetector) {
 
     override fun detect(
@@ -141,9 +141,9 @@ class BarcodeDetector(
         }
 
         /**
-         * Strategy for selecting the most prominent barcode
+         * Strategy for selecting the first barcode
          */
-        val MOST_PROMINENT = object : SelectionStrategy<FirebaseVisionBarcode> {
+        val FIRST = object : SelectionStrategy<FirebaseVisionBarcode> {
             override fun invoke(barcodes: List<FirebaseVisionBarcode>): FirebaseVisionBarcode =
                 barcodes.first()
         }
