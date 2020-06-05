@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             BarcodeDetector()
         ).apply {
 //            disable(FastFaceDetector)
-            disable(BarcodeDetector)
+//            disable(BarcodeDetector)
         }
     }
 

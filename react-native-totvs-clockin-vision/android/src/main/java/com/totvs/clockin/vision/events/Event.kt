@@ -1,4 +1,4 @@
-package com.totvs.camera.view.events
+package com.totvs.clockin.vision.events
 
 /**
  * React Native JS event representation.
@@ -37,8 +37,12 @@ interface Event : () -> Unit {
      * and register the event here by creating an instance of the class.
      */
     companion object {
-        val exported = listOf<Export>(OnPictureTaken)
-
+        val exported = listOf(
+            OnPictureTaken,
+            OnBarcodeDetected,
+            OnFaceDetected,
+            OnFaceRecognized
+        )
         /**
          * Fancy operator to enable for-each on Event.
          */
