@@ -70,7 +70,7 @@ public class ReactCameraModule(
     ) = reactApplicationContext.uiManager {
         addUIBlock { manager ->
             try {
-                val result = manager.cameraViewOrThrow(viewTag).block(this@withCamera)
+                val result = manager.cameraOrThrow(viewTag).block(this@withCamera)
                 if (autoResolve) {
                     resolve(result)
                 }
@@ -205,10 +205,10 @@ public class ReactCameraModule(
         }
 
         /**
-         * Extension method on [NativeViewHierarchyManager] to get the [CameraView] or
+         * Extension method on [NativeViewHierarchyManager] to get the [CameraView] as [Camera] or
          * throw if no view can be get for the specified viewTag
          */
-        private fun NativeViewHierarchyManager.cameraViewOrThrow(viewTag: Int) =
+        private fun NativeViewHierarchyManager.cameraOrThrow(viewTag: Int) : Camera =
             checkNotNull(resolveView(viewTag) as? CameraView) {
                 "Not possible to resolve CameraView($viewTag)"
             }
