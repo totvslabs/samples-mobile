@@ -40,7 +40,11 @@ open class FaceDetector(
     private val selectFace: SelectionStrategy<FirebaseVisionFace> = FIRST
 ) : AbstractVisionDetector<FaceObject>(FaceDetector) {
 
-    override fun detect(executor: Executor, image: ImageProxy, onDetected: (FaceObject) -> Unit) {
+    override fun detect(
+        executor: Executor,
+        image: ImageProxy,
+        onDetected: (FaceObject) -> Unit
+    ) {
         if (null == image.image) {
             return onDetected(NullFaceObject)
         }

@@ -46,7 +46,11 @@ class FastFaceDetector(
     private val selectFace: SelectionStrategy<Face> = MOST_PROMINENT
 ) : AbstractVisionDetector<FaceObject>(FastFaceDetector) {
 
-    override fun detect(executor: Executor, image: ImageProxy, onDetected: (FaceObject) -> Unit) {
+    override fun detect(
+        executor: Executor,
+        image: ImageProxy,
+        onDetected: (FaceObject) -> Unit
+    ) {
         if (image.image == null) {
             return onDetected(NullFaceObject)
         }

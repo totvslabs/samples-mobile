@@ -5,6 +5,8 @@ import android.animation.ObjectAnimator
 import android.graphics.PointF
 import android.os.Handler
 import android.os.Looper
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.LeftEye
@@ -18,7 +20,7 @@ import com.totvs.camera.vision.stream.VisionReceiver
  */
 class AnimateEyes(
     private val lostObjectDurationMs: Long = 100,
-    private val animationDurationMs: Long = 100
+    private val animationDurationMs: Long = 175
 ) : Transformer<FaceObject, FaceObject> {
 
     private val handler = Handler(Looper.getMainLooper())
