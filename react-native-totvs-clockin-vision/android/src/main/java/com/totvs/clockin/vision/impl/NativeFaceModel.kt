@@ -2,12 +2,11 @@ package com.totvs.clockin.vision.impl
 
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.annotation.Keep
 import androidx.annotation.WorkerThread
 import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
 import com.totvs.clockin.vision.core.Face
-import com.totvs.clockin.vision.recognition.DetectionModel
-import com.totvs.clockin.vision.recognition.RecognitionModel
+import com.totvs.clockin.vision.core.DetectionModel
+import com.totvs.clockin.vision.core.RecognitionModel
 import com.tzutalin.dlib.FaceRec
 import java.lang.IllegalStateException
 import java.util.concurrent.atomic.AtomicBoolean
@@ -17,7 +16,8 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 internal class NativeFaceModel private constructor(
     private val config: Config
-) : RecognitionModel<Bitmap, Face>, DetectionModel<Bitmap, Face> {
+) : RecognitionModel<Bitmap, Face>,
+    DetectionModel<Bitmap, Face> {
 
     private val model by lazy {
         FaceRec(config.modelDirectory)

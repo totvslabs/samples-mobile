@@ -1,4 +1,4 @@
-package com.totvs.clockin.vision.recognition
+package com.totvs.clockin.vision.core
 
 import androidx.annotation.WorkerThread
 
