@@ -40,7 +40,7 @@ import com.totvs.camera.view.toCameraFacing
  *
  * @see also [ReactCameraModule]
  */
-public class CameraModule(
+public class ReactCameraModule(
     private val context: ReactApplicationContext
 ) : ReactContextBaseJavaModule(context) {
 

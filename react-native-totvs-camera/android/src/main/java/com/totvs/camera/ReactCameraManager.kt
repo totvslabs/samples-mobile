@@ -13,7 +13,7 @@ import com.totvs.camera.view.toCameraFacing
 /**
  * [CameraView] react native manager
  */
-class CameraManager : ViewGroupManager<CameraView>() {
+class ReactCameraManager : ViewGroupManager<CameraView>() {
 
     /**
      * React Native view name for the view managed by this manager
@@ -61,7 +61,8 @@ class CameraManager : ViewGroupManager<CameraView>() {
 
     companion object {
         /**
-         * Name exported to react native. this will work as the component name
+         * Name exported to react native. this will work as the component name. by convention
+         * we name the manager with the same name as the view it manages.
          */
         private const val VIEW_NAME = "CameraView"
     }
