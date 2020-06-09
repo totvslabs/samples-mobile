@@ -13,7 +13,7 @@ import com.totvs.camera.view.toCameraFacing
 /**
  * [CameraView] react native manager
  */
-class ReactCameraManager : ViewGroupManager<CameraView>() {
+class CameraManager : ViewGroupManager<CameraView>() {
 
     /**
      * React Native view name for the view managed by this manager

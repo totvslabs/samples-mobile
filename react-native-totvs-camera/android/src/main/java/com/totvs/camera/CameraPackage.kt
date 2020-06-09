@@ -29,14 +29,14 @@ import com.facebook.react.uimanager.ViewManager
  *
  * @see also [ReactCameraModule]
  */
-public class ReactCameraPackage : ReactPackage {
+public class CameraPackage : ReactPackage {
     /**
      * Register modules for this library
      */
     override fun createNativeModules(
         context: ReactApplicationContext
     ): List<NativeModule> = listOf(
-        ReactCameraModule(context)
+        CameraModule(context)
     )
 
     /**
@@ -45,6 +45,6 @@ public class ReactCameraPackage : ReactPackage {
     override fun createViewManagers(
         context: ReactApplicationContext
     ): List<ViewManager<*, *>> = listOf(
-        ReactCameraManager()
+        CameraManager()
     )
 }
