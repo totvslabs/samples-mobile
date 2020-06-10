@@ -3,7 +3,6 @@ package com.totvs.camera.view
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
-import android.util.Log
 import android.util.Size
 import android.view.View
 import androidx.annotation.CallSuper
@@ -34,7 +33,7 @@ class GraphicOverlay @JvmOverloads internal constructor(
 
     val isFrontCamera get() = host.facing == CameraFacing.FRONT
 
-    private val size get() = Size(width, height)
+    val size get() = Size(width, height)
 
     @GuardedBy("this")
     private val graphics = mutableListOf<Graphic>()

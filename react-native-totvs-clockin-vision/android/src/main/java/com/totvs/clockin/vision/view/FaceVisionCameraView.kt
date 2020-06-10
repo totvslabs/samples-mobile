@@ -11,7 +11,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
-import com.totvs.camera.core.annotations.NeedsProfiling
 import com.totvs.camera.view.CameraView
 import com.totvs.camera.view.core.CameraViewModuleOptions
 import com.totvs.camera.vision.DetectionAnalyzer
@@ -275,10 +274,18 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         livenessConnection?.disconnect()
 
         // setup the vision stream for face detected objects.
-        livenessConnection = (analyzer as? DetectionAnalyzer)
-            ?.detections
-            ?.filterIsInstance<FaceObject>()
-            ?.connect(liveness)
+        livenessConnection = if(liveness is LivenessFace) {
+            (analyzer as? DetectionAnalyzer)
+                ?.detections
+                ?.filterIsInstance<FaceObject>()
+                ?.transform(FaceBoundingBox(graphicOverlay))
+                ?.connect(liveness)
+        } else {
+            (analyzer as? DetectionAnalyzer)
+                ?.detections
+                ?.filterIsInstance<FaceObject>()
+                ?.connect(liveness)
+        }
 
         installFaceGraphics(liveness)
     }
@@ -297,6 +304,7 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         proximityConnection = (analyzer as? DetectionAnalyzer)
             ?.detections
             ?.filterIsInstance<FaceObject>()
+            ?.transform(FaceBoundingBox(graphicOverlay))
             ?.connect(proximity)
     }
 
@@ -322,15 +330,15 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         }
 
         // setup the vision stream for face detected objects.
-        if (liveness is LivenessEyes) {
-            graphicsConnection = (analyzer as? DetectionAnalyzer)
+        graphicsConnection = if (liveness is LivenessEyes) {
+            (analyzer as? DetectionAnalyzer)
                 ?.detections
                 ?.filterIsInstance<FaceObject>()
                 ?.sendOn(ContextCompat.getMainExecutor(context))
                 ?.transform(AnimateEyes())
                 ?.connect(faceGraphic)
         } else {
-            graphicsConnection = (analyzer as? DetectionAnalyzer)
+            (analyzer as? DetectionAnalyzer)
                 ?.detections
                 ?.filterIsInstance<FaceObject>()
                 ?.sendOn(ContextCompat.getMainExecutor(context))
