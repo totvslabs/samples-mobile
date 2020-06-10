@@ -55,6 +55,7 @@ class ProximityByFaceWidth(
             }
         } else {
             foundFace.set(true)
+            // send a valid event.
             OnFaceProximity(
                 isUnderThreshold = value.width <= threshold,
                 threshold = threshold,

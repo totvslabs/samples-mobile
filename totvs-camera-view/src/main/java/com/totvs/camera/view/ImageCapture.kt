@@ -1,12 +1,12 @@
 package com.totvs.camera.view
 
 import android.content.Context
-import android.net.Uri
-import android.util.Log
 import androidx.annotation.RestrictTo
 import androidx.annotation.experimental.UseExperimental
-import androidx.camera.core.*
-import com.totvs.camera.core.CameraFacing
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
 import com.totvs.camera.core.OnImageCaptured
 import com.totvs.camera.core.OnImageSaved
 import com.totvs.camera.core.OutputFileOptions
@@ -27,7 +27,7 @@ internal fun ImageCapture.internalTakePicture(
     options: OutputFileOptions,
     onSaved: OnImageSaved
 ) {
-    val file = options.file ?: createFile(context)
+    val file = createFile(context, options.outputDirectory)
 
     val metadata = ImageCapture.Metadata().apply {
         isReversedHorizontal = options.isReversedHorizontal
@@ -72,7 +72,8 @@ internal fun ImageCapture.internalTakePicture(
  * Create a random file. This is use in case no file is specified in [OutputFileOptions]
  * on [ImageCapture.takePicture]
  */
-private fun createFile(context: Context, extension: String = "jpg") : File {
+private fun createFile(context: Context, outputDirectory: File? = null, extension: String = "jpg") : File {
     val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)
-    return File(context.filesDir, "IMG_${sdf.format(Date())}.$extension")
+    val parent = outputDirectory ?: context.filesDir
+    return File(parent, "IMG_${sdf.format(Date())}.$extension")
 }

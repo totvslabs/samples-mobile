@@ -182,9 +182,9 @@ public class ReactCameraModule(
      */
     @AnyThread
     @ReactMethod
-    public fun takePicture(viewTag: Int, location: String?, promise: Promise) {
-        val options = OutputFileOptions(file = try {
-                File(location!!)
+    public fun takePicture(viewTag: Int, outputDir: String?, promise: Promise) {
+        val options = OutputFileOptions(outputDirectory = try {
+                File(outputDir!!)
             } catch (ex: Exception) { null }
         )
 

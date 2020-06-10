@@ -399,10 +399,10 @@ export default class CameraView extends Component<PropsType, StateType> {
    * Take a picture and save it in the specified location. The saved 
    * image would be in JPEG format.
    * 
-   * If not location is provided then, the image would be saved into the data
+   * If not outputDir is provided then, the image would be saved into the data
    * directory of the app with a random name.
    */
-  takePicture = async (location) => CameraModule.takePicture(this._cameraHandle, location);
+  takePicture = async (outputDir) => CameraModule.takePicture(this._cameraHandle, outputDir);
 
   /**
    * View renderization happens here
