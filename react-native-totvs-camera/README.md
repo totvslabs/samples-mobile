@@ -16,10 +16,10 @@ we need to also configure manually these dependencies when we manually install t
     directory.
 3. To the file `camera-app/android/settings.gradle` append the next lines:
 ```javascript
-    include ':totvs-camera-core'
-    include ':totvs-camera-view'
-    project(':totvs-camera-core').projectDir = new File(rootProject.projectDir, './totvs-camera-core')
-    project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './totvs-camera-view')
+include ':totvs-camera-core'
+include ':totvs-camera-view'
+project(':totvs-camera-core').projectDir = new File(rootProject.projectDir, './totvs-camera-core')
+project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './totvs-camera-view')
 ```
 
 This step will map any reference to the dependencies of the libraries to the physical location
@@ -29,22 +29,22 @@ of the libraries we already copied.
     append to their `build.gradle` file, the following lines:
 
 ```javascript
-  buildscript {
-    ext {
-        kotlin_version = '1.3.72'
-    }
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+buildscript {
+  ext {
+    kotlin_version = '1.3.72'
+  }
+  repositories {
+    google()
+    jcenter()
+   }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
 }
 
 repositories {
-    google()
-    jcenter()
+  google()
+  jcenter()
 }
 ```
 
