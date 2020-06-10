@@ -395,8 +395,14 @@ export default class CameraView extends Component<PropsType, StateType> {
    */
   isTorchEnabled = async () => this.isTorchEnabled(); 
 
-  // experimental API
-  takePicture = async () => CameraModule.takePicture(this._cameraHandle);
+  /**
+   * Take a picture and save it in the specified location. The saved 
+   * image would be in JPEG format.
+   * 
+   * If not location is provided then, the image would be saved into the data
+   * directory of the app with a random name.
+   */
+  takePicture = async (location) => CameraModule.takePicture(this._cameraHandle, location);
 
   /**
    * View renderization happens here

@@ -1,35 +1,52 @@
 
-# react-native-totvs-camera
-
-## Getting started
-
-`$ npm install react-native-totvs-camera --save`
-
-### Mostly automatic installation
-
-`$ react-native link react-native-totvs-camera`
-
 ### Manual installation
 
+Additional steps are required if this library is manually installed in a project node_modules
+directory.
+
+Here we describe the steps with a hypothetical react-native project called `camera-app`.
 
 #### Android
 
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.reactlibrary.RNReactNativeTotvsCameraPackage;` to the imports at the top of the file
-  - Add `new RNReactNativeTotvsCameraPackage()` to the list returned by the `getPackages()` method
-2. Append the following lines to `android/settings.gradle`:
-  	```
-  	include ':react-native-totvs-camera'
-  	project(':react-native-totvs-camera').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-totvs-camera/android')
-  	```
-3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-  	```
-      compile project(':react-native-totvs-camera')
-  	```
+Because `react-native-totvs-camera` depends also on `totvs-camera-core` and `totvs-camera-view`
+we need to also configure manually these dependencies when we manually install this library.
 
-
-## Usage
+1. Copy this library into `camera-app/node_modules`
+2. Copy libraries `totvs-camera-core` and `totvs-camera-view` into `camera-app/android`
+    directory.
+3. To the file `camera-app/android/settings.gradle` append the next lines:
 ```javascript
-import TotvsCamera from 'react-native-totvs-camera';
+    include ':totvs-camera-core'
+    include ':totvs-camera-view'
+    // Map project reference to physical location
+	project(':totvs-camera-core').projectDir = new File(rootProject.projectDir, './totvs-camera-core')
+	project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './totvs-camera-view')
 ```
-  
+
+This step will map any reference to the dependencies of the libraries to the physical location
+of the libraries we already copied.
+
+4. To each of `camera-app/android/totvs-camera-view` and `camera-app/android/totvs-camera-core`
+    append to their `build.gradle` file, the following lines:
+
+```javascript
+  buildscript {
+    ext {
+        kotlin_version = '1.3.72'
+    }
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+repositories {
+    google()
+    jcenter()
+}
+```
+
+5. Done

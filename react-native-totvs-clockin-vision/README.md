@@ -1,45 +1,55 @@
 
-# react-native-react-native-totvs-clockin-vision
-
-## Getting started
-
-`$ npm install react-native-react-native-totvs-clockin-vision --save`
-
-### Mostly automatic installation
-
-`$ react-native link react-native-react-native-totvs-clockin-vision`
-
 ### Manual installation
 
+Additional steps are required if this library is manually installed in a project node_modules
+directory.
 
-#### iOS
-
-1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `react-native-react-native-totvs-clockin-vision` and add `RNReactNativeTotvsClockinVision.xcodeproj`
-3. In XCode, in the project navigator, select your project. Add `libRNReactNativeTotvsClockinVision.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
-4. Run your project (`Cmd+R`)<
+Here we describe the steps with a hypothetical react-native project called `camera-app`.
 
 #### Android
 
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.reactlibrary.RNReactNativeTotvsClockinVisionPackage;` to the imports at the top of the file
-  - Add `new RNReactNativeTotvsClockinVisionPackage()` to the list returned by the `getPackages()` method
-2. Append the following lines to `android/settings.gradle`:
-  	```
-  	include ':react-native-react-native-totvs-clockin-vision'
-  	project(':react-native-react-native-totvs-clockin-vision').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-react-native-totvs-clockin-vision/android')
-  	```
-3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-  	```
-      compile project(':react-native-react-native-totvs-clockin-vision')
-  	```
+Because `react-native-totvs-clockin-vision` depends also on `totvs-camera-core`,`totvs-camera-view`
+and `totvs-camera-vision` we need to also configure manually these dependencies when we manually
+install this library.
 
-
-## Usage
+1. Copy this library into `camera-app/node_modules`
+2. Copy libraries `totvs-camera-core`, `totvs-camera-view` and `totvs-camera-vision`
+   into `camera-app/android` directory.
+3. To the file `camera-app/android/settings.gradle` append the next lines:
 ```javascript
-import RNReactNativeTotvsClockinVision from 'react-native-react-native-totvs-clockin-vision';
-
-// TODO: What to do with the module?
-RNReactNativeTotvsClockinVision;
+    include ':totvs-camera-core'
+    include ':totvs-camera-view'
+    include ':totvs-camera-vision'
+    // Map project reference to physical location
+	project(':totvs-camera-core').projectDir = new File(rootProject.projectDir, './totvs-camera-core')
+	project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './totvs-camera-view')
+	project(':totvs-camera-vision').projectDir = new File(rootProject.projectDir, './totvs-camera-vision')
 ```
-  
+
+This step will map any reference to the dependencies of the libraries to the physical location
+of the libraries we already copied.
+
+4. To each of `camera-app/android/totvs-camera-view`, `camera-app/android/totvs-camera-core` and
+    `camera-app/android/totvs-camera-vision` append to their `build.gradle` file, the following lines:
+
+```javascript
+  buildscript {
+    ext {
+        kotlin_version = '1.3.72'
+    }
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+repositories {
+    google()
+    jcenter()
+}
+```
+
+5. Done

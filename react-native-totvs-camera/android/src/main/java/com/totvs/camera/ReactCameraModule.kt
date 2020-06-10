@@ -17,6 +17,7 @@ import com.totvs.camera.view.core.ExportableConstant
 import com.totvs.camera.view.toCameraFacing
 import com.totvs.camera.view.toFacingConstant
 import com.totvs.camera.view.core.CameraZoomLimits
+import java.io.File
 
 /**
  * React Native module for this library.
@@ -170,9 +171,6 @@ public class ReactCameraModule(
     public fun getLensFacing(viewTag: Int, promise: Promise) =
         promise.withCamera(viewTag) { facing.toFacingConstant }
 
-    // Experimental API. still needs to determine the output location and how/who/when
-    // to pass it down to this library. in the meantime is going to be saved in the data directory
-    // of the app.
     /**
      * Even though the [Camera] interface offers two variation of [takePicture]
      * here we only expose what's relevant to a react-native app at this moment. The
@@ -184,9 +182,14 @@ public class ReactCameraModule(
      */
     @AnyThread
     @ReactMethod
-    public fun takePicture(viewTag: Int, promise: Promise) =
+    public fun takePicture(viewTag: Int, location: String?, promise: Promise) {
+        val options = OutputFileOptions(file = try {
+                File(location!!)
+            } catch (ex: Exception) { null }
+        )
+
         promise.withCamera(viewTag, autoResolve = false) {
-            takePicture(options = OutputFileOptions.NULL) { file, throwable ->
+            takePicture(options = options) { file, throwable ->
                 throwable?.let {
                     promise.reject(it)
                 }
@@ -196,6 +199,7 @@ public class ReactCameraModule(
             }
             true
         }
+    }
 
     // END View methods
 

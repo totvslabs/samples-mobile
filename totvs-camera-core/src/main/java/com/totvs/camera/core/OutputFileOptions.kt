@@ -15,11 +15,11 @@ data class OutputFileOptions(
      * have an horizontal mirroring regarding the back camera. We need to set this
      * in order to let the saving engine knows that the image needs to be treated accordingly
      */
-    val isReversedHorizontal: Boolean,
+    val isReversedHorizontal: Boolean = false,
     /**
      * * Indicate whether the saved taken image is reversed vertically.
      */
-    val isReversedVertical: Boolean
+    val isReversedVertical: Boolean = false
 ) {
     companion object {
         val NULL = OutputFileOptions(file = null, isReversedHorizontal = false, isReversedVertical = true)
