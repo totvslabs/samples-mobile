@@ -1,7 +1,9 @@
 package com.totvs.clockin.vision.events
 
+import com.facebook.react.bridge.ReactContext
+
 class OnPictureTaken : Event {
-    override fun invoke() {
+    override fun invoke(context: ReactContext, viewId: Int) {
     }
 
     companion object : Event.Export {

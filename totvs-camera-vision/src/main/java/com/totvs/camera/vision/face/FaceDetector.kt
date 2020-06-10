@@ -105,6 +105,8 @@ open class FaceDetector(
         sourceSize = sourceSize,
         boundingBox = face.boundingBox.toRectF(),
         sourceRotationDegrees = rotation,
+        width = face.boundingBox.width().toFloat(),
+        height = face.boundingBox.height().toFloat(),
         landmarks = extractLandmarks(face)
     )
 

@@ -108,6 +108,8 @@ class FastFaceDetector(
             face.position.y + face.height
         ),
         sourceRotationDegrees = rotation,
+        width = face.width,
+        height = face.height,
         landmarks = extractLandmarks(face)
     )
 

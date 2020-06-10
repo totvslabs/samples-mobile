@@ -4,10 +4,8 @@ import androidx.annotation.FloatRange
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.totvs.camera.core.CameraFacing
 import com.totvs.camera.core.annotations.LensFacing
 import com.totvs.camera.view.CameraView
-import com.totvs.camera.view.events.Event
 import com.totvs.camera.view.toCameraFacing
 
 /**
@@ -26,18 +24,6 @@ class ReactCameraManager : ViewGroupManager<CameraView>() {
     @Suppress("MissingPermission")
     override fun createViewInstance(context: ThemedReactContext): CameraView =
         CameraView(context)
-
-    /**
-     * Register events
-     */
-    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
-        val events = mutableMapOf<String, Any>()
-        // Event.forEach { e -> ... } will also work or Event.exported.forEach { e -> .. }
-        for (e in Event) {
-            events[e.name] = mutableMapOf("registrationName" to e.name)
-        }
-        return events
-    }
 
     // START Setters methods
 

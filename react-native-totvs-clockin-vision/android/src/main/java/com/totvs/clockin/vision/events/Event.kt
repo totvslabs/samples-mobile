@@ -1,12 +1,14 @@
 package com.totvs.clockin.vision.events
 
+import com.facebook.react.bridge.ReactContext
+
 /**
  * React Native JS event representation.
  *
  * Events emitted to the JS side are advised to implement this interface
  *
  */
-interface Event : () -> Unit {
+interface Event : (ReactContext, Int) -> Unit {
 
     /**
      * Encodes information about the exportability of this event
@@ -41,8 +43,10 @@ interface Event : () -> Unit {
             OnPictureTaken,
             OnBarcodeDetected,
             OnFaceDetected,
-            OnFaceRecognized
+            OnFaceRecognized,
+            OnFaceProximity
         )
+
         /**
          * Fancy operator to enable for-each on Event.
          */

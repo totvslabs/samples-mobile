@@ -21,6 +21,8 @@ data class FaceObject(
     override val sourceSize: Size = Size(0, 0),
     override val boundingBox: RectF? = null,
     override val sourceRotationDegrees: Int = -1,
+    val width: Float,
+    val height: Float,
     private val landmarks: List<Landmark> = mutableListOf()
 ) : VisionObject() {
 
@@ -82,7 +84,10 @@ data class FaceObject(
 /**
  * Null representation of a null face object.
  */
-val NullFaceObject = FaceObject(sourceSize = Size(Int.MIN_VALUE, Int.MIN_VALUE))
+val NullFaceObject = FaceObject(
+    sourceSize = Size(Int.MIN_VALUE, Int.MIN_VALUE),
+    width = 0f, height = 0f
+)
 
 /**
  * Accessor to know when this [VisionObject] is null
