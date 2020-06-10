@@ -19,6 +19,7 @@ import com.totvs.camera.app.vision.barcode.TranslateBarcode
 import com.totvs.camera.app.vision.face.AnimateEyes
 import com.totvs.camera.app.vision.face.FaceGraphic
 import com.totvs.camera.core.CameraFacing
+import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.view.CameraView
 import com.totvs.camera.view.core.CameraViewModuleOptions
@@ -103,9 +104,12 @@ class MainActivity : AppCompatActivity() {
         val controls = View.inflate(this, R.layout.camera_ui_controls, container)
 
         controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
-            camera.takePicture(OutputFileOptions.NULL) { file, ex ->
-                Log.e("**", "file saved: ${file?.absolutePath}")
+            camera.takePicture { image: ImageProxy?, throwable: Throwable? ->
+
             }
+//            camera.takePicture(OutputFileOptions.NULL) { file, ex ->
+//                Log.e("**", "file saved: ${file?.absolutePath}")
+//            }
         }
 
         controls.findViewById<ImageButton>(R.id.camera_switch_button).setOnClickListener {

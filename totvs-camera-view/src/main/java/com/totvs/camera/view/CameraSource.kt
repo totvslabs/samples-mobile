@@ -346,12 +346,26 @@ internal class CameraSource(private val view: CameraView) {
             CameraFacing.BACK
     }
 
+    /**
+     * Take and save a picture. To guarantee the right display of the saved image, we override
+     * [OutputFileOptions.isReversedHorizontal] property.
+     *
+     * The saved image would be in JPEG format.
+     */
     fun takePicture(options: OutputFileOptions, onSaved: OnImageSaved) {
-        capture?.testPictureTake(view.context, captureExecutor, facing, options, onSaved)
+        capture?.internalTakePicture(
+            view.context, captureExecutor, options.copy(
+                isReversedHorizontal = facing == CameraFacing.FRONT
+            ), onSaved
+        )
     }
 
+    /**
+     * Take a picture and hand it to the caller. The caller must be responsible for closing
+     * the associated image.
+     */
     fun takePicture(onCaptured: OnImageCaptured) {
-        capture?.testPictureTake(captureExecutor, onCaptured)
+        capture?.internalTakePicture(captureExecutor, onCaptured)
     }
 
     /**

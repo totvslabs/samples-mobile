@@ -44,7 +44,10 @@ public interface Camera {
      * Trigger a capture image action.
      *
      * This method automatically save the captured in the location specified on
-     * options and then call the callback
+     * options and then call the callback.
+     *
+     * Images are saved in JPEG format. If no file object is specified in [options] then
+     * a random name and location is used.
      */
     public fun takePicture(options: OutputFileOptions, onSaved: OnImageSaved)
 
