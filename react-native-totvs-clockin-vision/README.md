@@ -20,10 +20,9 @@ install this library.
     include ':totvs-camera-core'
     include ':totvs-camera-view'
     include ':totvs-camera-vision'
-    // Map project reference to physical location
-	project(':totvs-camera-core').projectDir = new File(rootProject.projectDir, './totvs-camera-core')
-	project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './totvs-camera-view')
-	project(':totvs-camera-vision').projectDir = new File(rootProject.projectDir, './totvs-camera-vision')
+    project(':totvs-camera-core').projectDir = new File(rootProject.projectDir, './totvs-camera-core')
+    project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './totvs-camera-view')
+    project(':totvs-camera-vision').projectDir = new File(rootProject.projectDir, './totvs-camera-vision')
 ```
 
 This step will map any reference to the dependencies of the libraries to the physical location

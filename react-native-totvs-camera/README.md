@@ -18,9 +18,8 @@ we need to also configure manually these dependencies when we manually install t
 ```javascript
     include ':totvs-camera-core'
     include ':totvs-camera-view'
-    // Map project reference to physical location
-	project(':totvs-camera-core').projectDir = new File(rootProject.projectDir, './totvs-camera-core')
-	project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './totvs-camera-view')
+    project(':totvs-camera-core').projectDir = new File(rootProject.projectDir, './totvs-camera-core')
+    project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './totvs-camera-view')
 ```
 
 This step will map any reference to the dependencies of the libraries to the physical location
