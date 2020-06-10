@@ -30,7 +30,11 @@ class LivenessFace(val context: Context, val viewId: Int) : Liveness() {
 /**
  * Detect eyes blinking
  */
-class LivenessEyes(val context: Context, val viewId: Int, var requiredBlinks: Int = 0) : Liveness() {
+class LivenessEyes(
+    val context: Context,
+    val viewId: Int,
+    var requiredBlinks: Int = 0
+) : Liveness() {
     override val id: Int = 2
 
     override fun toString() = TAG

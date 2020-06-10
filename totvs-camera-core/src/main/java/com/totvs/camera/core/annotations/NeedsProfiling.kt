@@ -9,7 +9,7 @@ import androidx.annotation.RestrictTo
 @Retention(AnnotationRetention.SOURCE)
 @Target(
     AnnotationTarget.FIELD, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.FUNCTION
+    AnnotationTarget.FUNCTION, AnnotationTarget.CLASS
 )
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 annotation class NeedsProfiling(val what: String = "")

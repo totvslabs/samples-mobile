@@ -4,6 +4,9 @@ import android.content.Context
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.stream.VisionReceiver
 
+/**
+ * Proximity Detector
+ */
 interface Proximity : VisionReceiver<FaceObject>
 
 /**

@@ -11,6 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
+import com.totvs.camera.core.annotations.NeedsProfiling
 import com.totvs.camera.view.CameraView
 import com.totvs.camera.view.core.CameraViewModuleOptions
 import com.totvs.camera.vision.DetectionAnalyzer
@@ -28,6 +29,12 @@ import java.util.concurrent.Executors
 /**
  * Camera View capable of face detection.
  */
+@NeedsProfiling(what = """
+    Check the impact of not using onDetachFromWindow/onAttachedToWindow in this view.
+    Something that can help is adding a check to see when the view is detached and 
+    a new one is created, but the host is still active, hence the lifecycle callback
+    is not called and resources are not cleared.
+""")
 class FaceVisionCameraView @JvmOverloads internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -119,7 +126,6 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
      */
     private var graphicsConnection: Connection? = null
 
-
     /**
      * Graphic to record graphics.
      */
@@ -179,6 +185,9 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
      * Setup every requirement of this face vision camera
      */
     private fun startUp() {
+        if (isDebug) {
+            Log.e(TAG, "Setting up camera requirements")
+        }
         setupExecutors()
         bindTo(lifecycleOwner)
     }
@@ -187,6 +196,9 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
      * Turn down every requirement of this face vision camera
      */
     private fun tearDown() {
+        if (isDebug) {
+            Log.e(TAG, "Tear down camera requirements")
+        }
         tearDownExecutors()
         closeConnections()
     }
