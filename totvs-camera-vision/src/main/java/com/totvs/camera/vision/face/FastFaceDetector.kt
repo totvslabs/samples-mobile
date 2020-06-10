@@ -110,6 +110,10 @@ class FastFaceDetector(
         sourceRotationDegrees = rotation,
         width = face.width,
         height = face.height,
+        eyesOpenProbability = EyesOpenProbability(
+            face.isLeftEyeOpenProbability,
+            face.isRightEyeOpenProbability
+        ),
         landmarks = extractLandmarks(face)
     )
 
@@ -126,6 +130,9 @@ class FastFaceDetector(
             }
             if (l.type == GMSLandmark.RIGHT_EYE) {
                 landmarks.add(RightEye(l.position))
+            }
+            if (l.type == GMSLandmark.NOSE_BASE) {
+                landmarks.add(Nose(l.position))
             }
         }
         return landmarks

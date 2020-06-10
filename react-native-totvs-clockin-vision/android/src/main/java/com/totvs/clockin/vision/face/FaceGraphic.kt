@@ -6,21 +6,20 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.Size
 import com.totvs.camera.view.GraphicOverlay
-import com.totvs.camera.vision.face.FaceObject
-import com.totvs.camera.vision.face.LeftEye
-import com.totvs.camera.vision.face.RightEye
-import com.totvs.camera.vision.face.isNull
+import com.totvs.camera.vision.face.*
 import com.totvs.camera.vision.stream.VisionReceiver
 import com.totvs.clockin.vision.R
 
 class FaceGraphic(
-    context: Context
+    context: Context,
+    var drawEyes: Boolean = false,
+    var drawNose: Boolean = false
 ) : GraphicOverlay.Graphic(), VisionReceiver<FaceObject> {
 
-    private val radius = context.resources.getDimension(R.dimen.face_eyes_radius)
-    private val stroke = context.resources.getDimension(R.dimen.face_eyes_stroke_width)
+    private val radius = context.resources.getDimension(R.dimen.face_landmark_radius)
+    private val stroke = context.resources.getDimension(R.dimen.face_landmark_stroke_width)
 
-    private val eyesPaint = Paint().apply {
+    private val paint = Paint().apply {
         style = Paint.Style.FILL
         strokeWidth = stroke
         isAntiAlias = true
@@ -38,7 +37,7 @@ class FaceGraphic(
     }
 
     private fun setBoundingBoxColors() {
-        eyesPaint.apply {
+        paint.apply {
             color = Color.WHITE
             alpha = 180
         }
@@ -46,13 +45,21 @@ class FaceGraphic(
 
     override fun onDraw(canvas: Canvas) {
         face?.let { face ->
-            // third way
+            // val nose = face[Nose | LeftEye | RightEye] // try this too.
+
             face.forEach { landmark ->
-                if (landmark is LeftEye || landmark is RightEye) {
+                if (drawEyes && (landmark is LeftEye || landmark is RightEye)) {
                     val cx = translateX(landmark.position.x, face.sourceSize)
                     val cy = translateY(landmark.position.y, face.sourceSize)
 
-                    canvas.drawCircle(cx, cy, radius, eyesPaint)
+                    canvas.drawCircle(cx, cy, radius, paint)
+                }
+
+                if (drawNose && landmark is Nose) {
+                    val cx = translateX(landmark.position.x, face.sourceSize)
+                    val cy = translateY(landmark.position.y, face.sourceSize)
+
+                    canvas.drawCircle(cx, cy, radius, paint)
                 }
             }
         }

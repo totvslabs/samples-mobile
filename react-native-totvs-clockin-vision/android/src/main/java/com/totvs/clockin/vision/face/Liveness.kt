@@ -1,5 +1,6 @@
 package com.totvs.clockin.vision.face
 
+import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.NullFaceObject
@@ -18,6 +19,7 @@ class LivenessFace(
     val context: ReactContext,
     val viewId: Int
 ) : Liveness() {
+
     override fun send(value: FaceObject) {
     }
 

@@ -57,6 +57,16 @@ data class RightEye(
 }
 
 /**
+ * Nose landmark
+ */
+data class Nose(
+    override val position: PointF
+) : AbstractLandmark(Nose) {
+    companion object : Landmark.Name<Nose>
+}
+
+
+/**
  * Accessor to know when this [Landmark] is null
  */
 val Landmark?.isNull get() = this == null || this == NullLandmark

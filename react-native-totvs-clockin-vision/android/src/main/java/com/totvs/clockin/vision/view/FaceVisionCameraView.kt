@@ -279,6 +279,8 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
             ?.detections
             ?.filterIsInstance<FaceObject>()
             ?.connect(liveness)
+
+        installFaceGraphics(liveness)
     }
 
     /**
@@ -301,7 +303,7 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
     /**
      * Enable graphic overlay on the camera
      */
-    private fun installFaceGraphics() {
+    private fun installFaceGraphics(liveness: Liveness) {
         if (isDebug) {
             Log.e(TAG, "Enabling face graphics. Analyzer is ready: ${null != analyzer}")
         }
@@ -313,14 +315,28 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         graphicOverlay.add(faceGraphic)
         // closing current connection
         graphicsConnection?.disconnect()
+        // we don't need to draw nose under liveness eyes nor eyes on liveness face.
+        faceGraphic.apply {
+            drawEyes = liveness is LivenessEyes
+            drawNose = liveness is LivenessFace
+        }
 
         // setup the vision stream for face detected objects.
-        graphicsConnection = (analyzer as? DetectionAnalyzer)
-            ?.detections
-            ?.filterIsInstance<FaceObject>()
-            ?.sendOn(ContextCompat.getMainExecutor(context))
-            ?.transform(AnimateEyes())
-            ?.connect(faceGraphic)
+        if (liveness is LivenessEyes) {
+            graphicsConnection = (analyzer as? DetectionAnalyzer)
+                ?.detections
+                ?.filterIsInstance<FaceObject>()
+                ?.sendOn(ContextCompat.getMainExecutor(context))
+                ?.transform(AnimateEyes())
+                ?.connect(faceGraphic)
+        } else {
+            graphicsConnection = (analyzer as? DetectionAnalyzer)
+                ?.detections
+                ?.filterIsInstance<FaceObject>()
+                ?.sendOn(ContextCompat.getMainExecutor(context))
+                ?.transform(AnimateNose())
+                ?.connect(faceGraphic)
+        }
     }
 
 

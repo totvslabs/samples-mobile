@@ -107,6 +107,10 @@ open class FaceDetector(
         sourceRotationDegrees = rotation,
         width = face.boundingBox.width().toFloat(),
         height = face.boundingBox.height().toFloat(),
+        eyesOpenProbability = EyesOpenProbability(
+            face.leftEyeOpenProbability,
+            face.rightEyeOpenProbability
+        ),
         landmarks = extractLandmarks(face)
     )
 
@@ -124,6 +128,9 @@ open class FaceDetector(
         // right eye
         face.getLandmark(FirebaseVisionFaceLandmark.RIGHT_EYE)?.let {
             landmarks.add(RightEye(PointF(it.position.x, it.position.y)))
+        }
+        face.getLandmark(FirebaseVisionFaceLandmark.NOSE_BASE)?.let {
+            landmarks.add(Nose(PointF(it.position.x, it.position.y)))
         }
         return landmarks
     }
