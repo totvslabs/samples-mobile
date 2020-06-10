@@ -23,6 +23,7 @@ data class FaceObject(
     override val sourceRotationDegrees: Int = -1,
     val width: Float,
     val height: Float,
+    val eyesOpenProbability: EyesOpenProbability,
     private val landmarks: List<Landmark> = mutableListOf()
 ) : VisionObject() {
 
@@ -82,11 +83,17 @@ data class FaceObject(
 }
 
 /**
+ * Eyes open probability
+ */
+data class EyesOpenProbability(val left: Float, val right: Float)
+
+/**
  * Null representation of a null face object.
  */
 val NullFaceObject = FaceObject(
     sourceSize = Size(Int.MIN_VALUE, Int.MIN_VALUE),
-    width = 0f, height = 0f
+    width = 0f, height = 0f,
+    eyesOpenProbability = EyesOpenProbability(0f, 0f)
 )
 
 /**

@@ -40,9 +40,7 @@ interface Event : (ReactContext, Int) -> Unit {
      */
     companion object {
         val exported = listOf(
-            OnPictureTaken,
             OnBarcodeDetected,
-            OnFaceDetected,
             OnFaceRecognized,
             OnFaceProximity
         )
