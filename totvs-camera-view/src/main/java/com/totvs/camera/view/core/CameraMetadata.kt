@@ -2,6 +2,8 @@ package com.totvs.camera.view.core
 
 import androidx.annotation.RestrictTo
 import androidx.camera.core.CameraSelector
+import com.totvs.camera.core.annotations.LensFacing
+import com.totvs.camera.core.CameraFacing
 
 /**
  * Exported constants of this module
@@ -13,7 +15,7 @@ sealed class ExportableConstant {
 
     companion object {
         private val all = listOf(
-            CameraFacing, ZoomLimits
+            CameraFacingConstants, CameraZoomLimits
         )
 
         operator fun iterator() = all.iterator()
@@ -23,10 +25,11 @@ sealed class ExportableConstant {
 }
 
 /**
- * Constants for camera facing
+ * Constants for camera facing. Exported properties annotated with [LensFacing] are expected
+ * to assume one of this values. This values map directly to one value of [CameraFacing]
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-private object CameraFacing : ExportableConstant() {
+object CameraFacingConstants : ExportableConstant() {
     override val name = "LENS_FACING"
 
     const val FRONT = CameraSelector.LENS_FACING_FRONT
@@ -43,7 +46,7 @@ private object CameraFacing : ExportableConstant() {
  * Constants for limit the zoom values, zoom values must be on [MIN, MAX]
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-private object ZoomLimits : ExportableConstant() {
+object CameraZoomLimits : ExportableConstant() {
     override val name = "ZOOM_LIMITS"
 
     const val MIN = 0.0

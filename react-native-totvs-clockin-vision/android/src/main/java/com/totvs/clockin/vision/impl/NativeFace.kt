@@ -2,7 +2,7 @@ package com.totvs.clockin.vision.impl
 
 import android.graphics.Point
 import android.graphics.Rect
-import com.totvs.clockin.vision.core.Face
+import com.totvs.clockin.vision.face.Face
 import com.tzutalin.dlib.VisionDetRet
 
 internal class NativeFace(private val rect: VisionDetRet) : Face() {

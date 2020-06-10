@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
-import com.totvs.clockin.vision.core.Face
+import com.totvs.clockin.vision.face.Face
 import com.totvs.clockin.vision.core.DetectionModel
 import com.totvs.clockin.vision.core.RecognitionModel
 import com.tzutalin.dlib.FaceRec

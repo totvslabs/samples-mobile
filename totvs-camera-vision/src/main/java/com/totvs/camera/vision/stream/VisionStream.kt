@@ -1,5 +1,7 @@
 package com.totvs.camera.vision.stream
 
+import androidx.annotation.CheckResult
+
 /**
  * [VisionStream] model a stream of vision object passing through a processing pipe
  * that can transform the object as it goes until it reaches the end of the pipe.
@@ -22,5 +24,6 @@ interface VisionStream<T> {
      * and returns a [Connection] that the caller can use to stop receiving objects from this
      * stream.
      */
+    @CheckResult
     fun connect(receiver: VisionReceiver<T>) : Connection
 }

@@ -1,17 +1,17 @@
-package com.totvs.camera.app.vision.face
+package com.totvs.clockin.vision.face
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.Size
-import com.totvs.camera.app.R
 import com.totvs.camera.view.GraphicOverlay
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.LeftEye
 import com.totvs.camera.vision.face.RightEye
 import com.totvs.camera.vision.face.isNull
 import com.totvs.camera.vision.stream.VisionReceiver
+import com.totvs.clockin.vision.R
 
 class FaceGraphic(
     context: Context
@@ -32,6 +32,11 @@ class FaceGraphic(
         setBoundingBoxColors()
     }
 
+    fun clear() {
+        face = null
+        postInvalidate()
+    }
+
     private fun setBoundingBoxColors() {
         eyesPaint.apply {
             color = Color.WHITE
@@ -39,16 +44,8 @@ class FaceGraphic(
         }
     }
 
-
     override fun onDraw(canvas: Canvas) {
         face?.let { face ->
-            // one way of retrieving the eyes
-            // val lEye = face[LeftEye]
-            // val rEye = face[RightEye]
-
-            // second way
-            // for (landmark in face) { ... }
-
             // third way
             face.forEach { landmark ->
                 if (landmark is LeftEye || landmark is RightEye) {

@@ -235,7 +235,7 @@ internal class CameraSource(private val view: CameraView) {
 
         val selector = CameraSelector
             .Builder()
-            .requireLensFacing(facing.toInt)
+            .requireLensFacing(facing.toFacingConstant)
             .build()
 
         val useCases = mutableListOf(preview, capture).apply {
@@ -332,6 +332,9 @@ internal class CameraSource(private val view: CameraView) {
 
     // take proper care of executors lifecycle
     fun turnDownExecutors() {
+        if (!::captureExecutor.isInitialized) {
+            return
+        }
         captureExecutor.shutdownNow()
         analysisExecutor.shutdownNow()
     }

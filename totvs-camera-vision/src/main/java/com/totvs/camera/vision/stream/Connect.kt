@@ -1,5 +1,7 @@
 package com.totvs.camera.vision.stream
 
+import androidx.annotation.CheckResult
+
 /**
  * Terminal operation that connect to this [VisionStream] and start receiving
  * the [T] that are passing through it.
@@ -8,6 +10,7 @@ package com.totvs.camera.vision.stream
  *
  * someStream.connect { object -> ... do something with the object }
  */
+@CheckResult
 fun <T> VisionStream<T>.connect(block: (T) -> Unit): Connection =
     connect(object : VisionReceiver<T> {
         override fun send(value: T) {

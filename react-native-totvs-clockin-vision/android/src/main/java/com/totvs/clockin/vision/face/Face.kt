@@ -1,4 +1,4 @@
-package com.totvs.clockin.vision.core
+package com.totvs.clockin.vision.face
 
 import android.graphics.Point
 import android.graphics.Rect

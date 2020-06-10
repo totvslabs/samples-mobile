@@ -12,9 +12,11 @@ import com.totvs.camera.core.Camera
 import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.core.annotations.LensFacing
 import com.totvs.camera.view.CameraView
+import com.totvs.camera.view.core.CameraFacingConstants
 import com.totvs.camera.view.core.ExportableConstant
 import com.totvs.camera.view.toCameraFacing
-
+import com.totvs.camera.view.toFacingConstant
+import com.totvs.camera.view.core.CameraZoomLimits
 
 /**
  * React Native module for this library.
@@ -83,7 +85,9 @@ public class ReactCameraModule(
     // START View methods
 
     /**
-     * Set camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom
+     * Set camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom.
+     *
+     * Zoom value if expected to be one in between of the exported [CameraZoomLimits]
      */
     @AnyThread
     @ReactMethod
@@ -97,7 +101,9 @@ public class ReactCameraModule(
     }
 
     /**
-     * Get camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom
+     * Get camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom.
+     *
+     * Zoom value if expected to be one in between of the exported [CameraZoomLimits]
      */
     @AnyThread
     @ReactMethod
@@ -139,8 +145,10 @@ public class ReactCameraModule(
         }
 
     /**
-     * Change the camera lens display. This is related to [toggleCamera] in the sence
+     * Change the camera lens display. This is related to [toggleCamera] in the sense
      * that this method indicate explicitly which lens to use for the camera.
+     *
+     * [facing] is expressed as one of the exported constants [CameraFacingConstants]
      */
     @AnyThread
     @ReactMethod
@@ -154,12 +162,13 @@ public class ReactCameraModule(
     }
 
     /**
-     * Get current camera facing
+     * Get current camera facing. Returned facing is expected to be one of the exported
+     * facing constants [CameraFacingConstants].
      */
     @AnyThread
     @ReactMethod
     public fun getLensFacing(viewTag: Int, promise: Promise) =
-        promise.withCamera(viewTag) { facing }
+        promise.withCamera(viewTag) { facing.toFacingConstant }
 
     // Experimental API. still needs to determine the output location and how/who/when
     // to pass it down to this library. in the meantime is going to be saved in the data directory

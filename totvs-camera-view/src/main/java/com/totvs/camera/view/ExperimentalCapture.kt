@@ -34,7 +34,7 @@ internal fun ImageCapture.testPictureTake(
     val file = createFile(context)
 
     val metadata = ImageCapture.Metadata().apply {
-        isReversedHorizontal = lensFacing.toInt == CameraSelector.LENS_FACING_FRONT
+        isReversedHorizontal = lensFacing.toFacingConstant == CameraSelector.LENS_FACING_FRONT
     }
 
     val outputOptions = ImageCapture.OutputFileOptions.Builder(file)

@@ -4,7 +4,7 @@ import com.totvs.camera.core.CameraFacing
 
 /**
  * Possible values for properties annotated with this annotation are:
- * [CameraFacing.BACK] and [CameraFacing.FRONT]
+ * [CameraFacing.BACK] and [CameraFacing.FRONT] or values that map to them.
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)

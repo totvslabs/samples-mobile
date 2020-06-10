@@ -1,23 +1,23 @@
 package com.totvs.camera.view
 
-import androidx.camera.core.CameraSelector
 import com.totvs.camera.core.CameraFacing
+import com.totvs.camera.view.core.CameraFacingConstants
 
 /**
- * Map a [CameraFacing] to a [CameraSelector.LensFacing]
+ * Map a [CameraFacing] to a [CameraFacingConstants]
  */
-val CameraFacing.toInt
+val CameraFacing.toFacingConstant
     get() = if (this == CameraFacing.FRONT) {
-        CameraSelector.LENS_FACING_FRONT
+        CameraFacingConstants.FRONT
     } else {
-        CameraSelector.LENS_FACING_BACK
+        CameraFacingConstants.BACK
     }
 
 /**
- * Map from a [CameraSelector.LensFacing] to a [CameraFacing]
+ * Map from a [CameraFacingConstants] to a [CameraFacing]
  */
 val Int.toCameraFacing
-    get() = if (this == CameraSelector.LENS_FACING_FRONT) {
+    get() = if (this == CameraFacingConstants.FRONT) {
         CameraFacing.FRONT
     } else {
         CameraFacing.BACK

@@ -42,7 +42,7 @@ open class CameraView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0
-) : FrameLayout(context, attrs, style), Camera, LifecycleEventListener {
+) : FrameLayout(context, attrs, style), Camera {
 
     // Listeners
 
@@ -67,9 +67,17 @@ open class CameraView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Bridge lifecycle event listeners.
+     */
+    private object LifecycleEvents : LifecycleEventListener {
+        override fun onHostResume()  = ReactLifecycleOwner.onHostResume()
+        override fun onHostPause()   = ReactLifecycleOwner.onHostPause()
+        override fun onHostDestroy() = ReactLifecycleOwner.onHostDestroy()
+    }
 
     /**
-     * Lifecycle owner to control [CameraX] lifecycle.
+     * Lifecycle owner to control [CameraSource] lifecycle.
      *
      * This property is a hack around react native environment. Since
      * react native is built on top of old android activity api, it is not
@@ -85,11 +93,11 @@ open class CameraView @JvmOverloads constructor(
      *
      * @see also [ReactLifecycleOwner]
      */
-    private val lifecycle: LifecycleOwner = when (context) {
+    private val lifecycleOwner: LifecycleOwner = when (context) {
         is LifecycleOwner -> context
         is ThemedReactContext -> ReactLifecycleOwner
             .also {
-                context.addLifecycleEventListener(this)
+                context.addLifecycleEventListener(LifecycleEvents)
             }
         else -> throw IllegalArgumentException(
             """ Invalid context type. You must use this view with a LifecycleOwner 
@@ -104,7 +112,7 @@ open class CameraView @JvmOverloads constructor(
         installHierarchyFitter(this)
     }
 
-    /** CameraX implementation manipulator */
+    /** CameraSource implementation manipulator */
     private val cameraSource: CameraSource
 
     /** [DisplayManager] */
@@ -127,7 +135,7 @@ open class CameraView @JvmOverloads constructor(
         addView(previewView, 0)
         addView(graphicOverlay)
         cameraSource = CameraSource(this).apply {
-            @Suppress("MissingPermission") bindToLifecycle(lifecycle)
+            @Suppress("MissingPermission") bindToLifecycle(lifecycleOwner)
         }
         setBackgroundResource(android.R.color.black)
     }
@@ -206,7 +214,7 @@ open class CameraView @JvmOverloads constructor(
     override var analyzer: ImageAnalyzer? = null
         set(value) {
             field = value
-            @Suppress("MissingPermission") bindToLifecycle(lifecycle) // we need to rebind again.
+            @Suppress("MissingPermission") bindToLifecycle(lifecycleOwner) // we need to rebind again.
         }
 
     // Overrides
@@ -218,7 +226,7 @@ open class CameraView @JvmOverloads constructor(
     override fun onSaveInstanceState(): Parcelable? {
         super.onSaveInstanceState()
         return Bundle().apply {
-            putInt(EXTRA_CAMERA_FACING, facing.toInt)
+            putInt(EXTRA_CAMERA_FACING, facing.toFacingConstant)
         }
     }
 
@@ -227,7 +235,7 @@ open class CameraView @JvmOverloads constructor(
         if (state is Bundle) {
             facing = state.getInt(
                 EXTRA_CAMERA_FACING,
-                CameraFacing.BACK.toInt
+                CameraFacing.BACK.toFacingConstant
             ).toCameraFacing
         } else {
             super.onRestoreInstanceState(state)
@@ -344,12 +352,6 @@ open class CameraView @JvmOverloads constructor(
      */
     open fun removeOverlayGraphic(graphic: GraphicOverlay.Graphic) =
         graphicOverlay.remove(graphic)
-
-    // Bridge lifecycle event listeners
-    override fun onHostResume() = ReactLifecycleOwner.onHostResume()
-    override fun onHostPause() = ReactLifecycleOwner.onHostPause()
-    override fun onHostDestroy() = ReactLifecycleOwner.onHostDestroy()
-
 
     companion object {
         private const val TAG = "CameraView"
