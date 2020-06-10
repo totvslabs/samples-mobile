@@ -30,12 +30,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Camera View capable of face detection.
  */
-@NeedsProfiling(what = """
-    Check the impact of not using onDetachFromWindow/onAttachedToWindow in this view.
-    Something that can help is adding a check to see when the view is detached and 
-    a new one is created, but the host is still active, hence the lifecycle callback
-    is not called and resources are not cleared.
-""")
 class FaceVisionCameraView @JvmOverloads internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
