@@ -243,14 +243,20 @@ open class CameraView @JvmOverloads constructor(
         super.onRestoreInstanceState(null) // compensate for kotlin call super requirement
     }
 
+    @CallSuper
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         displayManager.registerDisplayListener(displayListener, Handler(Looper.getMainLooper()))
+
+        tryToRebindToLifecycle()
     }
 
+    @CallSuper
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         displayManager.unregisterDisplayListener(displayListener)
+
+        tryToUnbindFromLifecycle()
     }
 
     @Suppress("MissingPermission")
@@ -338,6 +344,33 @@ open class CameraView @JvmOverloads constructor(
     private fun installHierarchyFitter(view: ViewGroup) {
         if (context is ThemedReactContext) { // only react-native setup
             view.setOnHierarchyChangeListener(viewHierarchyListener)
+        }
+    }
+
+    /**
+     * Try to release camera source resources.
+     *
+     * We do this selectively on react-context because is more prompt
+     * for react apps to call this callbacks more often than in android apps
+     * because of the hot-reload.
+     */
+    private fun tryToUnbindFromLifecycle() {
+        if (context is ThemedReactContext) {
+            cameraSource.unbindFromLifecycle(lifecycleOwner)
+        }
+    }
+
+    /**
+     * Try to acquire camera source resources.
+     *
+     * We do this selectively on react-context because is more prompt
+     * for react apps to call this callbacks more often than in android apps
+     * because of the hot-reload.
+     */
+    @Suppress("MissingPermission")
+    private fun tryToRebindToLifecycle() {
+        if (context is ThemedReactContext) {
+            cameraSource.bindToLifecycle(lifecycleOwner)
         }
     }
 

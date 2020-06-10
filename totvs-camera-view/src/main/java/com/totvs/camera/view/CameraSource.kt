@@ -154,12 +154,25 @@ internal class CameraSource(private val view: CameraView) {
             Log.e(TAG, "No camera permission granted")
             return
         }
+        // we start the executors
+        turnUpExecutors()
 
         pendingLifecycle = lifecycle
 
         if (measuredWidth > 0 && measuredHeight > 0) {
             bindToLifecycleAfterViewMeasured()
         }
+    }
+
+    /**
+     * Unbind the use cases from the lifecycle and release all related resources
+     */
+    @MainThread
+    fun unbindFromLifecycle(lifecycle: LifecycleOwner) {
+        cameraProvider?.unbindAll()
+
+        // turn down executors.
+        turnDownExecutors()
     }
 
     /**
@@ -188,8 +201,6 @@ internal class CameraSource(private val view: CameraView) {
             throw IllegalArgumentException("Cannot bind to a lifecycle in a destroyed state")
         }
         cameraProvider ?: return // let's try later when the provider is not null
-        // let's install the executors
-        turnUpExecutors()
 
         // adjust preview resolution based on measured size and aspect ratio
         // we set the appropriate preview size. Do notice that this is only a hint

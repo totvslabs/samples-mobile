@@ -25,6 +25,7 @@ import com.totvs.clockin.vision.face.*
 import com.totvs.clockin.vision.lifecycle.ReactLifecycleOwner
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Camera View capable of face detection.
@@ -131,17 +132,14 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
      */
     private val faceGraphic = FaceGraphic(context)
 
+    /**
+     * Whether or not we're on a ready state.
+     */
+    private val isReady = AtomicBoolean(false)
+
     init {
         withDebug()
-
         startUp()
-        analyzer = DetectionAnalyzer(
-            detectionExecutor,
-            FastFaceDetector(context)
-        ).apply {
-            // disable(/*any detector here*/)
-        }
-        installFaceGraphics()
     }
 
     // [FaceVisionCamera] contract
@@ -181,14 +179,30 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         this.options = options
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        startUp()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        tearDown()
+    }
+
     /**
      * Setup every requirement of this face vision camera
      */
     private fun startUp() {
+        if (isReady.get()) return
+
         if (isDebug) {
             Log.e(TAG, "Setting up camera requirements")
         }
+        // start executors
         setupExecutors()
+        // install detections
+        installAnalyzer()
+        // bind to lifecycle
         bindTo(lifecycleOwner)
     }
 
@@ -196,11 +210,25 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
      * Turn down every requirement of this face vision camera
      */
     private fun tearDown() {
+        isReady.set(false)
+
         if (isDebug) {
             Log.e(TAG, "Tear down camera requirements")
         }
         tearDownExecutors()
         closeConnections()
+    }
+
+    /**
+     * Install detection analyzer on [CameraView]
+     */
+    private fun installAnalyzer() {
+        analyzer = DetectionAnalyzer(
+            detectionExecutor,
+            FastFaceDetector(context)
+        ).apply {
+            // disable(/*any detector here*/)
+        }
     }
 
     /**
