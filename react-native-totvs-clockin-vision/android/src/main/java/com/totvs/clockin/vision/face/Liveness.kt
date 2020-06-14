@@ -1,6 +1,5 @@
 package com.totvs.clockin.vision.face
 
-import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.NullFaceObject
@@ -14,13 +13,20 @@ sealed class Liveness : VisionReceiver<FaceObject>
 
 /**
  * Detect face movement
+ *
+ * @param infeasibleAreaPercent controls what horizontal percentage of the screen
+ * will be regarded as not feasible region for the face to be to be even considered
+ * for liveness. This parameter help us to deal with the situation that one face might
+ * be in a corner of the screen coordinate system and we can't recognize it quite well.
  */
 class LivenessFace(
     val context: ReactContext,
-    val viewId: Int
+    val viewId: Int,
+    val infeasibleAreaPercent: Float = 0.2f
 ) : Liveness() {
 
     override fun send(value: FaceObject) {
+        
     }
 
     override fun toString() = TAG

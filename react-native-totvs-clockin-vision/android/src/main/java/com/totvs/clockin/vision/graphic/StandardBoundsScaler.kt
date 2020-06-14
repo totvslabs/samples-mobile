@@ -2,6 +2,7 @@ package com.totvs.clockin.vision.graphic
 
 import android.graphics.RectF
 import android.util.Size
+import androidx.annotation.CallSuper
 import com.totvs.camera.view.GraphicOverlay
 import com.totvs.camera.vision.VisionObject
 import com.totvs.camera.vision.stream.Transformer
@@ -46,6 +47,7 @@ abstract class StandardBoundsScaler<T : VisionObject>(
         boundingBox: RectF?
     ): T
 
+    @CallSuper
     override fun transform(value: T, receiver: VisionReceiver<T>) {
         // we do nothing when we don't have boundingBox: usually a null object
         val boundingBox = value.boundingBox ?: return receiver.send(value)
@@ -78,6 +80,41 @@ abstract class StandardBoundsScaler<T : VisionObject>(
             boundingBox = mappedBoundingBox
         ))
     }
+
+    /**
+     * Scale [x] into this graphic overlay coordinate. Results of this method are only valid
+     * after calling [transform], i.e after computing the appropriate scale factors.
+     */
+    fun scaleX(x: Float): Float {
+        return x * scale + offsetX
+    }
+
+    /**
+     * Scale [y] into this graphic overlay coordinate. Results of this method are only valid
+     * after calling [transform], i.e after computing the appropriate scale factors.
+     */
+    fun scaleY(y: Float): Float {
+        return y * scale + offsetY
+    }
+
+    /**
+     * Translate [x] to this graphic overlay coordinate. Results of this method are only valid
+     * after calling [transform], i.e after computing the appropriate scale factors.
+     */
+    fun translateX(x: Float): Float {
+        // The front facing image is flipped, so we need to mirror the positions on the vertical axis
+        return if (overlay.isFrontCamera) {
+            scaleX(lastSourceCoordinate.width - x)
+        } else {
+            scaleX(x)
+        }
+    }
+
+    /**
+     * Translate [y] to this graphic overlay coordinate. Results of this method are only valid
+     * after calling [transform], i.e after computing the appropriate scale factors.
+     */
+    protected fun translateY(y: Float): Float = scaleY(y)
 
     /**
      * This function computes the required values to scale any point in [source]

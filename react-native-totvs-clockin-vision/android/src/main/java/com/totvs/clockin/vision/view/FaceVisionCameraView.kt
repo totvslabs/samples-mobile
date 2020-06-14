@@ -21,10 +21,12 @@ import com.totvs.camera.vision.stream.*
 import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
 import com.totvs.clockin.vision.core.RecognitionModel
 import com.totvs.clockin.vision.face.*
+import com.totvs.clockin.vision.face.FaceVisionCamera.RecognitionOptions
 import com.totvs.clockin.vision.lifecycle.ReactLifecycleOwner
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+import com.totvs.camera.view.GraphicOverlay
 
 /**
  * Camera View capable of face detection.
@@ -130,8 +132,24 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
      */
     private val isReady = AtomicBoolean(false)
 
+    /**
+     * [Transformer] that adjust face objects source bounds to the [GraphicOverlay]
+     * coordinate system.
+     */
+    private val faceBoundsScaler by lazy {
+        FaceBoundsScaler(graphicOverlay)
+    }
+
+    /**
+     * [Transformer] that scale nose landmark from the source coordinate into [GraphicOverlay]
+     * coordinate system.
+     */
+    private val faceNoseTranslator by lazy {
+        FaceNoseTranslator(graphicOverlay)
+    }
+
     init {
-        withDebug()
+        enableDebug()
         startUp()
     }
 
@@ -160,8 +178,8 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         get() = null != proximity
 
 
-    override fun recognizeStillPicture() = ensureSetup {
-        Unit
+    override fun recognizeStillPicture(options: RecognitionOptions) = ensureSetup {
+
     }
 
     /**
@@ -278,7 +296,7 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
             (analyzer as? DetectionAnalyzer)
                 ?.detections
                 ?.filterIsInstance<FaceObject>()
-                ?.transform(FaceBoundingBox(graphicOverlay))
+                ?.transform(faceNoseTranslator)
                 ?.connect(liveness)
         } else {
             (analyzer as? DetectionAnalyzer)
@@ -304,7 +322,7 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         proximityConnection = (analyzer as? DetectionAnalyzer)
             ?.detections
             ?.filterIsInstance<FaceObject>()
-            ?.transform(FaceBoundingBox(graphicOverlay))
+            ?.transform(faceBoundsScaler)
             ?.connect(proximity)
     }
 
@@ -361,7 +379,7 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         private val isDebug get() = ClockInVisionModuleOptions.DEBUG_ENABLED
 
         // use this to debug the whole set of libraries. comment then out if no needed.
-        private fun withDebug() {
+        private fun enableDebug() {
             VisionModuleOptions.DEBUG_ENABLED = true
             CameraViewModuleOptions.DEBUG_ENABLED = true
             ClockInVisionModuleOptions.DEBUG_ENABLED = true
