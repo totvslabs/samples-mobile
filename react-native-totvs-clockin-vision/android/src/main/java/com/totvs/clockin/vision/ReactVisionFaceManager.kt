@@ -1,7 +1,11 @@
 package com.totvs.clockin.vision
 
+import androidx.annotation.FloatRange
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.annotations.ReactProp
+import com.totvs.camera.core.annotations.LensFacing
+import com.totvs.camera.view.toCameraFacing
 import com.totvs.clockin.vision.events.Event
 import com.totvs.clockin.vision.events.OnBarcodeDetected
 import com.totvs.clockin.vision.view.FaceVisionCameraView
@@ -9,7 +13,7 @@ import com.totvs.clockin.vision.view.FaceVisionCameraView
 /**
  * [FaceVisionCameraView] react view manager
  */
-class ReactVisionFaceManager : ViewGroupManager<FaceVisionCameraView>() {
+class ReactVisionFaceManager : AbstractViewManager<FaceVisionCameraView>() {
 
     /**
      * React Native view name for the view managed by this manager
@@ -36,10 +40,6 @@ class ReactVisionFaceManager : ViewGroupManager<FaceVisionCameraView>() {
         }
         return events
     }
-
-    // START Setters methods
-
-    // END Setters methods
 
     companion object {
         /**

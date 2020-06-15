@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import com.totvs.camera.view.CameraView
 import com.totvs.clockin.vision.barcode.BarcodeVisionCamera
 
-class BarcodeVisionCameraView @JvmOverloads constructor(
+class BarcodeVisionCameraView @JvmOverloads internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0

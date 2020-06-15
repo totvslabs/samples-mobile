@@ -50,6 +50,6 @@ interface Event : (ReactContext, Int) -> Unit {
          */
         operator fun iterator(): Iterator<Export> = exported.iterator()
 
-        public fun forEach(block: (Export) -> Unit) = iterator().forEach(block)
+        fun forEach(block: (Export) -> Unit) = iterator().forEach(block)
     }
 }

@@ -1,7 +1,6 @@
 package com.totvs.clockin.vision
 
 import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.ViewGroupManager
 import com.totvs.clockin.vision.events.Event
 import com.totvs.clockin.vision.events.OnBarcodeDetected
 import com.totvs.clockin.vision.view.BarcodeVisionCameraView
@@ -9,7 +8,7 @@ import com.totvs.clockin.vision.view.BarcodeVisionCameraView
 /**
  * [BarcodeVisionCameraView] react view manager
  */
-class ReactVisionBarcodeManager : ViewGroupManager<BarcodeVisionCameraView>() {
+class ReactVisionBarcodeManager : AbstractViewManager<BarcodeVisionCameraView>() {
     /**
      * React Native view name for the view managed by this manager
      */
@@ -35,10 +34,6 @@ class ReactVisionBarcodeManager : ViewGroupManager<BarcodeVisionCameraView>() {
         }
         return events
     }
-
-    // START Setters methods
-
-    // END Setters methods
 
     companion object {
         /**

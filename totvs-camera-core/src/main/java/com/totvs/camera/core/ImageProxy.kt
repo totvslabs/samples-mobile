@@ -10,7 +10,7 @@ import java.nio.ByteBuffer
  * This allow us to offer a unified and provided interface of an image
  * that is independent of the provider of captured images.
  */
-public interface ImageProxy : AutoCloseable {
+interface ImageProxy : AutoCloseable {
     /**
      * Close this resource. This will close the underlying [image] field.
      *

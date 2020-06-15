@@ -1,4 +1,4 @@
-package com.totvs.camera
+package com.totvs.clockin.vision
 
 import androidx.annotation.AnyThread
 import androidx.annotation.FloatRange
@@ -9,71 +9,34 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.uimanager.NativeViewHierarchyManager
 import com.facebook.react.uimanager.UIManagerModule
 import com.totvs.camera.core.Camera
-import com.totvs.camera.core.OutputFileOptions
 import com.totvs.camera.core.annotations.LensFacing
 import com.totvs.camera.view.CameraView
 import com.totvs.camera.view.core.CameraFacingConstants
-import com.totvs.camera.view.core.ExportableConstant
+import com.totvs.camera.view.core.CameraZoomLimits
 import com.totvs.camera.view.toCameraFacing
 import com.totvs.camera.view.toFacingConstant
-import com.totvs.camera.view.core.CameraZoomLimits
-import java.io.File
 
 /**
- * React Native module for this library.
+ * Abstract class to abstract common operations between [CameraView] subclasses
  */
-/*
- * Please keep in mind that the runtime react-native library used to compile
- * the library is different from the version resolved by gradle when used in a react-native
- * project. The version resolved by gradle which is around 0.20.1 while the one resolved
- * when compiling the library included in react native project depends on the version
- * used when creating the project.
- *
- * It turns out that the 0.20.1 library is not compatible with the runtime found
- * in node_modules. That said, DON'T fix the compile time errors on this file. They're there
- * to reflect the actual signature of the runtime library with which the project is
- * compiled.
- *
- * When you work on this library you can specify on build.gradle the node_modules directory
- * to be used as a source for the react-native library implementation to allow this code
- * to compile.
- *
- * Read documentation in react-native-totvs-camera/build.gradle to know how to handle this
- * situation for compile time.
- *
- * @see also [ReactCameraModule]
- */
-class ReactCameraModule(
-    context: ReactApplicationContext
+abstract class AbstractReactVisionModule(
+    private val context: ReactApplicationContext
 ) : ReactContextBaseJavaModule(context) {
-
-    override fun getName() = NAME
-
-    /**
-     * Constants exported to JS side
-     */
-    override fun getConstants(): MutableMap<String, Any> {
-        return mutableMapOf<String, Any>().apply {
-            ExportableConstant.forEach { set ->
-                put(set.name, set.export())
-            }
-        }
-    }
 
     /**
      * Utility function to reduce boilerplate code at executing a block of code
      * on the ui manager. If [autoResolve] is set to true, then the promise will be
      * resolved with the value returned from the block, otherwise the caller must
-     * resolve the promise
+     * resolve the promise.
      */
-    private fun <T> Promise.withCamera(
+    protected inline fun <reified C : Camera, R> Promise.withCamera(
         viewTag: Int,
         autoResolve: Boolean = true,
-        block: Camera.(promise: Promise) -> T
+        crossinline block: C.(promise: Promise) -> R
     ) = reactApplicationContext.uiManager {
         addUIBlock { manager ->
             try {
-                val result = manager.cameraOrThrow(viewTag).block(this@withCamera)
+                val result = manager.cameraOrThrow<C>(viewTag).block(this@withCamera)
                 if (autoResolve) {
                     resolve(result)
                 }
@@ -82,6 +45,12 @@ class ReactCameraModule(
             }
         }
     }
+
+    private inline fun <R> Promise.withCameraView(
+        viewTag: Int,
+        autoResolve: Boolean = true,
+        crossinline block: Camera.(promise: Promise) -> R
+    ) = withCamera<CameraView, R>(viewTag, autoResolve, block)
 
     // START View methods
 
@@ -96,7 +65,7 @@ class ReactCameraModule(
         @FloatRange(from = 0.0, to = 1.0) zoom: Float,
         viewTag: Int,
         promise: Promise
-    ) = promise.withCamera(viewTag) {
+    ) = promise.withCameraView(viewTag) {
         this.zoom = zoom
         true
     }
@@ -109,7 +78,7 @@ class ReactCameraModule(
     @AnyThread
     @ReactMethod
     fun getZoom(viewTag: Int, promise: Promise) =
-        promise.withCamera(viewTag) { zoom }
+        promise.withCameraView(viewTag) { zoom }
 
     /**
      * Enable or disable camera torch
@@ -120,7 +89,7 @@ class ReactCameraModule(
         enable: Boolean,
         viewTag: Int,
         promise: Promise
-    ) = promise.withCamera(viewTag) {
+    ) = promise.withCameraView(viewTag) {
         isTorchEnabled = enable
         true
     }
@@ -131,7 +100,7 @@ class ReactCameraModule(
     @AnyThread
     @ReactMethod
     fun isTorchEnabled(viewTag: Int, promise: Promise) =
-        promise.withCamera(viewTag) { isTorchEnabled }
+        promise.withCameraView(viewTag) { isTorchEnabled }
 
     /**
      * Toggle the camera. i.e if the current camera is the front one it will toggle to back
@@ -140,7 +109,7 @@ class ReactCameraModule(
     @AnyThread
     @ReactMethod
     fun toggleCamera(viewTag: Int, promise: Promise) =
-        promise.withCamera(viewTag) {
+        promise.withCameraView(viewTag) {
             toggleCamera()
             true
         }
@@ -157,7 +126,7 @@ class ReactCameraModule(
         @LensFacing facing: Int,
         viewTag: Int,
         promise: Promise
-    ) = promise.withCamera(viewTag) {
+    ) = promise.withCameraView(viewTag) {
         this.facing = facing.toCameraFacing
         true
     }
@@ -169,60 +138,27 @@ class ReactCameraModule(
     @AnyThread
     @ReactMethod
     fun getLensFacing(viewTag: Int, promise: Promise) =
-        promise.withCamera(viewTag) { facing.toFacingConstant }
-
-    /**
-     * Even though the [Camera] interface offers two variation of [takePicture]
-     * here we only expose what's relevant to a react-native app at this moment. The
-     * one that save the image into an specified location.
-     *
-     * This doesn't restrict from exposing the counter part capture method, we only need
-     * to figure out how/what to send up to the app as a representation of the captured
-     * image.
-     */
-    @AnyThread
-    @ReactMethod
-    public fun takePicture(viewTag: Int, outputDir: String?, promise: Promise) {
-        val options = OutputFileOptions(outputDirectory = try {
-                File(outputDir!!)
-            } catch (ex: Exception) { null }
-        )
-
-        promise.withCamera(viewTag, autoResolve = false) {
-            takePicture(options = options) { file, throwable ->
-                throwable?.let {
-                    promise.reject(it)
-                }
-                file?.let {
-                    promise.resolve(it.absolutePath)
-                }
-            }
-            true
-        }
-    }
+        promise.withCameraView(viewTag) { facing.toFacingConstant }
 
     // END View methods
 
     companion object {
         /**
-         * Exported name of the module representing this library
-         */
-        private const val NAME = "CameraModule"
-
-        /**
          * Extension method on [ReactApplicationContext] to get the ui manager module
          */
-        private fun ReactApplicationContext.uiManager(block: UIManagerModule.() -> Unit) {
+        protected fun ReactApplicationContext.uiManager(block: UIManagerModule.() -> Unit) {
             (getNativeModule(UIManagerModule::class.java) as UIManagerModule).block()
         }
 
         /**
-         * Extension method on [NativeViewHierarchyManager] to get the [CameraView] as [Camera] or
+         * Extension method on [NativeViewHierarchyManager] to get the a camera of type [C] or
          * throw if no view can be get for the specified viewTag
          */
-        private fun NativeViewHierarchyManager.cameraOrThrow(viewTag: Int) : Camera =
-            checkNotNull(resolveView(viewTag) as? CameraView) {
-                "Not possible to resolve CameraView($viewTag)"
+        protected inline fun <reified C : Camera> NativeViewHierarchyManager.cameraOrThrow(
+            viewTag: Int
+        ): C =
+            checkNotNull(resolveView(viewTag) as? C) {
+                "Not possible to resolve CameraView($viewTag) as ${C::class.java} type"
             }
     }
 }

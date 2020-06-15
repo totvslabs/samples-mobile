@@ -3,10 +3,8 @@ package com.totvs.camera.core
 /**
  * Representation of a camera device. Operations here are the one performed
  * with either an standard camera device or with outputs of such device.
- *
- * @note @TODO Operations regarding to real-time processing will be added later
  */
-public interface Camera {
+interface Camera {
     /**
      * Weather or not to enabled torch light for this camera
      */
@@ -38,7 +36,7 @@ public interface Camera {
      * Toggle camera facing, works the same as requesting the opposite of the current
      * facing.
      */
-    public fun toggleCamera()
+    fun toggleCamera()
 
     /**
      * Trigger a capture image action.
@@ -49,7 +47,7 @@ public interface Camera {
      * Images are saved in JPEG format. If no file object is specified in [options] then
      * a random name and location is used.
      */
-    public fun takePicture(options: OutputFileOptions, onSaved: OnImageSaved)
+    fun takePicture(options: OutputFileOptions, onSaved: OnImageSaved)
 
     /**
      * Trigger a capture image action.
@@ -61,5 +59,5 @@ public interface Camera {
      * no more images might be taken and handled down to the caller. This behavior
      * is implementation dependent, but is mandatory to close the captured image.
      */
-    public fun takePicture(onCaptured: OnImageCaptured)
+    fun takePicture(onCaptured: OnImageCaptured)
 }

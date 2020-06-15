@@ -1,15 +1,14 @@
 package com.totvs.clockin.vision
 
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.totvs.clockin.vision.view.BarcodeVisionCameraView
 
 /**
  * [BarcodeVisionCameraView] react module interface
  */
 class ReactVisionBarcodeModule(
-    private val context: ReactApplicationContext
-) : ReactContextBaseJavaModule(context) {
+    context: ReactApplicationContext
+) : AbstractReactVisionModule(context) {
 
     override fun getName() = NAME
 
@@ -18,6 +17,9 @@ class ReactVisionBarcodeModule(
     }
 
     // START View methods
+
+    // @TODO(jansel) - not yet implemented
+
     // END View methods
 
     companion object {

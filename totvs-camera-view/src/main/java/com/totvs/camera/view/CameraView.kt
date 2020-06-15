@@ -302,7 +302,7 @@ open class CameraView @JvmOverloads constructor(
      */
     @MainThread
     @RequiresPermission(permission.CAMERA)
-    public fun bindToLifecycle(lifecycle: LifecycleOwner) {
+    fun bindToLifecycle(lifecycle: LifecycleOwner) {
         cameraSource.bindToLifecycle(lifecycle)
     }
 
