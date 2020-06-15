@@ -49,6 +49,8 @@ class LivenessFace(
                     OnLiveness(mode = id)(context, viewId)
                 }
             }
+        } else {
+            state.clear()
         }
     }
 
