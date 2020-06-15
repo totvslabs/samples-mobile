@@ -12,6 +12,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
 import com.totvs.camera.view.CameraView
+import com.totvs.camera.view.GraphicOverlay
 import com.totvs.camera.view.core.CameraViewModuleOptions
 import com.totvs.camera.vision.DetectionAnalyzer
 import com.totvs.camera.vision.core.VisionModuleOptions
@@ -23,10 +24,15 @@ import com.totvs.clockin.vision.core.RecognitionModel
 import com.totvs.clockin.vision.face.*
 import com.totvs.clockin.vision.face.FaceVisionCamera.RecognitionOptions
 import com.totvs.clockin.vision.lifecycle.ReactLifecycleOwner
+import com.totvs.clockin.vision.utils.createFile
+import com.totvs.clockin.vision.utils.toBitmap
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
-import com.totvs.camera.view.GraphicOverlay
 
 /**
  * Camera View capable of face detection.
@@ -148,6 +154,11 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         FaceNoseTranslator(graphicOverlay)
     }
 
+    /**
+     * Flag to determine when the camera is busy processing one image for recognition.
+     */
+    private val isRecognizing = AtomicBoolean(false)
+
     init {
         enableDebug()
         startUp()
@@ -179,7 +190,63 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
 
 
     override fun recognizeStillPicture(options: RecognitionOptions) = ensureSetup {
+        if (isRecognizing.get()) {
+            if (isDebug) {
+                Log.w(TAG, "Recognizer is busy, ignoring this request.")
+            }
+            return@ensureSetup
+        }
+        isRecognizing.set(true)
 
+        takePicture { image, throwable ->
+            throwable?.let {
+                // on error: reset
+                isRecognizing.set(false)
+                Log.e(TAG, "Error taking picture", it)
+            }
+            // closing the image after using.
+            val bitmap = image?.use { it.image?.toBitmap() }
+
+            if (null != bitmap) {
+                val latch = CountDownLatch(2)
+                var result = RecognitionResult()
+
+                val saver = ImageSaver(bitmap) { file, exception ->
+                    exception?.let {
+                        Log.e(TAG, "Error saving image", it)
+                    }
+                    // report the saved file
+                    result.file = file
+                    // notify we're done
+                    latch.countDown()
+                }
+                val recognizer = ImageRecognizer(bitmap) { faces, exception ->
+                    exception?.let {
+                        Log.e(TAG, "Error saving image", it)
+                    }
+                    // report the recognized faces
+                    result.faces = faces
+                    // notify we're done
+                    latch.countDown()
+                }
+
+                recognitionExecutor.run {
+                    execute(saver)
+                    execute(recognizer)
+                }
+
+                try {
+                    latch.await() // await for completion
+                } catch (ex: Exception) {
+                    if (isDebug) {
+                        Log.e(TAG, "Closing [ImageRecognizer] & [ImageSaver]")
+                    }
+                }
+                isRecognizing.set(false)
+                // we send to process the result and allow the recognizer to receive more requests.
+                processRecognitionResult(result)
+            }
+        }
     }
 
     /**
@@ -246,8 +313,10 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
      * Bind lifecycle owner
      */
     private fun bindTo(lifecycleOwner: LifecycleOwner) {
-        lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
-        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
+        lifecycleOwner.lifecycle.apply {
+            removeObserver(lifecycleObserver)
+            addObserver(lifecycleObserver)
+        }
     }
 
     /**
@@ -267,7 +336,8 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
             return // this suffix to not initialize more than once the executors
         }
         detectionExecutor = Executors.newSingleThreadExecutor()
-        recognitionExecutor = Executors.newSingleThreadExecutor()
+        // one for [ImageSaver] another for [ImageRecognizer]
+        recognitionExecutor = Executors.newFixedThreadPool(2)
     }
 
     /**
@@ -292,7 +362,7 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
         livenessConnection?.disconnect()
 
         // setup the vision stream for face detected objects.
-        livenessConnection = if(liveness is LivenessFace) {
+        livenessConnection = if (liveness is LivenessFace) {
             (analyzer as? DetectionAnalyzer)
                 ?.detections
                 ?.filterIsInstance<FaceObject>()
@@ -366,12 +436,72 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
     }
 
 
-    private fun <T> ensureSetup(block: () -> T): T {
+    private fun ensureSetup(block: () -> Unit) {
         if (!::model.isInitialized || !::options.isInitialized) {
             throw IllegalStateException("FaceVisionCameraView haven't been setup. Please call setup first")
         }
         return block()
     }
+
+    private fun processRecognitionResult(result: RecognitionResult) {
+
+    }
+
+    /**
+     * Task to save the image to disk.
+     */
+    private inner class ImageSaver(
+        private val bitmap: Bitmap,
+        private val onSave: (File?, Throwable?) -> Unit
+    ) : Runnable {
+        override fun run() {
+            val location = createFile(context, options.capturesOutputDir)
+            val output = ByteArrayOutputStream()
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+            try {
+                output.use { byteArray ->
+                    FileOutputStream(location).use { out ->
+                        out.write(byteArray.toByteArray())
+                        out.flush()
+                    }
+                }
+                onSave(location, null)
+            } catch (ex: Exception) {
+                onSave(null, ex)
+            }
+        }
+    }
+
+    /**
+     * Task to perform the recognition task on the provided image.
+     */
+    private inner class ImageRecognizer(
+        private val bitmap: Bitmap,
+        private val onRecognized: (List<Face>, Throwable?) -> Unit
+    ) : Runnable {
+        override fun run() {
+            try {
+                model.recognize(bitmap) { list ->
+                    onRecognized(list, null)
+                }
+            } catch (ex: Exception) {
+                onRecognized(emptyList(), ex)
+            }
+        }
+    }
+
+    /**
+     * Result of a recognition tasks.
+     *
+     * @param file in which the image was saved.
+     * @param face recognized from the image.
+     */
+    private data class RecognitionResult(
+        var file: File? = null,
+        var faces: List<Face> = emptyList()
+    )
+
 
     companion object {
         private const val TAG = "FaceVisionCameraView"

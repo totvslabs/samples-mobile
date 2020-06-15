@@ -151,7 +151,7 @@ internal class CameraSource(private val view: CameraView) {
     @RequiresPermission(permission.CAMERA)
     fun bindToLifecycle(lifecycle: LifecycleOwner) {
         if (!view.hasPermissions) {
-            Log.e(TAG, "No camera permission granted")
+            Log.w(TAG, "No camera permission granted")
             return
         }
         // we start the executors
@@ -182,7 +182,7 @@ internal class CameraSource(private val view: CameraView) {
     @RequiresPermission(permission.CAMERA)
     fun bindToLifecycleAfterViewMeasured() {
         if (!view.hasPermissions) {
-            Log.e(TAG, "No camera permission granted")
+            Log.w(TAG, "No camera permission granted")
             return
         }
 
@@ -209,7 +209,7 @@ internal class CameraSource(private val view: CameraView) {
         // this is the reason we don't use aspect ratio here. We don't want cameraX
         // to chose a big size.
         val previewSize = computePreviewSize().also {
-            Log.e(TAG, "Using preview size=$it")
+            Log.w(TAG, "Using preview size=$it")
         }
 
         capture = captureBuilder.apply {
@@ -231,7 +231,7 @@ internal class CameraSource(private val view: CameraView) {
                 view.displayRotationDegrees, isDisplayPortrait, previewSize, ASPECT_RATIO_4_3
             )
 
-            Log.e(TAG, "Installing preview analyzer with image output of size=$analysisOutSize")
+            Log.i(TAG, "Installing preview analyzer with image output of size=$analysisOutSize")
 
             analysis = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -265,7 +265,7 @@ internal class CameraSource(private val view: CameraView) {
     @MainThread
     fun cleanCurrentLifecycle() {
         if (!view.hasPermissions) {
-            Log.e(TAG, "No camera permission granted")
+            Log.w(TAG, "No camera permission granted")
             return
         }
         cameraProvider?.unbindAll()
@@ -311,7 +311,7 @@ internal class CameraSource(private val view: CameraView) {
     // update view related information used by the use cases
     private fun updateViewInfo() {
         if (!view.hasPermissions) {
-            Log.e(TAG, "No camera permission granted")
+            Log.w(TAG, "No camera permission granted")
             return
         }
         capture?.let {

@@ -69,8 +69,8 @@ internal fun ImageCapture.internalTakePicture(
 }
 
 /**
- * Create a random file. This is use in case no file is specified in [OutputFileOptions]
- * on [ImageCapture.takePicture]
+ * Create a random file in the provided [outputDirectory] with [extension]. if [outputDirectory]
+ * if not provided the created file is located in the data directory of the app.
  */
 private fun createFile(context: Context, outputDirectory: File? = null, extension: String = "jpg") : File {
     val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS", Locale.US)

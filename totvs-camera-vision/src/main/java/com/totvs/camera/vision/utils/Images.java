@@ -7,6 +7,9 @@ import androidx.annotation.RestrictTo;
 import java.nio.ByteBuffer;
 import java.nio.ReadOnlyBufferException;
 
+/**
+ * This is an internal API. This is not intended to be used outside this project.
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class Images {
     /**

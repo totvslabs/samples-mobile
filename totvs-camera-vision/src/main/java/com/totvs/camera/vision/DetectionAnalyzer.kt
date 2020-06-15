@@ -155,7 +155,7 @@ open class DetectionAnalyzer(
                     latch.await()
                 } catch (ex: Exception) {
                     if (DEBUG_ENABLED) {
-                        Log.e(TAG, "Closing detectors")
+                        Log.i(TAG, "Closing detectors")
                     }
                 }
                 // all detectors are done, let's set to analyze more images
