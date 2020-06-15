@@ -66,7 +66,7 @@ internal fun ByteArray.toBase64(): String? = if (size == 0) null else Base64.enc
  * Get the base64 representation of an image if possible, null otherwise
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-internal fun getFileImageBase64(path: String): String? = getFileImageData(path)
+internal fun getFileBase64(path: String): String? = getFileImageData(path)
     ?.let {
         it.toBase64()
     }

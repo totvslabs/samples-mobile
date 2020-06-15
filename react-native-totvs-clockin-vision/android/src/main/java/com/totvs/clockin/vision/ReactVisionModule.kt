@@ -4,12 +4,9 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
-import com.totvs.clockin.vision.core.Model
 import com.totvs.clockin.vision.core.Model.Config
 import com.totvs.clockin.vision.core.ModelProvider
-import com.totvs.clockin.vision.utils.getModelOutputDir
-import com.totvs.clockin.vision.utils.prepareModelDirectories
-import com.totvs.clockin.vision.utils.setModelDirName
+import com.totvs.clockin.vision.utils.*
 import kotlin.concurrent.thread
 
 /**
@@ -59,6 +56,20 @@ class ReactVisionModule(
             promise.resolve(true)
         }
     }
+
+    /**
+     * Retrieve the base64 representation of any image located at [path]
+     */
+    @ReactMethod
+    fun getImageFileBase64(path: String, promise: Promise) =
+        promise.resolve(getFileBase64(path))
+
+    /**
+     * Delete the image located at [path]
+     */
+    @ReactMethod
+    fun deleteImageFile(path: String, promise: Promise) =
+        promise.resolve(deleteFile(path))
 
     // END Module methods
 
