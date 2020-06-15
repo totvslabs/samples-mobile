@@ -216,37 +216,31 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
             if (null != bitmap) {
                 // we add an extra task if we're required to save the image.
                 val latch = CountDownLatch(1 + if (options.saveImage) 1 else 0)
-                // collective result.
                 var result = RecognitionResult()
 
-                // if we're required to save the image, then
                 if (options.saveImage) {
                     val saver = ImageSaver(bitmap, options) { file, exception ->
                         exception?.let {
                             Log.e(TAG, "Error saving image", it)
                         }
-                        // report the saved file
                         result.file = file
                         // notify we're done
                         latch.countDown()
                     }
-                    // run the image saver
                     recognitionExecutor.execute(saver)
                 }
                 val recognizer = ImageRecognizer(bitmap) { faces, exception ->
                     exception?.let {
                         Log.e(TAG, "Error saving image", it)
                     }
-                    // report the recognized faces
                     result.faces = faces
                     // notify we're done
                     latch.countDown()
                 }
-                // run recognizer
                 recognitionExecutor.execute(recognizer)
 
                 try {
-                    latch.await() // await for completion
+                    latch.await()
                 } catch (ex: Exception) {
                     if (isDebug) {
                         Log.e(TAG, "Closing [ImageRecognizer] & [ImageSaver]")
@@ -285,11 +279,8 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         if (isDebug) {
             Log.e(TAG, "Setting up camera requirements")
         }
-        // start executors
         setupExecutors()
-        // install detections
         installAnalyzer()
-        // bind to lifecycle
         bindTo(lifecycleOwner)
     }
 
