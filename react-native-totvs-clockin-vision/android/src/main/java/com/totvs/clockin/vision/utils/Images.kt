@@ -2,8 +2,14 @@ package com.totvs.clockin.vision.utils
 
 import android.graphics.*
 import android.media.Image
+import android.util.Log
 import androidx.annotation.RestrictTo
+import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
+import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.lang.Exception
 
 /**
  * Convert an [Image] into a [Bitmap]

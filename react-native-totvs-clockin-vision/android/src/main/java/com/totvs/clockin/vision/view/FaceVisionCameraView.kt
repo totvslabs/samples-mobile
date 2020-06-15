@@ -23,6 +23,7 @@ import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
 import com.totvs.clockin.vision.core.RecognitionModel
 import com.totvs.clockin.vision.face.*
 import com.totvs.clockin.vision.face.FaceVisionCamera.RecognitionOptions
+import com.totvs.clockin.vision.face.FaceVisionCamera.RecognitionResult
 import com.totvs.clockin.vision.lifecycle.ReactLifecycleOwner
 import com.totvs.clockin.vision.utils.createFile
 import com.totvs.clockin.vision.utils.toBitmap
@@ -108,10 +109,6 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
      */
     private lateinit var model: RecognitionModel<Bitmap, Face>
 
-    /**
-     * Options to be used with this camera view
-     */
-    private lateinit var options: FaceVisionOptions
 
     /**
      * [Connection] of liveness feature
@@ -188,8 +185,17 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
     override val isFaceProximityEnabled: Boolean
         get() = null != proximity
 
-
-    override fun recognizeStillPicture(options: RecognitionOptions) = ensureSetup {
+    /**
+     * Capture an still picture and recognizes the person on it.
+     *
+     * [options] is used to control the behavior of the recognition task. if [options.saveImage]
+     * is set to true we'll save the picture at [options.outputDir] otherwise we'll skip that
+     * task.
+     */
+    override fun recognizeStillPicture(
+        options: RecognitionOptions,
+        onResult: (RecognitionResult) -> Unit
+    ) = ensureSetup {
         if (isRecognizing.get()) {
             if (isDebug) {
                 Log.w(TAG, "Recognizer is busy, ignoring this request.")
@@ -208,17 +214,24 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
             val bitmap = image?.use { it.image?.toBitmap() }
 
             if (null != bitmap) {
-                val latch = CountDownLatch(2)
+                // we add an extra task if we're required to save the image.
+                val latch = CountDownLatch(1 + if (options.saveImage) 1 else 0)
+                // collective result.
                 var result = RecognitionResult()
 
-                val saver = ImageSaver(bitmap) { file, exception ->
-                    exception?.let {
-                        Log.e(TAG, "Error saving image", it)
+                // if we're required to save the image, then
+                if (options.saveImage) {
+                    val saver = ImageSaver(bitmap, options) { file, exception ->
+                        exception?.let {
+                            Log.e(TAG, "Error saving image", it)
+                        }
+                        // report the saved file
+                        result.file = file
+                        // notify we're done
+                        latch.countDown()
                     }
-                    // report the saved file
-                    result.file = file
-                    // notify we're done
-                    latch.countDown()
+                    // run the image saver
+                    recognitionExecutor.execute(saver)
                 }
                 val recognizer = ImageRecognizer(bitmap) { faces, exception ->
                     exception?.let {
@@ -229,11 +242,8 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
                     // notify we're done
                     latch.countDown()
                 }
-
-                recognitionExecutor.run {
-                    execute(saver)
-                    execute(recognizer)
-                }
+                // run recognizer
+                recognitionExecutor.execute(recognizer)
 
                 try {
                     latch.await() // await for completion
@@ -244,7 +254,7 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
                 }
                 isRecognizing.set(false)
                 // we send to process the result and allow the recognizer to receive more requests.
-                processRecognitionResult(result)
+                onResult(result)
             }
         }
     }
@@ -252,9 +262,8 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
     /**
      * Let's setup the view with an appropriate model and options
      */
-    override fun setup(model: RecognitionModel<Bitmap, Face>, options: FaceVisionOptions) {
+    override fun setup(model: RecognitionModel<Bitmap, Face>) {
         this.model = model
-        this.options = options
     }
 
     override fun onAttachedToWindow() {
@@ -437,14 +446,10 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
 
 
     private fun ensureSetup(block: () -> Unit) {
-        if (!::model.isInitialized || !::options.isInitialized) {
+        if (!::model.isInitialized) {
             throw IllegalStateException("FaceVisionCameraView haven't been setup. Please call setup first")
         }
         return block()
-    }
-
-    private fun processRecognitionResult(result: RecognitionResult) {
-
     }
 
     /**
@@ -452,10 +457,11 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
      */
     private inner class ImageSaver(
         private val bitmap: Bitmap,
+        private val options: RecognitionOptions,
         private val onSave: (File?, Throwable?) -> Unit
     ) : Runnable {
         override fun run() {
-            val location = createFile(context, options.capturesOutputDir)
+            val location = createFile(context, options.outputDir)
             val output = ByteArrayOutputStream()
 
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
@@ -490,18 +496,6 @@ class FaceVisionCameraView @JvmOverloads internal constructor(
             }
         }
     }
-
-    /**
-     * Result of a recognition tasks.
-     *
-     * @param file in which the image was saved.
-     * @param face recognized from the image.
-     */
-    private data class RecognitionResult(
-        var file: File? = null,
-        var faces: List<Face> = emptyList()
-    )
-
 
     companion object {
         private const val TAG = "FaceVisionCameraView"
