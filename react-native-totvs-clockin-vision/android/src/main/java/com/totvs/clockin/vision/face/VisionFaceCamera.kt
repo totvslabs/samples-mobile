@@ -8,7 +8,7 @@ import java.io.File
 /**
  * [VisionCamera] dedicated to face detection/recognition
  */
-interface FaceVisionCamera : VisionCamera {
+interface VisionFaceCamera : VisionCamera {
 
     /**
      * Configure a liveness strategy to use in this vision camera.
@@ -31,7 +31,7 @@ interface FaceVisionCamera : VisionCamera {
     val isFaceProximityEnabled: Boolean
 
     /**
-     * Setup this [FaceVisionCamera] with a proper model and options
+     * Setup this [VisionFaceCamera] with a proper model and options
      */
     fun setup(model: RecognitionModel<Bitmap, Face>)
 

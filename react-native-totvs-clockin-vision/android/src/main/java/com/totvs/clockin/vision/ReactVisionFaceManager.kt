@@ -9,14 +9,13 @@ import com.totvs.clockin.vision.events.Event
 import com.totvs.clockin.vision.events.OnBarcodeDetected
 import com.totvs.clockin.vision.face.LivenessEyes
 import com.totvs.clockin.vision.face.LivenessFace
-import com.totvs.clockin.vision.face.Proximity
 import com.totvs.clockin.vision.face.ProximityByFaceWidth
-import com.totvs.clockin.vision.view.FaceVisionCameraView
+import com.totvs.clockin.vision.view.VisionFaceCameraView
 
 /**
- * [FaceVisionCameraView] react view manager
+ * [VisionFaceCameraView] react view manager
  */
-class ReactVisionFaceManager : AbstractViewManager<FaceVisionCameraView>() {
+class ReactVisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
 
     /**
      * React Native view name for the view managed by this manager
@@ -26,8 +25,8 @@ class ReactVisionFaceManager : AbstractViewManager<FaceVisionCameraView>() {
     /**
      * Create an instance of the view managed by this manager
      */
-    override fun createViewInstance(context: ThemedReactContext): FaceVisionCameraView =
-        FaceVisionCameraView(context)
+    override fun createViewInstance(context: ThemedReactContext): VisionFaceCameraView =
+        VisionFaceCameraView(context)
 
     /**
      * Register events
@@ -52,7 +51,7 @@ class ReactVisionFaceManager : AbstractViewManager<FaceVisionCameraView>() {
      * Sets the appropriate liveness mode on the [cameraView]
      */
     @ReactProp(name = "livenessMode", defaultInt = LivenessModes.NONE)
-    fun setLivenessMode(cameraView: FaceVisionCameraView, @LivenessMode mode: Int) {
+    fun setLivenessMode(cameraView: VisionFaceCameraView, @LivenessMode mode: Int) {
         cameraView.liveness = when (mode) {
             LivenessModes.EYES -> LivenessEyes(
                 cameraView.context as ReactContext,
@@ -72,7 +71,7 @@ class ReactVisionFaceManager : AbstractViewManager<FaceVisionCameraView>() {
      * to track until regarding a face as live.
      */
     @ReactProp(name = "blinksCount")
-    fun setBlinksCount(cameraView: FaceVisionCameraView, count: Int) {
+    fun setBlinksCount(cameraView: VisionFaceCameraView, count: Int) {
         TransientState.requiredBlinks = count
     }
 
@@ -80,7 +79,7 @@ class ReactVisionFaceManager : AbstractViewManager<FaceVisionCameraView>() {
      * Set the proximity detector on the [cameraView]
      */
     @ReactProp(name = "isProximityEnabled")
-    fun isProximityEnabled(cameraView: FaceVisionCameraView, enabled: Boolean) {
+    fun isProximityEnabled(cameraView: VisionFaceCameraView, enabled: Boolean) {
         if (!enabled) {
             cameraView.proximity = null
         } else {
@@ -101,7 +100,7 @@ class ReactVisionFaceManager : AbstractViewManager<FaceVisionCameraView>() {
      * Sets the appropriate [cameraView] proximity threshold value
      */
     @ReactProp(name = "proximityThreshold")
-    fun setProximityThreshold(cameraView: FaceVisionCameraView, threshold: Float) {
+    fun setProximityThreshold(cameraView: VisionFaceCameraView, threshold: Float) {
         TransientState.proximityThreshold = threshold
     }
 
@@ -128,6 +127,6 @@ class ReactVisionFaceManager : AbstractViewManager<FaceVisionCameraView>() {
          * Name exported to react native. this will work as the component name. by convention
          * we name the manager with the same name as the view it manages.
          */
-        private const val VIEW_NAME = "FaceVisionCameraView"
+        private const val VIEW_NAME = "VisionFaceCameraView"
     }
 }

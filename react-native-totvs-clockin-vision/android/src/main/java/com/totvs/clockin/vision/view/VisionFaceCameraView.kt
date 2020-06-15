@@ -22,8 +22,8 @@ import com.totvs.camera.vision.stream.*
 import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
 import com.totvs.clockin.vision.core.RecognitionModel
 import com.totvs.clockin.vision.face.*
-import com.totvs.clockin.vision.face.FaceVisionCamera.RecognitionOptions
-import com.totvs.clockin.vision.face.FaceVisionCamera.RecognitionResult
+import com.totvs.clockin.vision.face.VisionFaceCamera.RecognitionOptions
+import com.totvs.clockin.vision.face.VisionFaceCamera.RecognitionResult
 import com.totvs.clockin.vision.lifecycle.ReactLifecycleOwner
 import com.totvs.clockin.vision.utils.createFile
 import com.totvs.clockin.vision.utils.toBitmap
@@ -38,11 +38,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Camera View capable of face detection.
  */
-class FaceVisionCameraView @JvmOverloads internal constructor(
+class VisionFaceCameraView @JvmOverloads internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
     style: Int = 0
-) : CameraView(context, attrs, style), FaceVisionCamera {
+) : CameraView(context, attrs, style), VisionFaceCamera {
 
     // Listeners
     /**

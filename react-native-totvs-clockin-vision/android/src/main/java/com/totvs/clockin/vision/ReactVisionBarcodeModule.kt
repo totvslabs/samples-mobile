@@ -2,13 +2,13 @@ package com.totvs.clockin.vision
 
 import com.facebook.react.bridge.ReactApplicationContext
 import com.totvs.camera.vision.core.VisionBarcodeFormat
-import com.totvs.clockin.vision.view.BarcodeVisionCameraView
+import com.totvs.clockin.vision.view.VisionBarcodeCameraView
 import com.totvs.camera.view.core.ExportableConstant as CameraExportableConstants
 import com.totvs.camera.vision.core.ExportableConstant as VisionExportableConstants
 
 
 /**
- * [BarcodeVisionCameraView] react module interface
+ * [VisionBarcodeCameraView] react module interface
  */
 class ReactVisionBarcodeModule(
     context: ReactApplicationContext

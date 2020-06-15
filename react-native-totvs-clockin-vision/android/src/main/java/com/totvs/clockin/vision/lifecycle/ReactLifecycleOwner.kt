@@ -5,12 +5,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.facebook.react.bridge.LifecycleEventListener
-import com.totvs.clockin.vision.view.FaceVisionCameraView
+import com.totvs.clockin.vision.view.VisionFaceCameraView
 
 /**
  * LifecycleOwner to bridge with react-native environment
  *
- * @see also [FaceVisionCameraView.lifecycleOwner]
+ * @see also [VisionFaceCameraView.lifecycleOwner]
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal object ReactLifecycleOwner : LifecycleOwner, LifecycleEventListener {

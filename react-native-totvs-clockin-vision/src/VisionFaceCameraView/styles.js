@@ -1,0 +1,19 @@
+/**
+ * @format
+ * @flow strict-local
+ */
+ 
+////////////////////////////
+// ANCHOR Import Modules
+////////////////////////////
+
+import { StyleSheet } from 'react-native';
+
+////////////////////////////
+// ANCHOR Styles
+////////////////////////////
+
+
+export default {
+  
+}

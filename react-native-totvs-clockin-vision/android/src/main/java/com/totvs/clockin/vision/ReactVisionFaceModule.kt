@@ -6,16 +6,16 @@ import com.facebook.react.bridge.ReactMethod
 import com.totvs.camera.vision.core.VisionBarcodeFormat
 import com.totvs.clockin.vision.core.ExportableConstant
 import com.totvs.clockin.vision.events.OnFaceRecognized
-import com.totvs.clockin.vision.face.FaceVisionCamera
-import com.totvs.clockin.vision.face.FaceVisionCamera.RecognitionOptions
+import com.totvs.clockin.vision.face.VisionFaceCamera
+import com.totvs.clockin.vision.face.VisionFaceCamera.RecognitionOptions
 import com.totvs.clockin.vision.utils.getModelOutputDir
-import com.totvs.clockin.vision.view.FaceVisionCameraView
+import com.totvs.clockin.vision.view.VisionFaceCameraView
 import java.io.File
 import com.totvs.camera.view.core.ExportableConstant as CameraExportableConstants
 import com.totvs.camera.vision.core.ExportableConstant as VisionExportableConstants
 
 /**
- * [FaceVisionCameraView] react module interface
+ * [VisionFaceCameraView] react module interface
  */
 class ReactVisionFaceModule(
     private val context: ReactApplicationContext
@@ -56,7 +56,7 @@ class ReactVisionFaceModule(
     private inline fun <R> Promise.withCamera(
         viewTag: Int,
         autoResolve: Boolean = true,
-        crossinline block: FaceVisionCamera.(promise: Promise) -> R
+        crossinline block: VisionFaceCamera.(promise: Promise) -> R
     ) = withCameraDevice(viewTag, autoResolve, block)
 
     // START Module methods

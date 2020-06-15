@@ -3,12 +3,12 @@ package com.totvs.clockin.vision
 import com.facebook.react.uimanager.ThemedReactContext
 import com.totvs.clockin.vision.events.Event
 import com.totvs.clockin.vision.events.OnBarcodeDetected
-import com.totvs.clockin.vision.view.BarcodeVisionCameraView
+import com.totvs.clockin.vision.view.VisionBarcodeCameraView
 
 /**
- * [BarcodeVisionCameraView] react view manager
+ * [VisionBarcodeCameraView] react view manager
  */
-class ReactVisionBarcodeManager : AbstractViewManager<BarcodeVisionCameraView>() {
+class ReactVisionBarcodeManager : AbstractViewManager<VisionBarcodeCameraView>() {
     /**
      * React Native view name for the view managed by this manager
      */
@@ -17,8 +17,8 @@ class ReactVisionBarcodeManager : AbstractViewManager<BarcodeVisionCameraView>()
     /**
      * Create an instance of the view managed by this manager
      */
-    override fun createViewInstance(context: ThemedReactContext): BarcodeVisionCameraView =
-        BarcodeVisionCameraView(context)
+    override fun createViewInstance(context: ThemedReactContext): VisionBarcodeCameraView =
+        VisionBarcodeCameraView(context)
 
     /**
      * Register events.
@@ -43,6 +43,6 @@ class ReactVisionBarcodeManager : AbstractViewManager<BarcodeVisionCameraView>()
          * Name exported to react native. this will work as the component name. by convention
          * we name the manager with the same name as the view it manages.
          */
-        private const val VIEW_NAME = "BarcodeVisionCameraView"
+        private const val VIEW_NAME = "VisionBarcodeCameraView"
     }
 }
