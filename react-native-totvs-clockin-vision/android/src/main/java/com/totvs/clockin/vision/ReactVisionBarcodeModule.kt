@@ -40,7 +40,6 @@ class ReactVisionBarcodeModule(
     }
 
     // START Module methods
-
     // END Module methods
 
     companion object {

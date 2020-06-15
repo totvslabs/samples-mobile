@@ -30,10 +30,12 @@ object LivenessModes : ExportableConstant() {
 
     const val FACE = LivenessFace.id
     const val EYES = LivenessEyes.id
+    const val NONE = 0 // disabled
 
     override fun export(): Map<String, Any> = mapOf(
         "FACE" to FACE,
-        "EYES" to EYES
+        "EYES" to EYES,
+        "NONE" to NONE
     )
 }
 

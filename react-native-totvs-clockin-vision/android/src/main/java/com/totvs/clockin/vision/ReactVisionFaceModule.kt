@@ -2,20 +2,23 @@ package com.totvs.clockin.vision
 
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
-import com.totvs.camera.core.Camera
-import com.totvs.camera.view.CameraView
+import com.facebook.react.bridge.ReactMethod
 import com.totvs.camera.vision.core.VisionBarcodeFormat
 import com.totvs.clockin.vision.core.ExportableConstant
+import com.totvs.clockin.vision.events.OnFaceRecognized
 import com.totvs.clockin.vision.face.FaceVisionCamera
-import com.totvs.camera.vision.core.ExportableConstant as VisionExportableConstants
-import com.totvs.camera.view.core.ExportableConstant as CameraExportableConstants
+import com.totvs.clockin.vision.face.FaceVisionCamera.RecognitionOptions
+import com.totvs.clockin.vision.utils.getModelOutputDir
 import com.totvs.clockin.vision.view.FaceVisionCameraView
+import java.io.File
+import com.totvs.camera.view.core.ExportableConstant as CameraExportableConstants
+import com.totvs.camera.vision.core.ExportableConstant as VisionExportableConstants
 
 /**
  * [FaceVisionCameraView] react module interface
  */
 class ReactVisionFaceModule(
-    context: ReactApplicationContext
+    private val context: ReactApplicationContext
 ) : AbstractReactVisionModule(context) {
 
     override fun getName() = NAME
@@ -53,10 +56,29 @@ class ReactVisionFaceModule(
     private inline fun <R> Promise.withCamera(
         viewTag: Int,
         autoResolve: Boolean = true,
-        crossinline block: Camera.(promise: Promise) -> R
+        crossinline block: FaceVisionCamera.(promise: Promise) -> R
     ) = withCameraDevice(viewTag, autoResolve, block)
 
     // START Module methods
+
+    /**
+     * Trigger the recognition on an still picture. If [saveImage] is true, then the result will
+     * contain a path for the saved image.
+     * Results of this method are obtained through the dispatch of the [OnFaceRecognized] event
+     */
+    @ReactMethod
+    fun recognizeStillPicture(viewTag: Int, saveImage: Boolean, promise: Promise) =
+        promise.withCamera(viewTag) {
+            recognizeStillPicture(
+                RecognitionOptions(
+                    saveImage = saveImage,
+                    outputDir = File(getModelOutputDir())
+                )
+            ) { result ->
+                // let's dispatch the [OnFaceRecognized] event
+                OnFaceRecognized(result.file, result.faces)(context, viewTag)
+            }
+        }
 
     // END Module methods
 
