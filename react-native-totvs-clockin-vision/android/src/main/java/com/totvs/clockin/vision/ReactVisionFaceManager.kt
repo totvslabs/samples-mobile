@@ -5,11 +5,14 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.totvs.clockin.vision.annotations.LivenessMode
 import com.totvs.clockin.vision.core.LivenessModes
+import com.totvs.clockin.vision.core.Model
+import com.totvs.clockin.vision.core.ModelProvider
 import com.totvs.clockin.vision.events.Event
 import com.totvs.clockin.vision.events.OnBarcodeDetected
 import com.totvs.clockin.vision.face.LivenessEyes
 import com.totvs.clockin.vision.face.LivenessFace
 import com.totvs.clockin.vision.face.ProximityByFaceWidth
+import com.totvs.clockin.vision.utils.getModelOutputDir
 import com.totvs.clockin.vision.view.VisionFaceCameraView
 
 /**
@@ -26,7 +29,13 @@ class ReactVisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
      * Create an instance of the view managed by this manager
      */
     override fun createViewInstance(context: ThemedReactContext): VisionFaceCameraView =
-        VisionFaceCameraView(context)
+        VisionFaceCameraView(context).apply {
+            setup(
+                ModelProvider.getFaceRecognitionModel(
+                    Model.Config(modelDirectory = getModelOutputDir())
+                )
+            )
+        }
 
     /**
      * Register events
