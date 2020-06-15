@@ -39,4 +39,9 @@ interface Model {
      */
     @WorkerThread
     fun release()
+
+    /**
+     * Configuration of the model
+     */
+    data class Config(val modelDirectory: String)
 }

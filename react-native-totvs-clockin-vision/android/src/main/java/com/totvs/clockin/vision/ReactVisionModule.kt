@@ -1,7 +1,16 @@
 package com.totvs.clockin.vision
 
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+import com.totvs.clockin.vision.core.Model
+import com.totvs.clockin.vision.core.Model.Config
+import com.totvs.clockin.vision.core.ModelProvider
+import com.totvs.clockin.vision.utils.getModelOutputDir
+import com.totvs.clockin.vision.utils.prepareModelDirectories
+import com.totvs.clockin.vision.utils.setModelDirName
+import kotlin.concurrent.thread
 
 /**
  * Module representative of this library. It performs and expose an interface
@@ -14,12 +23,44 @@ class ReactVisionModule(
 
     override fun getName() = NAME
 
-    override fun getConstants(): MutableMap<String, Any> {
-        return mutableMapOf()
+    // START Module methods
+
+    /**
+     * Set the name of the output and location directory for the recognition model
+     */
+    @ReactMethod
+    fun setModelOutputDirectoryName(name: String) = setModelDirName(name)
+
+    /**
+     * Get the location of the model output directory.
+     */
+    @ReactMethod
+    fun getModelOutputDirectory(promise: Promise) = promise.resolve(getModelOutputDir())
+
+    /**
+     * Create the model output and captures output directories
+     */
+    @ReactMethod
+    fun setupModelDirectories(promise: Promise) = prepareModelDirectories(context) {
+        promise.resolve(true)
     }
 
-    // START View methods
-    // END View methods
+    /**
+     * Utility to trigger the recognition model
+     */
+    @ReactMethod
+    fun trainRecognitionModel(promise: Promise) {
+        thread {
+            ModelProvider.getFaceRecognitionModel(
+                Config(
+                    modelDirectory = getModelOutputDir()
+                )
+            ).train()
+            promise.resolve(true)
+        }
+    }
+
+    // END Module methods
 
     companion object {
         /**

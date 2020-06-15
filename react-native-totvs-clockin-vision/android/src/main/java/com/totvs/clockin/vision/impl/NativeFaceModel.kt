@@ -4,11 +4,11 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
-import com.totvs.clockin.vision.face.Face
 import com.totvs.clockin.vision.core.DetectionModel
+import com.totvs.clockin.vision.core.Model.Config
 import com.totvs.clockin.vision.core.RecognitionModel
+import com.totvs.clockin.vision.face.Face
 import com.tzutalin.dlib.FaceRec
-import java.lang.IllegalStateException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -80,11 +80,6 @@ internal class NativeFaceModel private constructor(
         // sending up the results.
         onDetected(results.map { NativeFace(it) })
     }
-
-    /**
-     * Configuration of the model
-     */
-    data class Config(val modelDirectory: String)
 
     /**
      * Companion object

@@ -39,9 +39,9 @@ class ReactVisionBarcodeModule(
         return constants
     }
 
-    // START View methods
+    // START Module methods
 
-    // END View methods
+    // END Module methods
 
     companion object {
         /**

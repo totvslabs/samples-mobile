@@ -29,14 +29,14 @@ abstract class AbstractReactVisionModule(
      * resolved with the value returned from the block, otherwise the caller must
      * resolve the promise.
      */
-    protected inline fun <reified C : Camera, R> Promise.withCamera(
+    protected inline fun <reified C : Camera, R> Promise.withCameraDevice(
         viewTag: Int,
         autoResolve: Boolean = true,
         crossinline block: C.(promise: Promise) -> R
     ) = reactApplicationContext.uiManager {
         addUIBlock { manager ->
             try {
-                val result = manager.cameraOrThrow<C>(viewTag).block(this@withCamera)
+                val result = manager.cameraOrThrow<C>(viewTag).block(this@withCameraDevice)
                 if (autoResolve) {
                     resolve(result)
                 }
@@ -46,11 +46,14 @@ abstract class AbstractReactVisionModule(
         }
     }
 
-    private inline fun <R> Promise.withCameraView(
+    /**
+     * Convenience method to get a camera instance on a reified parameter.
+     */
+    private inline fun <R> Promise.withCamera(
         viewTag: Int,
         autoResolve: Boolean = true,
         crossinline block: Camera.(promise: Promise) -> R
-    ) = withCamera<CameraView, R>(viewTag, autoResolve, block)
+    ) = withCameraDevice(viewTag, autoResolve, block)
 
     // START View methods
 
@@ -65,7 +68,7 @@ abstract class AbstractReactVisionModule(
         @FloatRange(from = 0.0, to = 1.0) zoom: Float,
         viewTag: Int,
         promise: Promise
-    ) = promise.withCameraView(viewTag) {
+    ) = promise.withCamera(viewTag) {
         this.zoom = zoom
         true
     }
@@ -78,7 +81,7 @@ abstract class AbstractReactVisionModule(
     @AnyThread
     @ReactMethod
     fun getZoom(viewTag: Int, promise: Promise) =
-        promise.withCameraView(viewTag) { zoom }
+        promise.withCamera(viewTag) { zoom }
 
     /**
      * Enable or disable camera torch
@@ -89,7 +92,7 @@ abstract class AbstractReactVisionModule(
         enable: Boolean,
         viewTag: Int,
         promise: Promise
-    ) = promise.withCameraView(viewTag) {
+    ) = promise.withCamera(viewTag) {
         isTorchEnabled = enable
         true
     }
@@ -100,7 +103,7 @@ abstract class AbstractReactVisionModule(
     @AnyThread
     @ReactMethod
     fun isTorchEnabled(viewTag: Int, promise: Promise) =
-        promise.withCameraView(viewTag) { isTorchEnabled }
+        promise.withCamera(viewTag) { isTorchEnabled }
 
     /**
      * Toggle the camera. i.e if the current camera is the front one it will toggle to back
@@ -109,7 +112,7 @@ abstract class AbstractReactVisionModule(
     @AnyThread
     @ReactMethod
     fun toggleCamera(viewTag: Int, promise: Promise) =
-        promise.withCameraView(viewTag) {
+        promise.withCamera(viewTag) {
             toggleCamera()
             true
         }
@@ -126,7 +129,7 @@ abstract class AbstractReactVisionModule(
         @LensFacing facing: Int,
         viewTag: Int,
         promise: Promise
-    ) = promise.withCameraView(viewTag) {
+    ) = promise.withCamera(viewTag) {
         this.facing = facing.toCameraFacing
         true
     }
@@ -138,7 +141,7 @@ abstract class AbstractReactVisionModule(
     @AnyThread
     @ReactMethod
     fun getLensFacing(viewTag: Int, promise: Promise) =
-        promise.withCameraView(viewTag) { facing.toFacingConstant }
+        promise.withCamera(viewTag) { facing.toFacingConstant }
 
     // END View methods
 

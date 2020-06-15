@@ -83,7 +83,7 @@ class ReactCameraModule(
         }
     }
 
-    // START View methods
+    // START Module methods
 
     /**
      * Set camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom.
@@ -201,7 +201,7 @@ class ReactCameraModule(
         }
     }
 
-    // END View methods
+    // END Module methods
 
     companion object {
         /**

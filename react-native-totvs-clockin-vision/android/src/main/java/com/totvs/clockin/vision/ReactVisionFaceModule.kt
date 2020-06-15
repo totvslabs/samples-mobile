@@ -1,8 +1,12 @@
 package com.totvs.clockin.vision
 
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
+import com.totvs.camera.core.Camera
+import com.totvs.camera.view.CameraView
 import com.totvs.camera.vision.core.VisionBarcodeFormat
 import com.totvs.clockin.vision.core.ExportableConstant
+import com.totvs.clockin.vision.face.FaceVisionCamera
 import com.totvs.camera.vision.core.ExportableConstant as VisionExportableConstants
 import com.totvs.camera.view.core.ExportableConstant as CameraExportableConstants
 import com.totvs.clockin.vision.view.FaceVisionCameraView
@@ -43,9 +47,18 @@ class ReactVisionFaceModule(
         return constants
     }
 
-    // START View methods
-    
-    // END View methods
+    /**
+     * Convenience method to get a camera instance on a reified parameter.
+     */
+    private inline fun <R> Promise.withCamera(
+        viewTag: Int,
+        autoResolve: Boolean = true,
+        crossinline block: Camera.(promise: Promise) -> R
+    ) = withCameraDevice(viewTag, autoResolve, block)
+
+    // START Module methods
+
+    // END Module methods
 
     companion object {
         /**
