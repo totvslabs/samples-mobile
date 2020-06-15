@@ -5,5 +5,4 @@ import com.totvs.clockin.vision.core.VisionCamera
 /**
  * [VisionCamera] dedicated to barcode detection/recognition
  */
-interface BarcodeVisionCamera : VisionCamera {
-}
+interface BarcodeVisionCamera : VisionCamera

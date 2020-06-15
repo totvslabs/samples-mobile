@@ -43,16 +43,16 @@ import java.io.File
  *
  * @see also [ReactCameraModule]
  */
-public class ReactCameraModule(
+class ReactCameraModule(
     private val context: ReactApplicationContext
 ) : ReactContextBaseJavaModule(context) {
 
-    public override fun getName() = NAME
+    override fun getName() = NAME
 
     /**
      * Constants exported to JS side
      */
-    public override fun getConstants(): MutableMap<String, Any> {
+    override fun getConstants(): MutableMap<String, Any> {
         return mutableMapOf<String, Any>().apply {
             ExportableConstant.forEach { set ->
                 put(set.name, set.export())

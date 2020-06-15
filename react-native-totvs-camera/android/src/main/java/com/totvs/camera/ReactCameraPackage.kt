@@ -29,7 +29,7 @@ import com.facebook.react.uimanager.ViewManager
  *
  * @see also [ReactCameraModule]
  */
-public class ReactCameraPackage : ReactPackage {
+class ReactCameraPackage : ReactPackage {
     /**
      * Register modules for this library
      */
