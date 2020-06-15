@@ -29,21 +29,36 @@ import React, { Component } from 'react';
 import styles from './styles';
 
 /////////////////////////////
+// Import Utility
+/////////////////////////////
+
+import { isAbsent, toFiniteFloatOrNull } from '../../utils/numbers';
+
+/////////////////////////////
+// Import Components
+/////////////////////////////
+
+import FunctionChildren from '../FunctionChildren';
+import UnauthorizedView from '../UnauthorizedView';
+import PendingAuthorizationView from '../PendingAuthorizationView';
+
+
+/////////////////////////////
 // Import Native Components
 /////////////////////////////
 
-const VisionFaceCamera = Platform.select({
+const VisionBarcodeCamera = Platform.select({
   ios: View, 
-  android: requireNativeComponent('VisionFaceCameraView')
+  android: requireNativeComponent('VisionBarcodeCameraView')
 });
 
 /////////////////////////////
 // Import Native Modules
 /////////////////////////////
 
-const VisionFaceModule = Platform.select({
+const VisionBarcodeModule = Platform.select({
   ios: { },
-  android: NativeModules.VisionFaceModule
+  android: NativeModules.VisionBarcodeModule
 });
 
 /////////////////////////////
@@ -80,17 +95,22 @@ export type State = 'READY' | 'PENDING' | 'UNAUTHORIZED';
 /**
  * Enum representing camera status
  */
-const CameraState = {
+const BarcodeCameraState = {
   READY: 'READY',
   PENDING: 'PENDING',
   UNAUTHORIZED: 'UNAUTHORIZED'
 };
 /**
- * Constants exposed by the camera manager of the camera view
+ * Constants exposed by the camera manager of the barcode camera view
  */
 export const Constants = {
   // LENS_FACING.FRONT, LENS_FACING.BACK
-  LENS_FACING: CameraModule.LENS_FACING,
+  LENS_FACING: VisionBarcodeModule.LENS_FACING,
   // ZOOM_LIMITS.MAX, ZOOM_LIMITS.MIN
-  ZOOM_LIMITS: CameraModule.ZOOM_LIMITS,
+  ZOOM_LIMITS: VisionBarcodeModule.ZOOM_LIMITS,
+  // BARCODE_FORMATS
+  BARCODE_FORMAT: VisionBarcodeModule.BARCODE_FORMAT
 };
+
+
+
