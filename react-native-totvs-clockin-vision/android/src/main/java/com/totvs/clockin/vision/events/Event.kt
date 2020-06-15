@@ -39,7 +39,7 @@ interface Event : (ReactContext, Int) -> Unit {
      * and register the event here by creating an instance of the class.
      */
     companion object {
-        val exported = listOf(
+        private val exported = listOf(
             OnBarcodeDetected,
             OnFaceRecognized,
             OnFaceProximity
@@ -50,6 +50,6 @@ interface Event : (ReactContext, Int) -> Unit {
          */
         operator fun iterator(): Iterator<Export> = exported.iterator()
 
-        fun forEach(block: (Export) -> Unit) = iterator().forEach(block)
+        inline fun forEach(block: (Export) -> Unit) = iterator().forEach(block)
     }
 }

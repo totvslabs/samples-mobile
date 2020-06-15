@@ -21,7 +21,10 @@ class ReactVisionBarcodeManager : AbstractViewManager<BarcodeVisionCameraView>()
         BarcodeVisionCameraView(context)
 
     /**
-     * Register events
+     * Register events.
+     *
+     * Modifications on this method are required to filter out events not related to barcode
+     * capability. Nothing will happens if not filter is made but is advised.
      */
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         val events = mutableMapOf<String, Any>()

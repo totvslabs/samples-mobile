@@ -1,11 +1,6 @@
 package com.totvs.clockin.vision
 
-import androidx.annotation.FloatRange
 import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.ViewGroupManager
-import com.facebook.react.uimanager.annotations.ReactProp
-import com.totvs.camera.core.annotations.LensFacing
-import com.totvs.camera.view.toCameraFacing
 import com.totvs.clockin.vision.events.Event
 import com.totvs.clockin.vision.events.OnBarcodeDetected
 import com.totvs.clockin.vision.view.FaceVisionCameraView
@@ -28,6 +23,9 @@ class ReactVisionFaceManager : AbstractViewManager<FaceVisionCameraView>() {
 
     /**
      * Register events
+     *
+     * Modifications on this method are required to filter out events not related to face
+     * capability. Nothing will happens if not filter is made but is advised.
      */
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         val events = mutableMapOf<String, Any>()

@@ -15,7 +15,7 @@ sealed class ExportableConstant {
 
         operator fun iterator() = all.iterator()
 
-        fun forEach(block: (ExportableConstant) -> Unit) = iterator().forEach(block)
+        inline fun forEach(block: (ExportableConstant) -> Unit) = iterator().forEach(block)
     }
 }
 
