@@ -1,7 +1,6 @@
 package com.totvs.clockin.vision
 
 import com.facebook.react.bridge.ReactApplicationContext
-import com.totvs.camera.view.core.ExportableConstant
 import com.totvs.camera.vision.core.VisionBarcodeFormat
 import com.totvs.clockin.vision.view.BarcodeVisionCameraView
 import com.totvs.camera.view.core.ExportableConstant as CameraExportableConstants
@@ -35,10 +34,6 @@ class ReactVisionBarcodeModule(
             if (set != VisionBarcodeFormat) {
                 return@forEach
             }
-            constants[set.name] = set.export()
-        }
-        // now let's export constants of this module
-        ExportableConstant.forEach { set ->
             constants[set.name] = set.export()
         }
         return constants
