@@ -111,6 +111,8 @@ open class FaceDetector(
             face.leftEyeOpenProbability,
             face.rightEyeOpenProbability
         ),
+        eulerZ = face.headEulerAngleZ,
+        eulerY = face.headEulerAngleY,
         landmarks = extractLandmarks(face)
     )
 

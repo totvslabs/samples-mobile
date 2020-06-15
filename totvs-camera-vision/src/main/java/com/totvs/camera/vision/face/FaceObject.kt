@@ -24,6 +24,8 @@ data class FaceObject(
     val width: Float,
     val height: Float,
     val eyesOpenProbability: EyesOpenProbability,
+    val eulerZ: Float = 0f,
+    val eulerY: Float = 0f,
     private val landmarks: List<Landmark> = mutableListOf()
 ) : VisionObject() {
 

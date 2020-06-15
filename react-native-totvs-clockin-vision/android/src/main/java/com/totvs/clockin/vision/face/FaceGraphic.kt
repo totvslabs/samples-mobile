@@ -16,12 +16,20 @@ class FaceGraphic(
     var drawNose: Boolean = false
 ) : GraphicOverlay.Graphic(), VisionReceiver<FaceObject> {
 
-    private val radius = context.resources.getDimension(R.dimen.face_landmark_radius)
-    private val stroke = context.resources.getDimension(R.dimen.face_landmark_stroke_width)
+    private val eyesRadius = context.resources.getDimension(R.dimen.eyes_landmark_radius)
+    private val eyesStroke = context.resources.getDimension(R.dimen.eyes_landmark_stroke_width)
+    private val noseRadius = context.resources.getDimension(R.dimen.nose_landmark_radius)
+    private val noseStroke = context.resources.getDimension(R.dimen.nose_landmark_stroke_width)
 
-    private val paint = Paint().apply {
+    private val eyesPaint = Paint().apply {
         style = Paint.Style.FILL
-        strokeWidth = stroke
+        strokeWidth = eyesStroke
+        isAntiAlias = true
+    }
+
+    private val nosePaint = Paint().apply {
+        style = Paint.Style.FILL
+        strokeWidth = eyesStroke
         isAntiAlias = true
     }
 
@@ -37,7 +45,11 @@ class FaceGraphic(
     }
 
     private fun setBoundingBoxColors() {
-        paint.apply {
+        eyesPaint.apply {
+            color = Color.WHITE
+            alpha = 180
+        }
+        nosePaint.apply {
             color = Color.WHITE
             alpha = 180
         }
@@ -52,14 +64,14 @@ class FaceGraphic(
                     val cx = translateX(landmark.position.x, face.sourceSize)
                     val cy = translateY(landmark.position.y, face.sourceSize)
 
-                    canvas.drawCircle(cx, cy, radius, paint)
+                    canvas.drawCircle(cx, cy, eyesRadius, eyesPaint)
                 }
 
                 if (drawNose && landmark is Nose) {
                     val cx = translateX(landmark.position.x, face.sourceSize)
                     val cy = translateY(landmark.position.y, face.sourceSize)
 
-                    canvas.drawCircle(cx, cy, radius, paint)
+                    canvas.drawCircle(cx, cy, noseRadius, nosePaint)
                 }
             }
         }
@@ -74,7 +86,7 @@ class FaceGraphic(
                 90, 270 -> Size(value.sourceSize.height, value.sourceSize.width)
                 else -> throw IllegalArgumentException("Valid rotation are 0, 90, 180, 270")
             }
-            // @TODO special to the mirroring must be placed here. but since we're only drawing eyes.
+            // @TODO(jansel) special to the mirroring must be placed here. but since we're only drawing eyes.
             //       we can skip that additional computation.
             value.copy(sourceSize = rotatedSize)
         }

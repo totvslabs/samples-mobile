@@ -114,6 +114,8 @@ class FastFaceDetector(
             face.isLeftEyeOpenProbability,
             face.isRightEyeOpenProbability
         ),
+        eulerY = face.eulerY,
+        eulerZ = face.eulerZ,
         landmarks = extractLandmarks(face)
     )
 

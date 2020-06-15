@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="face_landmark_stroke_width">1dp</dimen>
-    <dimen name="face_landmark_radius">4dp</dimen>
+    <dimen name="eyes_landmark_stroke_width">1dp</dimen>
+    <dimen name="eyes_landmark_radius">4dp</dimen>
+    <dimen name="nose_landmark_stroke_width">1dp</dimen>
+    <dimen name="nose_landmark_radius">4dp</dimen>
 </resources>
