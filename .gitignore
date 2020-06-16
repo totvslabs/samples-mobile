@@ -46,6 +46,10 @@ captures/
 .idea/misc.xml
 .idea/workspace.xml
 .idea/libraries
-
+*.project
+*.classpath
+*.settings/*
+*.settings
 # Fastlane
 fastlane/report.xml
+

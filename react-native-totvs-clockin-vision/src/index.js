@@ -1,15 +1,15 @@
 /**
  * Export [VisionModule]
  */
-export { default } from './modules/VisionModule';
+export { default as VisionModule } from './modules/VisionModule';
 /**
  * Export [FaceCameraView]
  */
-export { default, FaceCameraConstants, FaceCameraState } from './views/FaceCameraView';
+export { default as FaceCameraView, FaceCameraConstants, FaceCameraState } from './views/FaceCameraView';
 /**
  * Export [BarcodeCameraView]
  */
-export { default, BarcodeCameraConstants, BarcodeCameraState } from './views/BarcodeCameraView';
+export { default as BarcodeCameraView, BarcodeCameraConstants, BarcodeCameraState } from './views/BarcodeCameraView';
 /**
  * Import & Export camera state
  */
