@@ -8,7 +8,6 @@ import {
   Platform,
 } from 'react-native';
 
-
 /////////////////////////////
 // Import Native Components
 /////////////////////////////
@@ -17,6 +16,12 @@ const NativeModule = Platform.select({
   ios: { },
   android: requireNativeComponent('VisionModule')
 });
+
+/////////////////////////////
+// Constants
+/////////////////////////////
+
+const BASE_64_DATA_HEADER = 'data:image/jpeg;base64,';
 
 /**
  * This class expose utility functionalities that the clock-in vision module
@@ -50,7 +55,15 @@ export default class VisionModule {
    * 
    * @param {String} path of the image to be encoded in base64
    */
-  static getImageFileBase64 = async path => NativeModule.getImageFileBase64(path);
+  static getImageFileBase64 = async path => {
+    const base64 = await NativeModule.getImageFileBase64(path);
+
+    if (!base64 || null == base64) {
+      return null;
+    }
+
+    return `${BASE_64_DATA_HEADER}${base64}`;
+  };
 
   /**
    * Delete the image located at [path]
