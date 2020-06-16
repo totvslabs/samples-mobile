@@ -15,8 +15,6 @@ import {
   Platform,
   ViewPropTypes,
   View,
-  ActivityIndicator,
-  Text,  
   PermissionsAndroid
 } from 'react-native';
 
@@ -359,12 +357,17 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
     if (this.state.isAuthorized || this.hasFaCC()) {
       return (
         <View style={style}>
+
           <VisionBarcodeCamera
             {...properties}
             ref={this._setReference}
             style={styles.barcodeCameraView.camera}
           />
-          {this.hasFaCC() ? children({ camera: this, ...this.props, ...properties}) : children}
+
+          {this.hasFaCC()
+            ? children({ camera: this, ...this.props, ...properties })
+            : children}
+            
         </View>
       );
     }
