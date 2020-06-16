@@ -31,6 +31,7 @@ import styles from './styles';
 /////////////////////////////
 
 import { isAbsent, toFiniteFloatOrNull } from '../../utils/numbers';
+import { type State } from '../../utils/types';
 
 /////////////////////////////
 // Import Components
@@ -83,8 +84,6 @@ type StateType = {
   isAuthorizationRequested: bool
 };
 
-export type State = 'READY' | 'PENDING' | 'UNAUTHORIZED';
-
 /////////////////////////////
 // Constants
 /////////////////////////////
@@ -92,7 +91,7 @@ export type State = 'READY' | 'PENDING' | 'UNAUTHORIZED';
 /**
  * Enum representing camera status
  */
-const FaceCameraState = {
+export const FaceCameraState = {
   READY: 'READY',
   PENDING: 'PENDING',
   UNAUTHORIZED: 'UNAUTHORIZED'
@@ -100,7 +99,7 @@ const FaceCameraState = {
 /**
  * Constants exposed by the camera manager of the face camera view
  */
-export const Constants = {
+export const FaceCameraConstants = {
   // LENS_FACING.FRONT, LENS_FACING.BACK
   LENS_FACING: VisionFaceModule.LENS_FACING,
   // ZOOM_LIMITS.MAX, ZOOM_LIMITS.MIN
@@ -279,15 +278,15 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
   toggleCamera = async () => VisionFaceModule.toggleCamera(this._cameraHandle);
 
   /**
-   * Set camera facing. Possible values are one of Constants.LENS_FACING, two possible 
+   * Set camera facing. Possible values are one of FaceCameraConstants.LENS_FACING, two possible 
    * values can be passed:
-   * 1. Constants.LENS_FACING.BACK
-   * 2. Constants.LENS_FACING.FRONT
+   * 1. FaceCameraConstants.LENS_FACING.BACK
+   * 2. FaceCameraConstants.LENS_FACING.FRONT
    */
   setFacing = async facing => {
     const {
       FRONT, BACK
-    } = Constants.LENS_FACING;
+    } = FaceCameraConstants.LENS_FACING;
 
     if (FRONT !== facing && BACK !== facing) {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
@@ -303,12 +302,12 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
 
   /**
    * Set the camera zoom. possible values are encoded in 
-   * [Constants.ZOOM_LIMITS.MIN, Constants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
+   * [FaceCameraConstants.ZOOM_LIMITS.MIN, FaceCameraConstants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
   setZoom = async zoom => {
     const {
       MIN, MAX
-    } = Constants.ZOOM_LIMITS;
+    } = FaceCameraConstants.ZOOM_LIMITS;
 
     const z = toFiniteFloatOrNull(zoom);
 

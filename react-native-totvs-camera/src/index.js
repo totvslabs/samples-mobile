@@ -11,7 +11,7 @@ import CameraView, {
 // export types
 export type CameraState = State;
 export { 
-  Constants 
+  Constants
 };
 
 // export components & constants
