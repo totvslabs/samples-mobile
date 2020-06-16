@@ -1,10 +1,8 @@
 package com.totvs.clockin.vision.face
 
-import com.facebook.react.bridge.ReactContext
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.NullFaceObject
 import com.totvs.camera.vision.stream.VisionReceiver
-import com.totvs.clockin.vision.events.OnFaceProximity
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -16,8 +14,7 @@ interface Proximity : VisionReceiver<FaceObject>
  * Proximity Detector that act on [FaceObject] width dimensions.
  */
 class ProximityByFaceWidth(
-    private val context: ReactContext,
-    private val viewId: Int
+    private val onProximity: (ProximityResult) -> Unit
 ) : Proximity {
     /**
      * Value that limit the face width to determine when the face width is right, hence
@@ -48,22 +45,33 @@ class ProximityByFaceWidth(
     override fun send(value: FaceObject) {
         if (NullFaceObject == value) {
             if (foundFace.compareAndSet(true, false)) {
-                OnFaceProximity(threshold = threshold, faceWidth = 0f, faceHeight = 0f)(
-                    context,
-                    viewId
-                )
+                onProximity(ProximityResult(
+                    threshold = threshold,
+                    faceWidth = 0f,
+                    faceHeight = 0f
+                ))
             }
         } else {
             foundFace.set(true)
             // send a valid event.
-            OnFaceProximity(
+            onProximity(ProximityResult(
                 isUnderThreshold = value.width <= threshold,
                 threshold = threshold,
                 faceWidth = value.width,
                 faceHeight = value.height
-            )(context, viewId)
+            ))
         }
     }
+
+    /**
+     * Data representing a proximity detection.
+     */
+    data class ProximityResult(
+        val threshold: Float,
+        val faceWidth: Float,
+        val faceHeight: Float,
+        val isUnderThreshold: Boolean = false
+    )
 
     companion object {
         private const val TAG = "ProximityByFaceWidth"

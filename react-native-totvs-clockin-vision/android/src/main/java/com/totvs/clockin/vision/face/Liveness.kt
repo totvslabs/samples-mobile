@@ -15,6 +15,11 @@ import javax.annotation.concurrent.GuardedBy
 sealed class Liveness : VisionReceiver<FaceObject>
 
 /**
+ * Data representing the result of a liveness detection
+ */
+data class LivenessResult(val mode: Int)
+
+/**
  * Detect face movement
  *
  * @param infeasibleAreaPercent controls what horizontal percentage of the screen
@@ -23,9 +28,8 @@ sealed class Liveness : VisionReceiver<FaceObject>
  * be in a corner of the screen coordinate system and we can't recognize it quite well.
  */
 class LivenessFace(
-    val context: ReactContext,
-    val viewId: Int,
-    val infeasibleAreaPercent: Float = 0.2f
+    private val infeasibleAreaPercent: Float = 0.2f,
+    private val onLiveness: (LivenessResult) -> Unit
 ) : Liveness() {
 
     private val state = YawState()
@@ -46,7 +50,7 @@ class LivenessFace(
                     // is live. clear
                     state.clear()
                     // emit event
-                    OnLiveness(mode = id)(context, viewId)
+                    onLiveness(LivenessResult(mode = id))
                 }
             }
         } else {
@@ -102,9 +106,8 @@ class LivenessFace(
  * Detect eyes blinking
  */
 class LivenessEyes(
-    val context: ReactContext,
-    val viewId: Int,
-    var requiredBlinks: Int = NO_BLINKS
+    private val requiredBlinks: Int = NO_BLINKS,
+    private val onLiveness: (LivenessResult) -> Unit
 ) : Liveness() {
     /**
      * Keep track of the previous probability tracked.
@@ -122,7 +125,7 @@ class LivenessEyes(
             return
         }
         if (meetRequiredBlinks(value)) {
-            OnLiveness(mode = id)(context, viewId)
+            onLiveness(LivenessResult(mode = id))
         }
     }
 

@@ -210,6 +210,8 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
     return false;
   }
 
+  _onProximity
+
   // public accessors and manipulators
 
    /**

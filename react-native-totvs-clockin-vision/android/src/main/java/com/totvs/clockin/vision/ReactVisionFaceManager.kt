@@ -9,6 +9,8 @@ import com.totvs.clockin.vision.core.Model
 import com.totvs.clockin.vision.core.ModelProvider
 import com.totvs.clockin.vision.events.Event
 import com.totvs.clockin.vision.events.OnBarcodeDetected
+import com.totvs.clockin.vision.events.OnFaceProximity
+import com.totvs.clockin.vision.events.OnLiveness
 import com.totvs.clockin.vision.face.LivenessEyes
 import com.totvs.clockin.vision.face.LivenessFace
 import com.totvs.clockin.vision.face.ProximityByFaceWidth
@@ -62,15 +64,14 @@ class ReactVisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
     @ReactProp(name = "livenessMode", defaultInt = LivenessModes.NONE)
     fun setLivenessMode(cameraView: VisionFaceCameraView, @LivenessMode mode: Int) {
         cameraView.liveness = when (mode) {
-            LivenessModes.EYES -> LivenessEyes(
-                cameraView.context as ReactContext,
-                cameraView.id,
-                TransientState.requiredBlinks
-            )
-            LivenessModes.FACE -> LivenessFace(
-                cameraView.context as ReactContext,
-                cameraView.id
-            )
+            LivenessModes.EYES -> LivenessEyes(TransientState.requiredBlinks) {
+                // on detection send the event
+                OnLiveness(it.mode)(cameraView.context as ReactContext, cameraView.id)
+            }
+            LivenessModes.FACE -> LivenessFace {
+                // on detection send the event
+                OnLiveness(it.mode)(cameraView.context as ReactContext, cameraView.id)
+            }
             else -> null // disable the liveness
         }
     }
@@ -97,10 +98,16 @@ class ReactVisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
             if (null != proximity) {
                 proximity.threshold = TransientState.proximityThreshold
             } else {
-                cameraView.proximity = ProximityByFaceWidth(
-                    cameraView.context as ReactContext,
-                    cameraView.id
-                ).apply { threshold = TransientState.proximityThreshold }
+                cameraView.proximity = ProximityByFaceWidth { result ->
+                    // on detection send the event,
+                    OnFaceProximity(
+                        isUnderThreshold = result.isUnderThreshold,
+                        threshold = result.threshold,
+                        faceWidth = result.faceWidth,
+                        faceHeight = result.faceHeight
+                    )(cameraView.context as ReactContext, cameraView.id)
+
+                }.apply { threshold = TransientState.proximityThreshold }
             }
         }
     }
