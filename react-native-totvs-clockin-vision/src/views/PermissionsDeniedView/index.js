@@ -8,11 +8,10 @@ import React from 'react';
 
 /**
  * View representing the state of the camera when no permission was granted
- * The caller code can customize this setting `unathorizedView` property.
  * 
  * @param {Object} props 
  */
-export default UnauthorizedView = () => {
+export default PermissionsDeniedView = () => {
   const text = "Camera not authorized";
   return (
     <View style={[styles.view]}>

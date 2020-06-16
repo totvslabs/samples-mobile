@@ -8,11 +8,10 @@ import React from 'react';
 
 /**
  * View representing the state of the camera while requesting permission.
- * The caller code can customize this setting `pendingAuthorizationView` property.
  * 
  * @param {Object} props 
  */
-export default PendingAuthorizationView = () => {
+export default PermissionsAskingView = () => {
   return (
     <View style={[styles.view]}>
       <ActivityIndicator size="small"/>

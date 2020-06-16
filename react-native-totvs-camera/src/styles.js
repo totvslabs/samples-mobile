@@ -20,7 +20,7 @@ const cameraView = StyleSheet.create({
   }
 });
 
-const pendingAuthorizationView = StyleSheet.create({
+const permissionsAskingView = StyleSheet.create({
   view: {
     flex: 1,
     alignItems: 'center',
@@ -28,7 +28,7 @@ const pendingAuthorizationView = StyleSheet.create({
   }
 });
 
-const unauthorizedView = StyleSheet.create({
+const permissionsDeniedView = StyleSheet.create({
   view: {
     flex: 1,
     alignItems: 'center',
@@ -43,6 +43,6 @@ const unauthorizedView = StyleSheet.create({
 
 export default {
   cameraView,
-  pendingAuthorizationView,
-  unauthorizedView
+  permissionsAskingView,
+  permissionsDeniedView
 };
