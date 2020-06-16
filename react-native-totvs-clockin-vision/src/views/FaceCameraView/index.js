@@ -210,7 +210,44 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
     return false;
   }
 
-  _onProximity
+  /**
+   * Called when isProximityEnabled is true.
+   */
+  _onFaceProximity = event => {
+    const payload = event.nativeEvent;
+    
+    const { 
+      onFaceProximity
+    } = this.props;
+
+    onFaceProximity && onFaceProximity(payload);
+  }
+
+  /**
+   * Called when we set a valid {FaceCameraConstants.LIVENESS_MODE} distinct from NONE
+   */
+  _onLiveness = event => {
+    const payload = event.nativeEvent;
+    
+    const { 
+      onLiveness
+    } = this.props;
+
+    onLiveness && onLiveness(payload);
+  }
+
+  /**
+   * Called when we trigger {recognizeStillPicture} 
+   */
+  _onFaceRecognized = event => {
+    const payload = event.nativeEvent;
+
+    const {
+      onFaceRecognized
+    } = this.props;
+
+    onFaceRecognized && onFaceRecognized(payload);
+  }
 
   // public accessors and manipulators
 
@@ -343,9 +380,16 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
   enableFlash = async enable => this.enableTorch(enable);
   
    /**
-   *  Whether the camera flash/torch is enabled
-   */
+    *  Whether the camera flash/torch is enabled
+    */
   isTorchEnabled = async () => this.isTorchEnabled(); 
+
+  /**
+   * Trigger the recognition on an still picture. If {saveImage} is true, then the result will
+   * contain a path for the saved image.
+   * Results of this method are obtained through the dispatch of the [OnFaceRecognized] event
+   */
+  recognizeStillPicture = async saveImage => VisionFaceModule.recognizeStillPicture(saveImage || false);
 
   /**
    * View renderization happens here
@@ -361,8 +405,11 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
 
           <VisionFaceCamera
             {...properties}
-            ref={this._setReference}
             style={styles.faceCameraView.camera}
+            onLiveness={this._onLiveness}
+            onFaceProximity={this._onFaceProximity}            
+            onFaceRecognized={this._onFaceRecognized}
+            ref={this._setReference}       
           />
 
           {this.hasFaCC()

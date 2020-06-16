@@ -42,7 +42,8 @@ interface Event : (ReactContext, Int) -> Unit {
         private val exported = listOf(
             OnBarcodeDetected,
             OnFaceRecognized,
-            OnFaceProximity
+            OnFaceProximity,
+            OnLiveness
         )
 
         /**
