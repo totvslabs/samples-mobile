@@ -15,9 +15,8 @@ import {
   Platform,
   ViewPropTypes,
   View,
-  ActivityIndicator,
-  Text,  
-  PermissionsAndroid
+  PermissionsAndroid,
+  StyleSheet
 } from 'react-native';
 
 import React, { Component } from 'react';
@@ -26,24 +25,39 @@ import React, { Component } from 'react';
 // Import Styles
 /////////////////////////////
 
-import styles from './styles';
+import styles from './FaceCameraView/styles';
+
+/////////////////////////////
+// Import Utility
+/////////////////////////////
+
+import { isAbsent, toFiniteFloatOrNull } from '../utils/numbers';
+import { type State } from '../utils/types';
+
+/////////////////////////////
+// Import Components
+/////////////////////////////
+
+import PermissionsDeniedView from './PermissionsDeniedView';
+import PermissionsAskingView from './PermissionsAskingView';
+
 
 /////////////////////////////
 // Import Native Components
 /////////////////////////////
 
-const NativeCamera = Platform.select({
+const VisionFaceCamera = Platform.select({
   ios: View, 
-  android: requireNativeComponent('CameraView')
+  android: requireNativeComponent('VisionFaceCameraView')
 });
 
 /////////////////////////////
 // Import Native Modules
 /////////////////////////////
 
-const CameraModule = Platform.select({
+const VisionFaceModule = Platform.select({
   ios: { },
-  android: NativeModules.CameraModule
+  android: NativeModules.VisionFaceModule
 });
 
 /////////////////////////////
@@ -65,16 +79,20 @@ type PropsType = typeof View.props & {
   permissionsDeniedView?: React.Component,
   onCameraStateChanged?: Function,
   facing?: Number,
-  zoom?: Number
+  zoom?: Number,  
+  livenessMode?: Number,
+  blinksCount?: Number,
+  isProximityEnabled?: Boolean,
+  proximityThreshold?: Number,
+  onLiveness?: Function,
+  onFaceProximity?: Function,
+  onFaceRecognized?: Function  
 };
 
 type StateType = {
   isAuthorized: bool,
   isAuthorizationRequested: bool
 };
-
-export type State = 'READY' | 'PENDING' | 'UNAUTHORIZED';
-
 
 /////////////////////////////
 // Constants
@@ -83,103 +101,38 @@ export type State = 'READY' | 'PENDING' | 'UNAUTHORIZED';
 /**
  * Enum representing camera status
  */
-const CameraState = {
+export const FaceCameraState = {
   READY: 'READY',
   PENDING: 'PENDING',
   UNAUTHORIZED: 'UNAUTHORIZED'
 };
 /**
- * Constants exposed by the camera manager of the camera view
+ * Constants exposed by the camera manager of the face camera view
  */
-export const Constants = {
+export const FaceCameraConstants = {
   // LENS_FACING.FRONT, LENS_FACING.BACK
-  LENS_FACING: CameraModule.LENS_FACING,
+  LENS_FACING: VisionFaceModule.LENS_FACING,
   // ZOOM_LIMITS.MAX, ZOOM_LIMITS.MIN
-  ZOOM_LIMITS: CameraModule.ZOOM_LIMITS,
+  ZOOM_LIMITS: VisionFaceModule.ZOOM_LIMITS,
+  // LIVENESS_MODE
+  LIVENESS_MODE: VisionFaceModule.LIVENESS_MODE
 };
-
-
-/////////////////////////////
-// Utilities
-/////////////////////////////
-
-/**
- * return true iff value is either null or undefined 
- * 
- * @param {Object} value 
- */
-const isAbsent = value => null === value || undefined == value;
-
-/**
- * Sanitize a value to a pure number or null 
- */
-const toFiniteFloatOrNull = value => {
-  const isNumeric = value => !isNaN(value) && isFinite(value);
-  try { 
-    const e = parseFloat(value);
-    return isNumeric(e) ? e : null;
-  } catch (e) { return null; }
-};
-
 
 /////////////////////////////
 // Components
 /////////////////////////////
 
-/**
- * Render appropriately a child component based on the type. 
- * We use this in case we need to have a child function component that 
- * need access to the camera component.
- * 
- * Bear in mind that if `children` is a function child, then it must return a 
- * react component.
- */
-const Children = ({ camera, ...props }) => {
-  const isFunction = e => typeof e === 'function';
-
-  const { children, ...rest } = props;
-  
-  return isFunction(children) ? children({ camera, ...props }) : children;
-}
 
 /**
- * View representing the state of the camera while requesting permission.
- * The caller code can customize this setting `permissionsAskingView` property.
- * 
- * @param {Object} props 
- */
-const PermissionsAskingView = () => {
-  return (
-    <View style={[styles.permissionsAskingView.view]}>
-      <ActivityIndicator size="small"/>
-    </View>
-  );
-}
-
-/**
- * View representing the state of the camera when no permission was granted
- * The caller code can customize this setting `permissionsDeniedView` property.
- * 
- * @param {Object} props 
- */
-const PermissionsDeniedView = () => {
-  const text = "Camera not authorized";
-  return (
-    <View style={[styles.permissionsDeniedView.view]}>
-      <Text style={[styles.permissionsDeniedView.text]}>{text}</Text>
-    </View>
-  );
-}
-
-/**
- * View that display a camera and expose camera-like functionalities.
+ * View that display a camera and expose camera-like functionalities to detect/recognize
+ * faces.
  * 
  * This view has the capabilty to ask for permissions required to render the camera
  * by itself. If these properties are not set and is disallowed to the camera to
  * ask for permissions, then the caller would be responsible to requests permission
  * required by this underlying component.
  */
-export default class CameraView extends Component<PropsType, StateType> {
+export default class FaceCameraView extends Component<PropsType, StateType> {
   /**
    * Properies exposed by this view
    */
@@ -191,7 +144,14 @@ export default class CameraView extends Component<PropsType, StateType> {
     permissionsDeniedView: PropTypes.element,
     onCameraStateChanged: PropTypes.func,
     facing: PropTypes.number,
-    zoom: PropTypes.number
+    zoom: PropTypes.number,
+    livenessMode: PropTypes.number,
+    blinksCount: PropTypes.number,
+    isProximityEnabled: PropTypes.bool,
+    proximityThreshold: PropTypes.number,
+    onLiveness: PropTypes.func,
+    onFaceProximity: PropTypes.func,
+    onFaceRecognized: PropTypes.func,
   };
   /**
    * Default props for this view
@@ -200,7 +160,7 @@ export default class CameraView extends Component<PropsType, StateType> {
     permissionsCameraOptions: { },    
     permissionsAskingView: PermissionsAskingView(),
     permissionsDeniedView: PermissionsDeniedView(),
-    onCameraStateChanged: () => { },  
+    onCameraStateChanged: () => { },    
   };
 
   _cameraHandle;
@@ -241,6 +201,12 @@ export default class CameraView extends Component<PropsType, StateType> {
       props.permissionsCameraOptions
     ) && isAbsent(props.requestPermissions) ? true : props.requestPermissions;
 
+    // enable proximity in case user set proximity threshold
+    // props and didn't set the allow flag.
+    expanded.isProximityEnabled = (
+      props.proximityThreshold
+    ) && isAbsent(props.isProximityEnabled) ? true : props.isProximityEnabled;
+    
     return expanded;
   }
 
@@ -269,6 +235,45 @@ export default class CameraView extends Component<PropsType, StateType> {
     return false;
   }
 
+  /**
+   * Called when isProximityEnabled is true.
+   */
+  _onFaceProximity = event => {
+    const payload = event.nativeEvent;
+    
+    const { 
+      onFaceProximity
+    } = this.props;
+
+    onFaceProximity && onFaceProximity(payload);
+  }
+
+  /**
+   * Called when we set a valid {FaceCameraConstants.LIVENESS_MODE} distinct from NONE
+   */
+  _onLiveness = event => {
+    const payload = event.nativeEvent;
+    
+    const { 
+      onLiveness
+    } = this.props;
+
+    onLiveness && onLiveness(payload);
+  }
+
+  /**
+   * Called when we trigger {recognizeStillPicture} 
+   */
+  _onFaceRecognized = event => {
+    const payload = event.nativeEvent;
+
+    const {
+      onFaceRecognized
+    } = this.props;
+
+    onFaceRecognized && onFaceRecognized(payload);
+  }
+
   // public accessors and manipulators
 
    /**
@@ -287,8 +292,8 @@ export default class CameraView extends Component<PropsType, StateType> {
     } = this.state;
     
     return isAuthorizationRequested 
-      ? isAuthorized ? CameraState.READY : CameraState.UNAUTHORIZED
-      : CameraState.PENDING
+      ? isAuthorized ? FaceCameraState.READY : FaceCameraState.UNAUTHORIZED
+      : FaceCameraState.PENDING
       ;
   }
   
@@ -334,39 +339,39 @@ export default class CameraView extends Component<PropsType, StateType> {
   /**
    * Toggle the camera lens facing
    */
-  toggleCamera = async () => CameraModule.toggleCamera(this._cameraHandle);
+  toggleCamera = async () => VisionFaceModule.toggleCamera(this._cameraHandle);
 
   /**
-   * Set camera facing. Possible values are one of Constants.LENS_FACING, two possible 
+   * Set camera facing. Possible values are one of FaceCameraConstants.LENS_FACING, two possible 
    * values can be passed:
-   * 1. Constants.LENS_FACING.BACK
-   * 2. Constants.LENS_FACING.FRONT
+   * 1. FaceCameraConstants.LENS_FACING.BACK
+   * 2. FaceCameraConstants.LENS_FACING.FRONT
    */
   setFacing = async facing => {
     const {
       FRONT, BACK
-    } = Constants.LENS_FACING;
+    } = FaceCameraConstants.LENS_FACING;
 
     if (FRONT !== facing && BACK !== facing) {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return CameraModule.setLensFacing(facing, this._cameraHandle);
+    return VisionFaceModule.setLensFacing(facing, this._cameraHandle);
   }
 
   /**
    * Returns the current camera facing
    */
-  getFacing = async () => CameraModule.getLensFacing(this._cameraHandle);
+  getFacing = async () => VisionFaceModule.getLensFacing(this._cameraHandle);
 
   /**
    * Set the camera zoom. possible values are encoded in 
-   * [Constants.ZOOM_LIMITS.MIN, Constants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
+   * [FaceCameraConstants.ZOOM_LIMITS.MIN, FaceCameraConstants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
   setZoom = async zoom => {
     const {
       MIN, MAX
-    } = Constants.ZOOM_LIMITS;
+    } = FaceCameraConstants.ZOOM_LIMITS;
 
     const z = toFiniteFloatOrNull(zoom);
 
@@ -374,23 +379,23 @@ export default class CameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return CameraModule.setZoom(z, this._cameraHandle);
+    return VisionFaceModule.setZoom(z, this._cameraHandle);
   }
 
   /**
    * Returns current zoom
    */
-  getZoom = async () => CameraModule.getZoom(this._cameraHandle);
+  getZoom = async () => VisionFaceModule.getZoom(this._cameraHandle);
 
   /**
    * Enable/Disable the torch (flash light) on this camera
    */
-  enableTorch = async enable => CameraModule.enableTorch(enable, this._cameraHandle);
+  enableTorch = async enable => VisionFaceModule.enableTorch(enable, this._cameraHandle);
 
   /**
    *  Whether the camera flash/torch is enabled
    */
-  isTorchEnabled = async () => CameraModule.isTorchEnabled(this._cameraHandle);
+  isTorchEnabled = async () => VisionFaceModule.isTorchEnabled(this._cameraHandle);
 
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
@@ -400,35 +405,42 @@ export default class CameraView extends Component<PropsType, StateType> {
   enableFlash = async enable => this.enableTorch(enable);
   
    /**
-   *  Whether the camera flash/torch is enabled
-   */
+    *  Whether the camera flash/torch is enabled
+    */
   isTorchEnabled = async () => this.isTorchEnabled(); 
 
   /**
-   * Take a picture and save it in the specified location. The saved 
-   * image would be in JPEG format.
-   * 
-   * If not outputDir is provided then, the image would be saved into the data
-   * directory of the app with a random name.
+   * Trigger the recognition on an still picture. If {saveImage} is true, then the result will
+   * contain a path for the saved image.
+   * Results of this method are obtained through the dispatch of the [OnFaceRecognized] event
    */
-  takePicture = async (outputDir) => CameraModule.takePicture(this._cameraHandle, outputDir);
+  recognizeStillPicture = async saveImage => VisionFaceModule.recognizeStillPicture(saveImage || false);
 
   /**
    * View renderization happens here
    */
   render = () => {
+    const { children } = this.props;
     const { style, ...properties } = this._expandProps(this.props);
     
     // if we were authorized or there's a possibly handler function, let's render the camera
     if (this.state.isAuthorized || this.hasFaCC()) {
       return (
         <View style={style}>
-          <NativeCamera
+
+          <VisionFaceCamera
             {...properties}
-            ref={this._setReference}
-            style={styles.cameraView.camera}
+            style={styles.camera}
+            onLiveness={this._onLiveness}
+            onFaceProximity={this._onFaceProximity}            
+            onFaceRecognized={this._onFaceRecognized}
+            ref={this._setReference}       
           />
-          {Children({ camera: this, ...this.props, ...properties })}
+
+          {this.hasFaCC()
+            ? children({ camera: this, ...this.props, ...properties })
+            : children}
+
         </View>
       );
     }
@@ -441,3 +453,12 @@ export default class CameraView extends Component<PropsType, StateType> {
   }
 }
 
+////////////////////////////
+// ANCHOR Styles
+////////////////////////////
+
+const styles = StyleSheet.create({
+  camera: {
+    ...StyleSheet.absoluteFill
+  }
+});

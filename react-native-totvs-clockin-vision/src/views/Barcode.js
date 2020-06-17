@@ -15,35 +15,43 @@ import {
   Platform,
   ViewPropTypes,
   View,
-  ActivityIndicator,
-  Text,  
-  PermissionsAndroid
+  PermissionsAndroid,
+  StyleSheet
 } from 'react-native';
 
 import React, { Component } from 'react';
 
 /////////////////////////////
-// Import Styles
+// Import Utility
 /////////////////////////////
 
-import styles from './styles';
+import { isAbsent, toFiniteFloatOrNull } from '../utils/numbers';
+import { type State } from '../utils/types';
+
+/////////////////////////////
+// Import Components
+/////////////////////////////
+
+import PermissionsDeniedView from './PermissionsDeniedView';
+import PermissionsAskingView from './PermissionsAskingView';
+
 
 /////////////////////////////
 // Import Native Components
 /////////////////////////////
 
-const NativeCamera = Platform.select({
+const VisionBarcodeCamera = Platform.select({
   ios: View, 
-  android: requireNativeComponent('CameraView')
+  android: requireNativeComponent('VisionBarcodeCameraView')
 });
 
 /////////////////////////////
 // Import Native Modules
 /////////////////////////////
 
-const CameraModule = Platform.select({
+const VisionBarcodeModule = Platform.select({
   ios: { },
-  android: NativeModules.CameraModule
+  android: NativeModules.VisionBarcodeModule
 });
 
 /////////////////////////////
@@ -65,16 +73,13 @@ type PropsType = typeof View.props & {
   permissionsDeniedView?: React.Component,
   onCameraStateChanged?: Function,
   facing?: Number,
-  zoom?: Number
+  zoom?: Number  
 };
 
 type StateType = {
   isAuthorized: bool,
   isAuthorizationRequested: bool
 };
-
-export type State = 'READY' | 'PENDING' | 'UNAUTHORIZED';
-
 
 /////////////////////////////
 // Constants
@@ -83,103 +88,38 @@ export type State = 'READY' | 'PENDING' | 'UNAUTHORIZED';
 /**
  * Enum representing camera status
  */
-const CameraState = {
+export const BarcodeCameraState = {
   READY: 'READY',
   PENDING: 'PENDING',
   UNAUTHORIZED: 'UNAUTHORIZED'
 };
 /**
- * Constants exposed by the camera manager of the camera view
+ * Constants exposed by the camera manager of the barcode camera view
  */
-export const Constants = {
+export const BarcodeCameraConstants = {
   // LENS_FACING.FRONT, LENS_FACING.BACK
-  LENS_FACING: CameraModule.LENS_FACING,
+  LENS_FACING: VisionBarcodeModule.LENS_FACING,
   // ZOOM_LIMITS.MAX, ZOOM_LIMITS.MIN
-  ZOOM_LIMITS: CameraModule.ZOOM_LIMITS,
+  ZOOM_LIMITS: VisionBarcodeModule.ZOOM_LIMITS,
+  // BARCODE_FORMATS
+  BARCODE_FORMAT: VisionBarcodeModule.BARCODE_FORMAT
 };
-
-
-/////////////////////////////
-// Utilities
-/////////////////////////////
-
-/**
- * return true iff value is either null or undefined 
- * 
- * @param {Object} value 
- */
-const isAbsent = value => null === value || undefined == value;
-
-/**
- * Sanitize a value to a pure number or null 
- */
-const toFiniteFloatOrNull = value => {
-  const isNumeric = value => !isNaN(value) && isFinite(value);
-  try { 
-    const e = parseFloat(value);
-    return isNumeric(e) ? e : null;
-  } catch (e) { return null; }
-};
-
 
 /////////////////////////////
 // Components
 /////////////////////////////
 
-/**
- * Render appropriately a child component based on the type. 
- * We use this in case we need to have a child function component that 
- * need access to the camera component.
- * 
- * Bear in mind that if `children` is a function child, then it must return a 
- * react component.
- */
-const Children = ({ camera, ...props }) => {
-  const isFunction = e => typeof e === 'function';
-
-  const { children, ...rest } = props;
-  
-  return isFunction(children) ? children({ camera, ...props }) : children;
-}
 
 /**
- * View representing the state of the camera while requesting permission.
- * The caller code can customize this setting `permissionsAskingView` property.
- * 
- * @param {Object} props 
- */
-const PermissionsAskingView = () => {
-  return (
-    <View style={[styles.permissionsAskingView.view]}>
-      <ActivityIndicator size="small"/>
-    </View>
-  );
-}
-
-/**
- * View representing the state of the camera when no permission was granted
- * The caller code can customize this setting `permissionsDeniedView` property.
- * 
- * @param {Object} props 
- */
-const PermissionsDeniedView = () => {
-  const text = "Camera not authorized";
-  return (
-    <View style={[styles.permissionsDeniedView.view]}>
-      <Text style={[styles.permissionsDeniedView.text]}>{text}</Text>
-    </View>
-  );
-}
-
-/**
- * View that display a camera and expose camera-like functionalities.
+ * View that display a camera and expose camera-like functionalities to detect/recognize
+ * barcodes.
  * 
  * This view has the capabilty to ask for permissions required to render the camera
  * by itself. If these properties are not set and is disallowed to the camera to
  * ask for permissions, then the caller would be responsible to requests permission
  * required by this underlying component.
  */
-export default class CameraView extends Component<PropsType, StateType> {
+export default class BarcodeCameraView extends Component<PropsType, StateType> {
   /**
    * Properies exposed by this view
    */
@@ -191,7 +131,7 @@ export default class CameraView extends Component<PropsType, StateType> {
     permissionsDeniedView: PropTypes.element,
     onCameraStateChanged: PropTypes.func,
     facing: PropTypes.number,
-    zoom: PropTypes.number
+    zoom: PropTypes.number    
   };
   /**
    * Default props for this view
@@ -200,7 +140,7 @@ export default class CameraView extends Component<PropsType, StateType> {
     permissionsCameraOptions: { },    
     permissionsAskingView: PermissionsAskingView(),
     permissionsDeniedView: PermissionsDeniedView(),
-    onCameraStateChanged: () => { },  
+    onCameraStateChanged: () => { },    
   };
 
   _cameraHandle;
@@ -287,8 +227,8 @@ export default class CameraView extends Component<PropsType, StateType> {
     } = this.state;
     
     return isAuthorizationRequested 
-      ? isAuthorized ? CameraState.READY : CameraState.UNAUTHORIZED
-      : CameraState.PENDING
+      ? isAuthorized ? BarcodeCameraState.READY : BarcodeCameraState.UNAUTHORIZED
+      : BarcodeCameraState.PENDING
       ;
   }
   
@@ -334,39 +274,39 @@ export default class CameraView extends Component<PropsType, StateType> {
   /**
    * Toggle the camera lens facing
    */
-  toggleCamera = async () => CameraModule.toggleCamera(this._cameraHandle);
+  toggleCamera = async () => VisionBarcodeModule.toggleCamera(this._cameraHandle);
 
   /**
-   * Set camera facing. Possible values are one of Constants.LENS_FACING, two possible 
+   * Set camera facing. Possible values are one of BarcodeCameraConstants.LENS_FACING, two possible 
    * values can be passed:
-   * 1. Constants.LENS_FACING.BACK
-   * 2. Constants.LENS_FACING.FRONT
+   * 1. BarcodeCameraConstants.LENS_FACING.BACK
+   * 2. BarcodeCameraConstants.LENS_FACING.FRONT
    */
   setFacing = async facing => {
     const {
       FRONT, BACK
-    } = Constants.LENS_FACING;
+    } = BarcodeCameraConstants.LENS_FACING;
 
     if (FRONT !== facing && BACK !== facing) {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return CameraModule.setLensFacing(facing, this._cameraHandle);
+    return VisionBarcodeModule.setLensFacing(facing, this._cameraHandle);
   }
 
   /**
    * Returns the current camera facing
    */
-  getFacing = async () => CameraModule.getLensFacing(this._cameraHandle);
+  getFacing = async () => VisionBarcodeModule.getLensFacing(this._cameraHandle);
 
   /**
    * Set the camera zoom. possible values are encoded in 
-   * [Constants.ZOOM_LIMITS.MIN, Constants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
+   * [BarcodeCameraConstants.ZOOM_LIMITS.MIN, BarcodeCameraConstants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
   setZoom = async zoom => {
     const {
       MIN, MAX
-    } = Constants.ZOOM_LIMITS;
+    } = BarcodeCameraConstants.ZOOM_LIMITS;
 
     const z = toFiniteFloatOrNull(zoom);
 
@@ -374,23 +314,23 @@ export default class CameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return CameraModule.setZoom(z, this._cameraHandle);
+    return VisionBarcodeModule.setZoom(z, this._cameraHandle);
   }
 
   /**
    * Returns current zoom
    */
-  getZoom = async () => CameraModule.getZoom(this._cameraHandle);
+  getZoom = async () => VisionBarcodeModule.getZoom(this._cameraHandle);
 
   /**
    * Enable/Disable the torch (flash light) on this camera
    */
-  enableTorch = async enable => CameraModule.enableTorch(enable, this._cameraHandle);
+  enableTorch = async enable => VisionBarcodeModule.enableTorch(enable, this._cameraHandle);
 
   /**
    *  Whether the camera flash/torch is enabled
    */
-  isTorchEnabled = async () => CameraModule.isTorchEnabled(this._cameraHandle);
+  isTorchEnabled = async () => VisionBarcodeModule.isTorchEnabled(this._cameraHandle);
 
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
@@ -405,30 +345,27 @@ export default class CameraView extends Component<PropsType, StateType> {
   isTorchEnabled = async () => this.isTorchEnabled(); 
 
   /**
-   * Take a picture and save it in the specified location. The saved 
-   * image would be in JPEG format.
-   * 
-   * If not outputDir is provided then, the image would be saved into the data
-   * directory of the app with a random name.
-   */
-  takePicture = async (outputDir) => CameraModule.takePicture(this._cameraHandle, outputDir);
-
-  /**
    * View renderization happens here
    */
   render = () => {
+    const { children } = this.props;
     const { style, ...properties } = this._expandProps(this.props);
     
     // if we were authorized or there's a possibly handler function, let's render the camera
     if (this.state.isAuthorized || this.hasFaCC()) {
       return (
         <View style={style}>
-          <NativeCamera
+
+          <VisionBarcodeCamera
             {...properties}
             ref={this._setReference}
-            style={styles.cameraView.camera}
+            style={styles.camera}
           />
-          {Children({ camera: this, ...this.props, ...properties })}
+
+          {this.hasFaCC()
+            ? children({ camera: this, ...this.props, ...properties })
+            : children}
+            
         </View>
       );
     }
@@ -441,3 +378,12 @@ export default class CameraView extends Component<PropsType, StateType> {
   }
 }
 
+////////////////////////////
+// ANCHOR Styles
+////////////////////////////
+
+const styles = StyleSheet.create({
+  camera: {
+    ...StyleSheet.absoluteFill
+  }
+});

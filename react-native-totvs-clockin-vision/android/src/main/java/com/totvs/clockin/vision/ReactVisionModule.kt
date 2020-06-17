@@ -43,7 +43,7 @@ class ReactVisionModule(
     }
 
     /**
-     * Utility to trigger the recognition model
+     * Utility to trigger the recognition model training operation
      */
     @ReactMethod
     fun trainRecognitionModel(promise: Promise) {
