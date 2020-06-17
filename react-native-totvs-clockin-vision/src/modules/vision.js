@@ -4,7 +4,7 @@
  */
 
 import {
-  requireNativeComponent, 
+  NativeModules,
   Platform,
 } from 'react-native';
 
@@ -14,7 +14,7 @@ import {
 
 const NativeModule = Platform.select({
   ios: { },
-  android: requireNativeComponent('VisionModule')
+  android: NativeModules.VisionModule
 });
 
 /////////////////////////////
