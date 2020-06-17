@@ -282,6 +282,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         setupExecutors()
         installAnalyzer()
         bindTo(lifecycleOwner)
+        isReady.set(true)
     }
 
     /**
