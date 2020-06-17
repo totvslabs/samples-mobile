@@ -1,5 +1,6 @@
 package com.totvs.clockin.vision
 
+import androidx.annotation.AnyThread
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -25,18 +26,21 @@ class ReactVisionModule(
     /**
      * Set the name of the output and location directory for the recognition model
      */
+    @AnyThread
     @ReactMethod
     fun setModelOutputDirectoryName(name: String) = setModelDirName(name)
 
     /**
      * Get the location of the model output directory.
      */
+    @AnyThread
     @ReactMethod
     fun getModelOutputDirectory(promise: Promise) = promise.resolve(getModelOutputDir())
 
     /**
      * Create the model output and captures output directories
      */
+    @AnyThread
     @ReactMethod
     fun setupModelDirectories(promise: Promise) = prepareModelDirectories(context) {
         promise.resolve(true)
@@ -45,6 +49,7 @@ class ReactVisionModule(
     /**
      * Utility to trigger the recognition model training operation
      */
+    @AnyThread
     @ReactMethod
     fun trainRecognitionModel(promise: Promise) {
         thread {
@@ -60,6 +65,7 @@ class ReactVisionModule(
     /**
      * Retrieve the base64 representation of any image located at [path]
      */
+    @AnyThread
     @ReactMethod
     fun getImageFileBase64(path: String, promise: Promise) =
         promise.resolve(getFileBase64(path))
@@ -67,6 +73,7 @@ class ReactVisionModule(
     /**
      * Delete the image located at [path]
      */
+    @AnyThread
     @ReactMethod
     fun deleteImageFile(path: String, promise: Promise) =
         promise.resolve(deleteFile(path))

@@ -1,5 +1,6 @@
 package com.totvs.clockin.vision
 
+import androidx.annotation.AnyThread
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
@@ -66,6 +67,7 @@ class ReactVisionFaceModule(
      * contain a path for the saved image.
      * Results of this method are obtained through the dispatch of the [OnFaceRecognized] event
      */
+    @AnyThread
     @ReactMethod
     fun recognizeStillPicture(viewTag: Int, saveImage: Boolean, promise: Promise) =
         promise.withCamera(viewTag) {
