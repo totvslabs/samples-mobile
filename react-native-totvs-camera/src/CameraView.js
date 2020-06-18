@@ -203,8 +203,8 @@ export default class CameraView extends Component<PropsType, StateType> {
     onCameraStateChanged: () => { },  
   };
 
-  _cameraHandle;
-  _cameraRef;
+  _handle;
+  _ref;
   _isMounted;
 
   constructor(props: PropsType) {
@@ -222,8 +222,8 @@ export default class CameraView extends Component<PropsType, StateType> {
    * Set the native view reference
    */
   _setReference = (ref: Object) => {
-    this._cameraRef = ref;
-    this._cameraHandle  = ref && findNodeHandle(ref);
+    this._ref = ref;
+    this._handle  = ref && findNodeHandle(ref);
   }
 
   /**
@@ -274,8 +274,8 @@ export default class CameraView extends Component<PropsType, StateType> {
    * 
    * @param {string} name of the invoking operation
    */
-  _checkCameraOp = op => {
-    if (!this._cameraHandle) {
+  _onHandle = op => {
+    if (!this._handle) {
       console.warn(`Couldn't perform ${op}. Camera is not initialized yet.`);
     }
   }
@@ -346,9 +346,9 @@ export default class CameraView extends Component<PropsType, StateType> {
    * Toggle the camera lens facing
    */
   toggleCamera = async () => {    
-    this._checkCameraOp('setFacing');
+    this._onHandle('setFacing');
 
-    return this._cameraHandle && CameraModule.toggleCamera(this._cameraHandle);
+    return this._handle && CameraModule.toggleCamera(this._handle);
   }
 
   /**
@@ -358,7 +358,7 @@ export default class CameraView extends Component<PropsType, StateType> {
    * 2. Constants.LENS_FACING.FRONT
    */
   setFacing = async facing => {
-    this._checkCameraOp('setFacing');
+    this._onHandle('setFacing');
 
     const {
       FRONT, BACK
@@ -368,16 +368,16 @@ export default class CameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return this._cameraHandle && CameraModule.setLensFacing(facing, this._cameraHandle);
+    return this._handle && CameraModule.setLensFacing(facing, this._handle);
   }
 
   /**
    * Returns the current camera facing
    */
   getFacing = async () => {
-    this._checkCameraOp('getFacing');
+    this._onHandle('getFacing');
 
-    return this._cameraHandle && CameraModule.getLensFacing(this._cameraHandle);
+    return this._handle && CameraModule.getLensFacing(this._handle);
   }
 
   /**
@@ -385,7 +385,7 @@ export default class CameraView extends Component<PropsType, StateType> {
    * [Constants.ZOOM_LIMITS.MIN, Constants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
   setZoom = async zoom => {
-    this._checkCameraOp('setZoom');
+    this._onHandle('setZoom');
 
     const {
       MIN, MAX
@@ -397,34 +397,34 @@ export default class CameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return this._cameraHandle && CameraModule.setZoom(z, this._cameraHandle);
+    return this._handle && CameraModule.setZoom(z, this._handle);
   }
 
   /**
    * Returns current zoom
    */
   getZoom = async () => {
-    this._checkCameraOp('getZoom');
+    this._onHandle('getZoom');
 
-    return this._cameraHandle && CameraModule.getZoom(this._cameraHandle);
+    return this._handle && CameraModule.getZoom(this._handle);
   }
 
   /**
    * Enable/Disable the torch (flash light) on this camera
    */
   enableTorch = async enable => {
-    this._checkCameraOp('enableTorch');
+    this._onHandle('enableTorch');
 
-    return this._cameraHandle && CameraModule.enableTorch(enable, this._cameraHandle);
+    return this._handle && CameraModule.enableTorch(enable, this._handle);
   }
 
   /**
    *  Whether the camera flash/torch is enabled
    */
   isTorchEnabled = async () => {
-    this._checkCameraOp('isTorchEnabled');
+    this._onHandle('isTorchEnabled');
 
-    return this._cameraHandle && CameraModule.isTorchEnabled(this._cameraHandle);
+    return this._handle && CameraModule.isTorchEnabled(this._handle);
   }
 
   /**
@@ -447,9 +447,9 @@ export default class CameraView extends Component<PropsType, StateType> {
    * directory of the app with a random name.
    */
   takePicture = async (outputDir) => {
-    this._checkCameraOp('takePicture');
+    this._onHandle('takePicture');
 
-    return this._cameraHandle && CameraModule.takePicture(this._cameraHandle, outputDir);
+    return this._handle && CameraModule.takePicture(this._handle, outputDir);
   }
 
   /**

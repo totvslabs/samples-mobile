@@ -160,8 +160,8 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
     onCameraStateChanged: () => { },    
   };
 
-  _cameraHandle;
-  _cameraRef;
+  _handle;
+  _ref;
   _isMounted;
 
   constructor(props: PropsType) {
@@ -179,8 +179,8 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * Set the native view reference
    */
   _setReference = (ref: Object) => {
-    this._cameraRef = ref;
-    this._cameraHandle  = ref && findNodeHandle(ref);
+    this._ref = ref;
+    this._handle  = ref && findNodeHandle(ref);
   }
 
   /**
@@ -237,8 +237,8 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * 
    * @param {string} name of the invoking operation
    */
-  _checkCameraOp = op => {
-    if (!this._cameraHandle) {
+  _onHandle = op => {
+    if (!this._handle) {
       console.warn(`Couldn't perform ${op}. Camera is not initialized yet.`);
     }
   }
@@ -348,9 +348,9 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * Toggle the camera lens facing
    */
   toggleCamera = async () => {
-    this._checkCameraOp('toggleCamera');
+    this._onHandle('toggleCamera');
 
-    return this._cameraHandle && VisionFaceModule.toggleCamera(this._cameraHandle);
+    return this._handle && VisionFaceModule.toggleCamera(this._handle);
   }
 
   /**
@@ -360,7 +360,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * 2. FaceCameraConstants.LENS_FACING.FRONT
    */
   setFacing = async facing => {
-    this._checkCameraOp('setFacing');
+    this._onHandle('setFacing');
 
     const {
       FRONT, BACK
@@ -370,16 +370,16 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return this._cameraHandle && VisionFaceModule.setLensFacing(facing, this._cameraHandle);
+    return this._handle && VisionFaceModule.setLensFacing(facing, this._handle);
   }
 
   /**
    * Returns the current camera facing
    */
   getFacing = async () => {
-    this._checkCameraOp('getFacing');
+    this._onHandle('getFacing');
 
-    return this._cameraHandle && VisionFaceModule.getLensFacing(this._cameraHandle);
+    return this._handle && VisionFaceModule.getLensFacing(this._handle);
   }
 
   /**
@@ -387,7 +387,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * [FaceCameraConstants.ZOOM_LIMITS.MIN, FaceCameraConstants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
   setZoom = async zoom => {
-    this._checkCameraOp('setZoom');
+    this._onHandle('setZoom');
 
     const {
       MIN, MAX
@@ -399,34 +399,34 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return this._cameraHandle && VisionFaceModule.setZoom(z, this._cameraHandle);
+    return this._handle && VisionFaceModule.setZoom(z, this._handle);
   }
 
   /**
    * Returns current zoom
    */
   getZoom = async () => {
-    this._checkCameraOp('getZoom');
+    this._onHandle('getZoom');
 
-    return this._cameraHandle && VisionFaceModule.getZoom(this._cameraHandle);
+    return this._handle && VisionFaceModule.getZoom(this._handle);
   }
 
   /**
    * Enable/Disable the torch (flash light) on this camera
    */
   enableTorch = async enable => {
-    this._checkCameraOp('enableTorch');
+    this._onHandle('enableTorch');
 
-    return this._cameraHandle && VisionFaceModule.enableTorch(enable, this._cameraHandle);
+    return this._handle && VisionFaceModule.enableTorch(enable, this._handle);
   }
 
   /**
    *  Whether the camera flash/torch is enabled
    */
   isTorchEnabled = async () => {
-    this._checkCameraOp('isTorchEnabled');
+    this._onHandle('isTorchEnabled');
 
-    return this._cameraHandle && VisionFaceModule.isTorchEnabled(this._cameraHandle)
+    return this._handle && VisionFaceModule.isTorchEnabled(this._handle)
   }
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
@@ -446,9 +446,9 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * Results of this method are obtained through the dispatch of the [OnFaceRecognized] event
    */
   recognizeStillPicture = async saveImage => {
-    this._checkCameraOp('recognizeStillPicture');
+    this._onHandle('recognizeStillPicture');
 
-    return this._cameraHandle && VisionFaceModule.recognizeStillPicture(saveImage || false);
+    return this._handle && VisionFaceModule.recognizeStillPicture(saveImage || false);
   }
 
   /**

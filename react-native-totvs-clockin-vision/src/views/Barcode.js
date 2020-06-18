@@ -143,8 +143,8 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
     onCameraStateChanged: () => { },    
   };
 
-  _cameraHandle;
-  _cameraRef;
+  _handle;
+  _ref;
   _isMounted;
 
   constructor(props: PropsType) {
@@ -162,8 +162,8 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
    * Set the native view reference
    */
   _setReference = (ref: Object) => {
-    this._cameraRef = ref;
-    this._cameraHandle  = ref && findNodeHandle(ref);
+    this._ref = ref;
+    this._handle  = ref && findNodeHandle(ref);
   }
 
   /**
@@ -214,8 +214,8 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
    * 
    * @param {string} name of the invoking operation
    */
-  _checkCameraOp = op => {
-    if (!this._cameraHandle) {
+  _onHandle = op => {
+    if (!this._handle) {
       console.warn(`Couldn't perform ${op}. Camera is not initialized yet.`);
     }
   }  
@@ -286,9 +286,9 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
    * Toggle the camera lens facing
    */
   toggleCamera = async () => {
-    this._checkCameraOp('toggleCamera');
+    this._onHandle('toggleCamera');
 
-    return this._cameraHandle && VisionBarcodeModule.toggleCamera(this._cameraHandle);
+    return this._handle && VisionBarcodeModule.toggleCamera(this._handle);
   }
 
   /**
@@ -298,7 +298,7 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
    * 2. BarcodeCameraConstants.LENS_FACING.FRONT
    */
   setFacing = async facing => {
-    this._checkCameraOp('setFacing');
+    this._onHandle('setFacing');
 
     const {
       FRONT, BACK
@@ -308,16 +308,16 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return this._cameraHandle && VisionBarcodeModule.setLensFacing(facing, this._cameraHandle);
+    return this._handle && VisionBarcodeModule.setLensFacing(facing, this._handle);
   }
 
   /**
    * Returns the current camera facing
    */
   getFacing = async () => {
-    this._checkCameraOp('getFacing');
+    this._onHandle('getFacing');
 
-    return this._cameraHandle && VisionBarcodeModule.getLensFacing(this._cameraHandle);
+    return this._handle && VisionBarcodeModule.getLensFacing(this._handle);
   }
 
   /**
@@ -325,7 +325,7 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
    * [BarcodeCameraConstants.ZOOM_LIMITS.MIN, BarcodeCameraConstants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
   setZoom = async zoom => {
-    this._checkCameraOp('setZoom');
+    this._onHandle('setZoom');
 
     const {
       MIN, MAX
@@ -337,34 +337,34 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return this._cameraHandle && VisionBarcodeModule.setZoom(z, this._cameraHandle);
+    return this._handle && VisionBarcodeModule.setZoom(z, this._handle);
   }
 
   /**
    * Returns current zoom
    */
   getZoom = async () => {
-    this._checkCameraOp('getZoom');
+    this._onHandle('getZoom');
 
-    return this._cameraHandle && VisionBarcodeModule.getZoom(this._cameraHandle);
+    return this._handle && VisionBarcodeModule.getZoom(this._handle);
   }
 
   /**
    * Enable/Disable the torch (flash light) on this camera
    */
   enableTorch = async enable => {
-    this._checkCameraOp('enableTorch');
+    this._onHandle('enableTorch');
 
-    return this._cameraHandle && VisionBarcodeModule.enableTorch(enable, this._cameraHandle);
+    return this._handle && VisionBarcodeModule.enableTorch(enable, this._handle);
   }
 
   /**
    *  Whether the camera flash/torch is enabled
    */
   isTorchEnabled = async () => {
-    this._checkCameraOp('isTorchEnabled');
+    this._onHandle('isTorchEnabled');
 
-    return this._cameraHandle && VisionBarcodeModule.isTorchEnabled(this._cameraHandle)
+    return this._handle && VisionBarcodeModule.isTorchEnabled(this._handle)
   }
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
