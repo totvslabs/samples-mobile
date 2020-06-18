@@ -211,7 +211,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
                 Log.e(TAG, "Error taking picture", it)
             }
             // closing the image after using.
-            val bitmap = image?.use { it.image?.toBitmap() }
+            val bitmap = image?.use { it.image?.toBitmap(it.imageInfo.rotationDegrees) }
 
             if (null != bitmap) {
                 // we add an extra task if we're required to save the image.

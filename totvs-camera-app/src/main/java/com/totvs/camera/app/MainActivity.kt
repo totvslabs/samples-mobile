@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 //            FaceDetector(),
             BarcodeDetector()
         ).apply {
-//            disable(FastFaceDetector)
+            disable(FastFaceDetector)
             disable(BarcodeDetector)
         }
     }
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
 
         controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
             camera.takePicture { image: ImageProxy?, throwable: Throwable? ->
-
+                Log.e("***", "orientation: ${image?.imageInfo?.rotationDegrees}")
             }
 //            camera.takePicture(OutputFileOptions.NULL) { file, ex ->
 //                Log.e("**", "file saved: ${file?.absolutePath}")
