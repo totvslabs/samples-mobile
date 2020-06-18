@@ -161,7 +161,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
   };
 
   _handle;
-  _ref;
+  _camera;
   _isMounted;
 
   constructor(props: PropsType) {
@@ -179,8 +179,8 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * Set the native view reference
    */
   _setReference = (ref: Object) => {
-    this._ref = ref;
-    this._handle  = ref && findNodeHandle(ref);
+    this._camera = ref;
+    this._handle = ref && findNodeHandle(ref);
   }
 
   /**
