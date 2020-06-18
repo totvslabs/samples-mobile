@@ -233,6 +233,17 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
   }
 
   /**
+   * Utilify function to debug the state of the camera.
+   * 
+   * @param {string} name of the invoking operation
+   */
+  _checkCameraOp = op => {
+    if (!this._cameraHandle) {
+      console.warn(`Couldn't perform ${op}. Camera is not initialized yet.`);
+    }
+  }
+
+  /**
    * Called when isProximityEnabled is true.
    */
   _onFaceProximity = event => {
@@ -336,7 +347,11 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
   /**
    * Toggle the camera lens facing
    */
-  toggleCamera = async () => VisionFaceModule.toggleCamera(this._cameraHandle);
+  toggleCamera = async () => {
+    this._checkCameraOp('toggleCamera');
+
+    return this._cameraHandle && VisionFaceModule.toggleCamera(this._cameraHandle);
+  }
 
   /**
    * Set camera facing. Possible values are one of FaceCameraConstants.LENS_FACING, two possible 
@@ -345,6 +360,8 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * 2. FaceCameraConstants.LENS_FACING.FRONT
    */
   setFacing = async facing => {
+    this._checkCameraOp('setFacing');
+
     const {
       FRONT, BACK
     } = FaceCameraConstants.LENS_FACING;
@@ -353,19 +370,25 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return VisionFaceModule.setLensFacing(facing, this._cameraHandle);
+    return this._cameraHandle && VisionFaceModule.setLensFacing(facing, this._cameraHandle);
   }
 
   /**
    * Returns the current camera facing
    */
-  getFacing = async () => VisionFaceModule.getLensFacing(this._cameraHandle);
+  getFacing = async () => {
+    this._checkCameraOp('getFacing');
+
+    return this._cameraHandle && VisionFaceModule.getLensFacing(this._cameraHandle);
+  }
 
   /**
    * Set the camera zoom. possible values are encoded in 
    * [FaceCameraConstants.ZOOM_LIMITS.MIN, FaceCameraConstants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
   setZoom = async zoom => {
+    this._checkCameraOp('setZoom');
+
     const {
       MIN, MAX
     } = FaceCameraConstants.ZOOM_LIMITS;
@@ -376,23 +399,35 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return VisionFaceModule.setZoom(z, this._cameraHandle);
+    return this._cameraHandle && VisionFaceModule.setZoom(z, this._cameraHandle);
   }
 
   /**
    * Returns current zoom
    */
-  getZoom = async () => VisionFaceModule.getZoom(this._cameraHandle);
+  getZoom = async () => {
+    this._checkCameraOp('getZoom');
+
+    return this._cameraHandle && VisionFaceModule.getZoom(this._cameraHandle);
+  }
 
   /**
    * Enable/Disable the torch (flash light) on this camera
    */
-  enableTorch = async enable => VisionFaceModule.enableTorch(enable, this._cameraHandle);
+  enableTorch = async enable => {
+    this._checkCameraOp('enableTorch');
+
+    return this._cameraHandle && VisionFaceModule.enableTorch(enable, this._cameraHandle);
+  }
 
   /**
    *  Whether the camera flash/torch is enabled
    */
-  isTorchEnabled = async () => VisionFaceModule.isTorchEnabled(this._cameraHandle)
+  isTorchEnabled = async () => {
+    this._checkCameraOp('isTorchEnabled');
+
+    return this._cameraHandle && VisionFaceModule.isTorchEnabled(this._cameraHandle)
+  }
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
    * flash light, this function can be modified to selectively enable the flash light 
@@ -410,7 +445,11 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * contain a path for the saved image.
    * Results of this method are obtained through the dispatch of the [OnFaceRecognized] event
    */
-  recognizeStillPicture = async saveImage => VisionFaceModule.recognizeStillPicture(saveImage || false);
+  recognizeStillPicture = async saveImage => {
+    this._checkCameraOp('recognizeStillPicture');
+
+    return this._cameraHandle && VisionFaceModule.recognizeStillPicture(saveImage || false);
+  }
 
   /**
    * View renderization happens here

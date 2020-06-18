@@ -209,6 +209,17 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
     return false;
   }
 
+  /**
+   * Utilify function to debug the state of the camera.
+   * 
+   * @param {string} name of the invoking operation
+   */
+  _checkCameraOp = op => {
+    if (!this._cameraHandle) {
+      console.warn(`Couldn't perform ${op}. Camera is not initialized yet.`);
+    }
+  }  
+
   // public accessors and manipulators
 
    /**
@@ -274,7 +285,11 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
   /**
    * Toggle the camera lens facing
    */
-  toggleCamera = async () => VisionBarcodeModule.toggleCamera(this._cameraHandle);
+  toggleCamera = async () => {
+    this._checkCameraOp('toggleCamera');
+
+    return this._cameraHandle && VisionBarcodeModule.toggleCamera(this._cameraHandle);
+  }
 
   /**
    * Set camera facing. Possible values are one of BarcodeCameraConstants.LENS_FACING, two possible 
@@ -283,6 +298,8 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
    * 2. BarcodeCameraConstants.LENS_FACING.FRONT
    */
   setFacing = async facing => {
+    this._checkCameraOp('setFacing');
+
     const {
       FRONT, BACK
     } = BarcodeCameraConstants.LENS_FACING;
@@ -291,19 +308,25 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return VisionBarcodeModule.setLensFacing(facing, this._cameraHandle);
+    return this._cameraHandle && VisionBarcodeModule.setLensFacing(facing, this._cameraHandle);
   }
 
   /**
    * Returns the current camera facing
    */
-  getFacing = async () => VisionBarcodeModule.getLensFacing(this._cameraHandle);
+  getFacing = async () => {
+    this._checkCameraOp('getFacing');
+
+    return this._cameraHandle && VisionBarcodeModule.getLensFacing(this._cameraHandle);
+  }
 
   /**
    * Set the camera zoom. possible values are encoded in 
    * [BarcodeCameraConstants.ZOOM_LIMITS.MIN, BarcodeCameraConstants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
   setZoom = async zoom => {
+    this._checkCameraOp('setZoom');
+
     const {
       MIN, MAX
     } = BarcodeCameraConstants.ZOOM_LIMITS;
@@ -314,24 +337,35 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return VisionBarcodeModule.setZoom(z, this._cameraHandle);
+    return this._cameraHandle && VisionBarcodeModule.setZoom(z, this._cameraHandle);
   }
 
   /**
    * Returns current zoom
    */
-  getZoom = async () => VisionBarcodeModule.getZoom(this._cameraHandle);
+  getZoom = async () => {
+    this._checkCameraOp('getZoom');
+
+    return this._cameraHandle && VisionBarcodeModule.getZoom(this._cameraHandle);
+  }
 
   /**
    * Enable/Disable the torch (flash light) on this camera
    */
-  enableTorch = async enable => VisionBarcodeModule.enableTorch(enable, this._cameraHandle);
+  enableTorch = async enable => {
+    this._checkCameraOp('enableTorch');
+
+    return this._cameraHandle && VisionBarcodeModule.enableTorch(enable, this._cameraHandle);
+  }
 
   /**
    *  Whether the camera flash/torch is enabled
    */
-  isTorchEnabled = async () => VisionBarcodeModule.isTorchEnabled(this._cameraHandle);
+  isTorchEnabled = async () => {
+    this._checkCameraOp('isTorchEnabled');
 
+    return this._cameraHandle && VisionBarcodeModule.isTorchEnabled(this._cameraHandle)
+  }
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
    * flash light, this function can be modified to selectively enable the flash light 
@@ -340,8 +374,8 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
   enableFlash = async enable => this.enableTorch(enable);
   
    /**
-   *  Whether the camera flash/torch is enabled
-   */
+    *  Whether the camera flash/torch is enabled
+    */
   isFlashEnabled = async () => this.isTorchEnabled(); 
 
   /**

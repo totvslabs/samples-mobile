@@ -269,6 +269,17 @@ export default class CameraView extends Component<PropsType, StateType> {
     return false;
   }
 
+  /**
+   * Utilify function to debug the state of the camera.
+   * 
+   * @param {string} name of the invoking operation
+   */
+  _checkCameraOp = op => {
+    if (!this._cameraHandle) {
+      console.warn(`Couldn't perform ${op}. Camera is not initialized yet.`);
+    }
+  }
+
   // public accessors and manipulators
 
    /**
@@ -334,7 +345,11 @@ export default class CameraView extends Component<PropsType, StateType> {
   /**
    * Toggle the camera lens facing
    */
-  toggleCamera = async () => CameraModule.toggleCamera(this._cameraHandle);
+  toggleCamera = async () => {    
+    this._checkCameraOp('setFacing');
+
+    return this._cameraHandle && CameraModule.toggleCamera(this._cameraHandle);
+  }
 
   /**
    * Set camera facing. Possible values are one of Constants.LENS_FACING, two possible 
@@ -343,6 +358,8 @@ export default class CameraView extends Component<PropsType, StateType> {
    * 2. Constants.LENS_FACING.FRONT
    */
   setFacing = async facing => {
+    this._checkCameraOp('setFacing');
+
     const {
       FRONT, BACK
     } = Constants.LENS_FACING;
@@ -351,19 +368,25 @@ export default class CameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return CameraModule.setLensFacing(facing, this._cameraHandle);
+    return this._cameraHandle && CameraModule.setLensFacing(facing, this._cameraHandle);
   }
 
   /**
    * Returns the current camera facing
    */
-  getFacing = async () => CameraModule.getLensFacing(this._cameraHandle);
+  getFacing = async () => {
+    this._checkCameraOp('getFacing');
+
+    return this._cameraHandle && CameraModule.getLensFacing(this._cameraHandle);
+  }
 
   /**
    * Set the camera zoom. possible values are encoded in 
    * [Constants.ZOOM_LIMITS.MIN, Constants.ZOOM_LIMITS.MAX] which are [0.0, 1.0]
    */
   setZoom = async zoom => {
+    this._checkCameraOp('setZoom');
+
     const {
       MIN, MAX
     } = Constants.ZOOM_LIMITS;
@@ -374,23 +397,35 @@ export default class CameraView extends Component<PropsType, StateType> {
       return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
     }
 
-    return CameraModule.setZoom(z, this._cameraHandle);
+    return this._cameraHandle && CameraModule.setZoom(z, this._cameraHandle);
   }
 
   /**
    * Returns current zoom
    */
-  getZoom = async () => CameraModule.getZoom(this._cameraHandle);
+  getZoom = async () => {
+    this._checkCameraOp('getZoom');
+
+    return this._cameraHandle && CameraModule.getZoom(this._cameraHandle);
+  }
 
   /**
    * Enable/Disable the torch (flash light) on this camera
    */
-  enableTorch = async enable => CameraModule.enableTorch(enable, this._cameraHandle);
+  enableTorch = async enable => {
+    this._checkCameraOp('enableTorch');
+
+    return this._cameraHandle && CameraModule.enableTorch(enable, this._cameraHandle);
+  }
 
   /**
    *  Whether the camera flash/torch is enabled
    */
-  isTorchEnabled = async () => CameraModule.isTorchEnabled(this._cameraHandle);
+  isTorchEnabled = async () => {
+    this._checkCameraOp('isTorchEnabled');
+
+    return this._cameraHandle && CameraModule.isTorchEnabled(this._cameraHandle);
+  }
 
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
@@ -411,7 +446,11 @@ export default class CameraView extends Component<PropsType, StateType> {
    * If not outputDir is provided then, the image would be saved into the data
    * directory of the app with a random name.
    */
-  takePicture = async (outputDir) => CameraModule.takePicture(this._cameraHandle, outputDir);
+  takePicture = async (outputDir) => {
+    this._checkCameraOp('takePicture');
+
+    return this._cameraHandle && CameraModule.takePicture(this._cameraHandle, outputDir);
+  }
 
   /**
    * View renderization happens here
