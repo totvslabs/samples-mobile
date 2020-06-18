@@ -64,6 +64,7 @@ type PropsType = typeof View.props & {
   permissionsAskingView?: React.Component,
   permissionsDeniedView?: React.Component,
   onCameraStateChanged?: Function,
+  onRef?: Function,
   facing?: Number,
   zoom?: Number
 };
@@ -190,6 +191,7 @@ export default class CameraView extends Component<PropsType, StateType> {
     permissionsAskingView: PropTypes.element,
     permissionsDeniedView: PropTypes.element,
     onCameraStateChanged: PropTypes.func,
+    onRef: PropTypes.func,
     facing: PropTypes.number,
     zoom: PropTypes.number
   };
@@ -200,7 +202,7 @@ export default class CameraView extends Component<PropsType, StateType> {
     permissionsCameraOptions: { },    
     permissionsAskingView: PermissionsAskingView(),
     permissionsDeniedView: PermissionsDeniedView(),
-    onCameraStateChanged: () => { },  
+    onCameraStateChanged: () => { },
   };
 
   _handle;
@@ -221,7 +223,7 @@ export default class CameraView extends Component<PropsType, StateType> {
   /**
    * Set the native view reference
    */
-  _setReference = (ref: Object) => {
+  _setReference = ref => {
     this._camera = ref;
     this._handle = ref && findNodeHandle(ref);
   }
@@ -334,6 +336,10 @@ export default class CameraView extends Component<PropsType, StateType> {
 
   componentDidMount = async () => {
     await this.refreshCameraState();
+    
+    // if this view as a delegated `ref` let's rebind the ref to 
+    // reflect the fact that now we received the native camera reference
+    this.props.ref && this.props.ref(this);    
   }
   
   componentWillUnmount = () => {

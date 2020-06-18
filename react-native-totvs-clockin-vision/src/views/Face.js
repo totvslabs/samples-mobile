@@ -11,16 +11,12 @@ import React, { Component } from 'react';
 import {
   findNodeHandle,
   NativeModules,
-
-
-
-
-  PermissionsAndroid, Platform, requireNativeComponent,
-
-
-
-
-  StyleSheet, View, ViewPropTypes
+  PermissionsAndroid, 
+  Platform, 
+  requireNativeComponent,
+  StyleSheet, 
+  View, 
+  ViewPropTypes
 } from 'react-native';
 /////////////////////////////
 // Import Utility
@@ -32,11 +28,6 @@ import PermissionsAskingView from './PermissionsAskingView';
 // Import Components
 /////////////////////////////
 import PermissionsDeniedView from './PermissionsDeniedView';
-
-
-
-
-
 
 /////////////////////////////
 // Import Native Components
@@ -74,6 +65,7 @@ type PropsType = typeof View.props & {
   permissionsAskingView?: React.Component,
   permissionsDeniedView?: React.Component,
   onCameraStateChanged?: Function,
+  onRef?: Function,
   facing?: Number,
   zoom?: Number,  
   livenessMode?: Number,
@@ -139,6 +131,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
     permissionsAskingView: PropTypes.element,
     permissionsDeniedView: PropTypes.element,
     onCameraStateChanged: PropTypes.func,
+    onRef: PropTypes.func,
     facing: PropTypes.number,
     zoom: PropTypes.number,
     livenessMode: PropTypes.number,
@@ -336,6 +329,10 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
 
   componentDidMount = async () => {
     await this.refreshCameraState();
+
+    // if this view as a delegated `ref` let's rebind the ref to 
+    // reflect the fact that now we received the native camera reference
+    this.props.ref && this.props.ref(this);    
   }
   
   componentWillUnmount = () => {
@@ -469,7 +466,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
             onLiveness={this._onLiveness}
             onFaceProximity={this._onFaceProximity}            
             onFaceRecognized={this._onFaceRecognized}
-            ref={this._setReference}       
+            ref={this._setReference}     
           />
 
           {this.hasFaCC()
