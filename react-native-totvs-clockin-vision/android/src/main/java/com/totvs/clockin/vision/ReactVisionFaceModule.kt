@@ -166,7 +166,7 @@ class ReactVisionFaceModule(
      */
     @AnyThread
     @ReactMethod
-    fun recognizeStillPicture(viewTag: Int, saveImage: Boolean, promise: Promise) =
+    fun recognizeStillPicture(saveImage: Boolean, viewTag: Int, promise: Promise) =
         promise.withCamera(viewTag) {
             recognizeStillPicture(
                 RecognitionOptions(
