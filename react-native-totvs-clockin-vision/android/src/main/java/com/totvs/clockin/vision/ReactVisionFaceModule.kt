@@ -177,6 +177,7 @@ class ReactVisionFaceModule(
                 // let's dispatch the [OnFaceRecognized] event
                 OnFaceRecognized(result.file, result.faces)(context, viewTag)
             }
+            true
         }
 
     // END Module methods
