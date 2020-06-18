@@ -339,7 +339,7 @@ export default class CameraView extends Component<PropsType, StateType> {
     
     // if this view as a delegated `ref` let's rebind the ref to 
     // reflect the fact that now we received the native camera reference
-    this.props.ref && this.props.ref(this);    
+    this.props.onRef && this.props.onRef(this);    
   }
   
   componentWillUnmount = () => {

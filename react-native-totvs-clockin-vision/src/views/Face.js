@@ -332,7 +332,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
 
     // if this view as a delegated `ref` let's rebind the ref to 
     // reflect the fact that now we received the native camera reference
-    this.props.ref && this.props.ref(this);    
+    this.props.onRef && this.props.onRef(this);
   }
   
   componentWillUnmount = () => {
@@ -445,7 +445,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
   recognizeStillPicture = async saveImage => {
     this._onHandle('recognizeStillPicture');
 
-    return this._handle && VisionFaceModule.recognizeStillPicture(saveImage || false);
+    return this._handle && VisionFaceModule.recognizeStillPicture(saveImage || false, this._handle);
   }
 
   /**
