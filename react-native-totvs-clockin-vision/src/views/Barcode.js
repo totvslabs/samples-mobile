@@ -342,7 +342,7 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
    /**
    *  Whether the camera flash/torch is enabled
    */
-  isTorchEnabled = async () => this.isTorchEnabled(); 
+  isFlashEnabled = async () => this.isTorchEnabled(); 
 
   /**
    * View renderization happens here

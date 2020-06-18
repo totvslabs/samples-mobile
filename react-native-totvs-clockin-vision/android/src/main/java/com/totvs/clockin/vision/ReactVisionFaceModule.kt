@@ -1,9 +1,15 @@
 package com.totvs.clockin.vision
 
 import androidx.annotation.AnyThread
+import androidx.annotation.FloatRange
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
+import com.totvs.camera.core.annotations.LensFacing
+import com.totvs.camera.view.core.CameraFacingConstants
+import com.totvs.camera.view.core.CameraZoomLimits
+import com.totvs.camera.view.toCameraFacing
+import com.totvs.camera.view.toFacingConstant
 import com.totvs.camera.vision.core.VisionBarcodeFormat
 import com.totvs.clockin.vision.core.ExportableConstant
 import com.totvs.clockin.vision.events.OnFaceRecognized
@@ -61,6 +67,97 @@ class ReactVisionFaceModule(
     ) = withCameraDevice(viewTag, autoResolve, block)
 
     // START Module methods
+    //
+    // Note: react-native doesn't play well with inherited @ReactMethod. It doesn't find
+    // inherited methods. That's the reason for logic duplication between Face/Barcode
+    // Modules.
+
+    /**
+     * Set camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom.
+     *
+     * Zoom value if expected to be one in between of the exported [CameraZoomLimits]
+     */
+    @AnyThread
+    @ReactMethod
+    fun setZoom(
+        @FloatRange(from = 0.0, to = 1.0) zoom: Float,
+        viewTag: Int,
+        promise: Promise
+    ) = promise.withCamera(viewTag) {
+        this.zoom = zoom
+        true
+    }
+
+    /**
+     * Get camera zoom. values ranges from 0 to 1 indicating the percentage of the zoom.
+     *
+     * Zoom value if expected to be one in between of the exported [CameraZoomLimits]
+     */
+    @AnyThread
+    @ReactMethod
+    fun getZoom(viewTag: Int, promise: Promise) =
+        promise.withCamera(viewTag) { zoom }
+
+    /**
+     * Enable or disable camera torch
+     */
+    @AnyThread
+    @ReactMethod
+    fun enableTorch(
+        enable: Boolean,
+        viewTag: Int,
+        promise: Promise
+    ) = promise.withCamera(viewTag) {
+        isTorchEnabled = enable
+        true
+    }
+
+    /**
+     * whether or not the camera torch is enabled
+     */
+    @AnyThread
+    @ReactMethod
+    fun isTorchEnabled(viewTag: Int, promise: Promise) =
+        promise.withCamera(viewTag) { isTorchEnabled }
+
+    /**
+     * Toggle the camera. i.e if the current camera is the front one it will toggle to back
+     * camera as vice versa.
+     */
+    @AnyThread
+    @ReactMethod
+    fun toggleCamera(viewTag: Int, promise: Promise) =
+        promise.withCamera(viewTag) {
+            toggleCamera()
+            true
+        }
+
+    /**
+     * Change the camera lens display. This is related to [toggleCamera] in the sense
+     * that this method indicate explicitly which lens to use for the camera.
+     *
+     * [facing] is expressed as one of the exported constants [CameraFacingConstants]
+     */
+    @AnyThread
+    @ReactMethod
+    fun setLensFacing(
+        @LensFacing facing: Int,
+        viewTag: Int,
+        promise: Promise
+    ) = promise.withCamera(viewTag) {
+        this.facing = facing.toCameraFacing
+        true
+    }
+
+    /**
+     * Get current camera facing. Returned facing is expected to be one of the exported
+     * facing constants [CameraFacingConstants].
+     */
+    @AnyThread
+    @ReactMethod
+    fun getLensFacing(viewTag: Int, promise: Promise) =
+        promise.withCamera(viewTag) { facing.toFacingConstant }
+
 
     /**
      * Trigger the recognition on an still picture. If [saveImage] is true, then the result will

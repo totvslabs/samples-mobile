@@ -402,7 +402,7 @@ export default class CameraView extends Component<PropsType, StateType> {
    /**
    *  Whether the camera flash/torch is enabled
    */
-  isTorchEnabled = async () => this.isTorchEnabled(); 
+  isFlashEnabled = async () => this.isTorchEnabled(); 
 
   /**
    * Take a picture and save it in the specified location. The saved 

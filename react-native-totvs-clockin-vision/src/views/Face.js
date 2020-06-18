@@ -7,33 +7,35 @@
 // Imports
 ////////////////////////////
 import PropTypes from 'prop-types';
-
-import {
-  findNodeHandle,  
-  NativeModules,
-  requireNativeComponent, 
-  Platform,
-  ViewPropTypes,
-  View,
-  PermissionsAndroid,
-  StyleSheet
-} from 'react-native';
-
 import React, { Component } from 'react';
+import {
+  findNodeHandle,
+  NativeModules,
 
+
+
+
+  PermissionsAndroid, Platform, requireNativeComponent,
+
+
+
+
+  StyleSheet, View, ViewPropTypes
+} from 'react-native';
 /////////////////////////////
 // Import Utility
 /////////////////////////////
-
 import { isAbsent, toFiniteFloatOrNull } from '../utils/numbers';
-import { type State } from '../utils/types';
-
+import { State } from '../utils/types';
+import PermissionsAskingView from './PermissionsAskingView';
 /////////////////////////////
 // Import Components
 /////////////////////////////
-
 import PermissionsDeniedView from './PermissionsDeniedView';
-import PermissionsAskingView from './PermissionsAskingView';
+
+
+
+
 
 
 /////////////////////////////
@@ -390,8 +392,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
   /**
    *  Whether the camera flash/torch is enabled
    */
-  isTorchEnabled = async () => VisionFaceModule.isTorchEnabled(this._cameraHandle);
-
+  isTorchEnabled = async () => VisionFaceModule.isTorchEnabled(this._cameraHandle)
   /**
    * Handy function to enable the camera torch. If there's difference between OS to enable the
    * flash light, this function can be modified to selectively enable the flash light 
@@ -402,7 +403,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    /**
     *  Whether the camera flash/torch is enabled
     */
-  isTorchEnabled = async () => this.isTorchEnabled(); 
+  isFlashEnabled = async () => this.isTorchEnabled(); 
 
   /**
    * Trigger the recognition on an still picture. If {saveImage} is true, then the result will
