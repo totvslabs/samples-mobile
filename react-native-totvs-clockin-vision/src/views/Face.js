@@ -141,7 +141,6 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
     onLiveness: PropTypes.func,
     onFaceProximity: PropTypes.func,
     onFaceRecognized: PropTypes.func,
-    onFaceRecognized: PropTypes.func
   };
   /**
    * Default props for this view
