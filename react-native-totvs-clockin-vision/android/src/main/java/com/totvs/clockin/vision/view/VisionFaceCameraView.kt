@@ -171,10 +171,10 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         set(value) {
             field = value
             // if we got a proximity installed then we enable the detector, otherwise we
-            // don't event enable the detector.
+            // check if we need to uninstall it.
             value?.let {
                 enableLiveness(it)
-            } ?: detectorAnalyzer?.disable(FastFaceDetector)
+            } ?: checkAnalyzerState()
         }
 
     override var proximity: Proximity? = null
@@ -184,7 +184,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
             // don't event enable the detector.
             value?.let {
                 enableProximity(it)
-            } ?: detectorAnalyzer?.disable(FastFaceDetector)
+            } ?: checkAnalyzerState()
         }
 
     override val isLivenessEnabled: Boolean
@@ -289,7 +289,6 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
             Log.e(TAG, "Setting up camera requirements")
         }
         setupExecutors()
-        installAnalyzer()
         bindTo(lifecycleOwner)
         isReady.set(true)
     }
@@ -311,11 +310,24 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
      * Install detection analyzer on [CameraView]
      */
     private fun installAnalyzer() {
+        if (null != analyzer) {
+            return
+        }
         analyzer = DetectionAnalyzer(
             detectionExecutor,
             FastFaceDetector(context)
         ).apply {
-            disable(FastFaceDetector)
+            // disable(FastFaceDetector)
+        }
+    }
+
+    /**
+     * Check if we need to uninstall the analyzer
+     */
+    private fun checkAnalyzerState() {
+        if (null == proximity && null == liveness) {
+            detectorAnalyzer?.disable(FastFaceDetector)
+            analyzer = null
         }
     }
 
@@ -368,21 +380,21 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         if (isDebug) {
             Log.e(TAG, "Enabling liveness $liveness. Analyzer is ready: ${null != analyzer}")
         }
-        // we just enable the analyzer as a pre-requisite
-        detectorAnalyzer?.enable(FastFaceDetector)
+        // we install the analyzer as a pre-requisite
+        installAnalyzer()
 
         // closing current connection
         livenessConnection?.disconnect()
 
         // setup the vision stream for face detected objects.
         livenessConnection = if (liveness is LivenessFace) {
-            (analyzer as? DetectionAnalyzer)
+            detectorAnalyzer
                 ?.detections
                 ?.filterIsInstance<FaceObject>()
                 ?.transform(faceNoseTranslator)
                 ?.connect(liveness)
         } else {
-            (analyzer as? DetectionAnalyzer)
+            detectorAnalyzer
                 ?.detections
                 ?.filterIsInstance<FaceObject>()
                 ?.connect(liveness)
@@ -398,14 +410,14 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         if (isDebug) {
             Log.e(TAG, "Enabling proximity $proximity. Analyzer is ready: ${null != analyzer}")
         }
-        // we just enable the analyzer as a pre-requisite
-        detectorAnalyzer?.enable(FastFaceDetector)
+        // we install the analyzer as a pre-requisite
+        installAnalyzer()
 
         // closing current connection
         proximityConnection?.disconnect()
 
         // setup the vision stream for face detected objects.
-        proximityConnection = (analyzer as? DetectionAnalyzer)
+        proximityConnection = detectorAnalyzer
             ?.detections
             ?.filterIsInstance<FaceObject>()
             ?.transform(faceBoundsScaler)
@@ -435,14 +447,14 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
 
         // setup the vision stream for face detected objects.
         graphicsConnection = if (liveness is LivenessEyes) {
-            (analyzer as? DetectionAnalyzer)
+            detectorAnalyzer
                 ?.detections
                 ?.filterIsInstance<FaceObject>()
                 ?.sendOn(ContextCompat.getMainExecutor(context))
                 ?.transform(AnimateEyes())
                 ?.connect(faceGraphic)
         } else {
-            (analyzer as? DetectionAnalyzer)
+            detectorAnalyzer
                 ?.detections
                 ?.filterIsInstance<FaceObject>()
                 ?.sendOn(ContextCompat.getMainExecutor(context))
