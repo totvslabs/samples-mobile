@@ -156,6 +156,11 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
      */
     private val isRecognizing = AtomicBoolean(false)
 
+    /**
+     * Handy getter to get the real installed analyzer.
+     */
+    private val detectorAnalyzer get() = analyzer as? DetectionAnalyzer
+
     init {
         enableDebug()
         startUp()
@@ -173,9 +178,11 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
     override var proximity: Proximity? = null
         set(value) {
             field = value
+            // if we got a proximity installed then we enable the detector, otherwise we
+            // don't event enable the detector.
             value?.let {
                 enableProximity(it)
-            }
+            } ?: detectorAnalyzer?.disable(FastFaceDetector)
         }
 
     override val isLivenessEnabled: Boolean
@@ -306,7 +313,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
             detectionExecutor,
             FastFaceDetector(context)
         ).apply {
-            // disable(/*any detector here*/)
+            disable(FastFaceDetector)
         }
     }
 
@@ -386,6 +393,9 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         if (isDebug) {
             Log.e(TAG, "Enabling proximity $proximity. Analyzer is ready: ${null != analyzer}")
         }
+        // we just enable the analyzer as a pre-requisite
+        detectorAnalyzer?.enable(FastFaceDetector)
+
         // closing current connection
         proximityConnection?.disconnect()
 
