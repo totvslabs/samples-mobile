@@ -59,7 +59,10 @@ internal fun ImageCapture.internalTakePicture(
 ) {
     takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
-            onCaptured(ImageProxyImpl(image.image, image.imageInfo.rotationDegrees), null)
+            onCaptured(ImageProxyImpl(image.image, image.imageInfo.rotationDegrees) {
+                image.close()
+                true // indicate that we've closed properly the resource
+            }, null)
         }
 
         override fun onError(exception: ImageCaptureException) {
