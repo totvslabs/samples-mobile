@@ -490,6 +490,6 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
 
 const styles = StyleSheet.create({
   camera: {
-    flex: 1
+    ...StyleSheet.absoluteFill
   }
 });
