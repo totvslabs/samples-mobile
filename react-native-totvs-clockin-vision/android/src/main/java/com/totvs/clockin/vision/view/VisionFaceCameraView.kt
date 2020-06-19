@@ -170,9 +170,11 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
     override var liveness: Liveness? = null
         set(value) {
             field = value
+            // if we got a proximity installed then we enable the detector, otherwise we
+            // don't event enable the detector.
             value?.let {
                 enableLiveness(it)
-            }
+            } ?: detectorAnalyzer?.disable(FastFaceDetector)
         }
 
     override var proximity: Proximity? = null
@@ -366,6 +368,9 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         if (isDebug) {
             Log.e(TAG, "Enabling liveness $liveness. Analyzer is ready: ${null != analyzer}")
         }
+        // we just enable the analyzer as a pre-requisite
+        detectorAnalyzer?.enable(FastFaceDetector)
+
         // closing current connection
         livenessConnection?.disconnect()
 
