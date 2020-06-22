@@ -67,8 +67,8 @@ class ReactVisionModule(
      */
     @AnyThread
     @ReactMethod
-    fun getImageFileBase64(path: String, promise: Promise) =
-        promise.resolve(getFileBase64(path))
+    fun getImageFileBase64(path: String?, promise: Promise) =
+        promise.resolve(path?.let { getFileBase64(path) })
 
     /**
      * Delete the image located at [path]

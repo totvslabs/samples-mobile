@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.Size
 import android.view.Surface
 import android.view.SurfaceView
 import android.view.View
@@ -385,6 +386,15 @@ open class CameraView @JvmOverloads constructor(
      */
     open fun removeOverlayGraphic(graphic: GraphicOverlay.Graphic) =
         graphicOverlay.remove(graphic)
+
+    /**
+     * Specify the desired capture/preview size for this camera. This allows subclasses
+     * to customize for optimization.
+     *
+     * Retuning null means that the implementation would be free to consider the best
+     * size possible.
+     */
+    open fun desiredPreviewSize() : Size? = null
 
     companion object {
         private const val TAG = "CameraView"

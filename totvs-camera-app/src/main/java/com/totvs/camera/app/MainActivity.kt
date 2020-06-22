@@ -3,6 +3,9 @@ package com.totvs.camera.app
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.ImageFormat
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -92,6 +95,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addCameraControls() {
+        val manager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        val characteristics = manager.getCameraCharacteristics("0")
+        val stream = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)!!
+        val sizes = stream.getOutputSizes(ImageFormat.JPEG)
+        sizes.forEach {
+            Log.e("***", "size: $it")
+        }
+
         val container = findViewById<ConstraintLayout>(R.id.camera_container)
 
         val camera = container.findViewById<CameraView>(R.id.camera_view)
@@ -105,7 +116,12 @@ class MainActivity : AppCompatActivity() {
 
         controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
             camera.takePicture { image: ImageProxy?, throwable: Throwable? ->
-                Log.e("***", "orientation: ${image?.imageInfo?.rotationDegrees}")
+                image?.use {
+                    Log.e(
+                        "***",
+                        "orientation: ${image.imageInfo.rotationDegrees} ${image.width}x${image.height}"
+                    )
+                }
             }
 //            camera.takePicture(OutputFileOptions.NULL) { file, ex ->
 //                Log.e("**", "file saved: ${file?.absolutePath}")

@@ -209,7 +209,7 @@ internal class CameraSource(private val view: CameraView) {
         // this is the reason we don't use aspect ratio here. We don't want cameraX
         // to chose a big size.
         val previewSize = computePreviewSize().also {
-            Log.w(TAG, "Using preview size=$it")
+            Log.i(TAG, "Using preview size=$it")
         }
 
         capture = captureBuilder.apply {
@@ -298,6 +298,10 @@ internal class CameraSource(private val view: CameraView) {
      */
     fun computePreviewSize(): Size {
         // we set the preferred aspect ratio to 4:3
+        if (null != view.desiredPreviewSize()) {
+            return view.desiredPreviewSize()!!
+        }
+
         val targetAspectRatio =
             if (isDisplayPortrait) ASPECT_RATIO_4_3.inverse else ASPECT_RATIO_4_3
 

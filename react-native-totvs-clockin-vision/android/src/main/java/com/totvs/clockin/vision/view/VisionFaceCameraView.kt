@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.AttributeSet
 import android.util.Log
+import android.util.Size
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -193,6 +194,16 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
 
     override val isFaceProximityEnabled: Boolean
         get() = null != proximity
+
+    /**
+     * Let's optimize for capture size. Sizes that proved to be good fit are:
+     *
+     * 1. kiosk: 960x720, 640x480(preferred)
+     */
+    override fun desiredPreviewSize(): Size? = if (isDisplayPortrait)
+        Size(480, 640)
+    else
+        Size(640, 480)
 
     /**
      * Capture an still picture and recognizes the person on it.
