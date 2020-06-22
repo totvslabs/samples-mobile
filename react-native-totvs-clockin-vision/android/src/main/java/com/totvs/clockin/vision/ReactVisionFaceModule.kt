@@ -15,6 +15,7 @@ import com.totvs.clockin.vision.core.ExportableConstant
 import com.totvs.clockin.vision.events.OnFaceRecognized
 import com.totvs.clockin.vision.face.VisionFaceCamera
 import com.totvs.clockin.vision.face.VisionFaceCamera.RecognitionOptions
+import com.totvs.clockin.vision.utils.getCapturesDirectory
 import com.totvs.clockin.vision.utils.getModelOutputDir
 import com.totvs.clockin.vision.view.VisionFaceCameraView
 import java.io.File
@@ -171,7 +172,7 @@ class ReactVisionFaceModule(
             recognizeStillPicture(
                 RecognitionOptions(
                     saveImage = saveImage,
-                    outputDir = File(getModelOutputDir())
+                    outputDir = File(getCapturesDirectory())
                 )
             ) { result ->
                 // let's dispatch the [OnFaceRecognized] event
