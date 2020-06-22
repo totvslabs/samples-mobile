@@ -75,8 +75,8 @@ class ReactVisionModule(
      */
     @AnyThread
     @ReactMethod
-    fun deleteImageFile(path: String, promise: Promise) =
-        promise.resolve(deleteFile(path))
+    fun deleteImageFile(path: String?, promise: Promise) =
+        promise.resolve(path?.let { deleteFile(path) })
 
     // END Module methods
 
