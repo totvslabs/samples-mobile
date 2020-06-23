@@ -80,7 +80,7 @@ class ReactVisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
      * This property is only related to liveness eyes and control the number of blinks
      * to track until regarding a face as live.
      */
-    @ReactProp(name = "blinksCount")
+    @ReactProp(name = "livenessBlinkCount")
     fun setBlinksCount(cameraView: VisionFaceCameraView, count: Int) {
         TransientState.requiredBlinks = count
 
