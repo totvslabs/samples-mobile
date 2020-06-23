@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -61,7 +62,6 @@ class MainActivity : AppCompatActivity() {
 //            FaceDetector(),
             BarcodeDetector()
         ).apply {
-            disable(FastFaceDetector)
             disable(BarcodeDetector)
         }
     }
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val container = findViewById<ConstraintLayout>(R.id.camera_container)
+        val container = findViewById<ViewGroup>(R.id.camera_container)
         container.postDelayed({
             container.systemUiVisibility = FLAGS_FULLSCREEN
         }, IMMERSIVE_FLAG_TIMEOUT)
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
             Log.e("***", "size: $it")
         }
 
-        val container = findViewById<ConstraintLayout>(R.id.camera_container)
+        val container = findViewById<ViewGroup>(R.id.camera_container)
 
         val camera = container.findViewById<CameraView>(R.id.camera_view)
 

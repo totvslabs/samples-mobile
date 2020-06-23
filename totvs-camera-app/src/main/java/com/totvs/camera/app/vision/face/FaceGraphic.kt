@@ -7,10 +7,7 @@ import android.graphics.Paint
 import android.util.Size
 import com.totvs.camera.app.R
 import com.totvs.camera.view.GraphicOverlay
-import com.totvs.camera.vision.face.FaceObject
-import com.totvs.camera.vision.face.LeftEye
-import com.totvs.camera.vision.face.RightEye
-import com.totvs.camera.vision.face.isNull
+import com.totvs.camera.vision.face.*
 import com.totvs.camera.vision.stream.VisionReceiver
 
 class FaceGraphic(
@@ -51,7 +48,7 @@ class FaceGraphic(
 
             // third way
             face.forEach { landmark ->
-                if (landmark is LeftEye || landmark is RightEye) {
+                if (landmark is LeftEye || landmark is RightEye || landmark is Nose) {
                     val cx = translateX(landmark.position.x, face.sourceSize)
                     val cy = translateY(landmark.position.y, face.sourceSize)
 
