@@ -20,40 +20,30 @@ class FaceGraphic(
     private val eyesStroke = context.resources.getDimension(R.dimen.eyes_landmark_stroke_width)
     private val noseRadius = context.resources.getDimension(R.dimen.nose_landmark_radius)
     private val noseStroke = context.resources.getDimension(R.dimen.nose_landmark_stroke_width)
+    private val eyesColor  = context.resources.getColor(R.color.eyes_landmark_color)
+    private val noseColor  = context.resources.getColor(R.color.nose_landmark_color)
+
 
     private val eyesPaint = Paint().apply {
         style = Paint.Style.FILL
         strokeWidth = eyesStroke
         isAntiAlias = true
+        color = eyesColor
     }
 
     private val nosePaint = Paint().apply {
         style = Paint.Style.FILL
-        strokeWidth = eyesStroke
+        strokeWidth = noseStroke
         isAntiAlias = true
+        color = noseColor
     }
 
     private var face: FaceObject? = null
-
-    init {
-        setBoundingBoxColors()
-    }
 
     fun clear() {
         face = null
         if (isAttached) {
             postInvalidate()
-        }
-    }
-
-    private fun setBoundingBoxColors() {
-        eyesPaint.apply {
-            color = Color.WHITE
-            alpha = 180
-        }
-        nosePaint.apply {
-            color = Color.WHITE
-            alpha = 180
         }
     }
 

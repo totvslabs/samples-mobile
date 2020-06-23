@@ -141,6 +141,10 @@ class LivenessEyes(
         // Get the lowest value from both eyes.
         val eyesOpenProb =
             face.eyesOpenProbability.left.coerceAtMost(face.eyesOpenProbability.right)
+
+        if (eyesOpenProb == UNCOMPUTED_PROBABILITY) {
+            return false
+        }
         // Were the eyes open previously?
         var meetRequirement = false
 
@@ -169,6 +173,11 @@ class LivenessEyes(
         internal const val id = 2
 
         private const val TAG = "Liveness(Eyes)"
+
+        /**
+         * non-computed probability
+         */
+        private const val UNCOMPUTED_PROBABILITY = -1.0f
 
         /**
          * Value that defined no required blinks
