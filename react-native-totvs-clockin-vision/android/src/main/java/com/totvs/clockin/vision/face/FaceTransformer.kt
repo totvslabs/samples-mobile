@@ -38,14 +38,13 @@ class FaceNoseTranslator(overlay: GraphicOverlay) : StandardBoundsScaler<FaceObj
         // all the scales parameter before calling this method, hence we can use those
         // scales to fix landmark points.
         // We do two things at once: 1. copying the upstream object. 2. fix the landmarks points.
-        val landmarks = mutableListOf<Landmark>().let { list ->
-            for (l in this) {
-                list.add(if (l is Nose) Nose(position = PointF(
-                    translateX(l.position.x),
-                    translateY(l.position.y),
-                )) else l)
-            }
-        }
+        val landmarks = mutableListOf<Landmark>()
+        for (l in this) {
+            landmarks.add(if (l is Nose) Nose(position = PointF(
+                translateX(l.position.x),
+                translateY(l.position.y),
+            )) else l)
+        }        
         return copy(sourceSize = sourceSize, boundingBox = boundingBox, landmarks = landmarks)
     }
 }
