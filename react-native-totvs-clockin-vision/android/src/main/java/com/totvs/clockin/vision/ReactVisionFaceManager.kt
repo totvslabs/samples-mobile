@@ -64,10 +64,10 @@ class ReactVisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
     @ReactProp(name = "livenessMode", defaultInt = LivenessModes.NONE)
     fun setLivenessMode(cameraView: VisionFaceCameraView, @LivenessMode mode: Int) {
         cameraView.liveness = when (mode) {
-            LivenessModes.EYES -> LivenessEyes(TransientState.requiredBlinks) {
+            LivenessModes.EYES -> LivenessEyes {
                 // on detection send the event
                 OnLiveness(it.mode)(cameraView.context as ReactContext, cameraView.id)
-            }
+            }.apply { requiredBlinks = TransientState.requiredBlinks }
             LivenessModes.FACE -> LivenessFace {
                 // on detection send the event
                 OnLiveness(it.mode)(cameraView.context as ReactContext, cameraView.id)
@@ -83,6 +83,10 @@ class ReactVisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
     @ReactProp(name = "blinksCount")
     fun setBlinksCount(cameraView: VisionFaceCameraView, count: Int) {
         TransientState.requiredBlinks = count
+
+        (cameraView.liveness as? LivenessEyes)?.let {
+            it.requiredBlinks = count
+        }
     }
 
     /**
@@ -118,6 +122,10 @@ class ReactVisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
     @ReactProp(name = "proximityThreshold")
     fun setProximityThreshold(cameraView: VisionFaceCameraView, threshold: Float) {
         TransientState.proximityThreshold = threshold
+
+        (cameraView.proximity as? ProximityByFaceWidth)?.let {
+            it.threshold = threshold
+        }
     }
 
 

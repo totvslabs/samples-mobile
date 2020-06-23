@@ -106,9 +106,17 @@ class LivenessFace(
  * Detect eyes blinking
  */
 class LivenessEyes(
-    private val requiredBlinks: Int = NO_BLINKS,
     private val onLiveness: (LivenessResult) -> Unit
 ) : Liveness() {
+
+    var requiredBlinks: Int = NO_BLINKS
+        get() = synchronized(this) {
+            field
+        }
+        set(value) = synchronized(this) {
+            field = value
+        }
+
     /**
      * Keep track of the previous probability tracked.
      */

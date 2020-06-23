@@ -389,7 +389,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
      */
     private fun enableLiveness(liveness: Liveness) {
         if (isDebug) {
-            Log.e(TAG, "Enabling liveness $liveness. Analyzer is ready: ${null != analyzer}")
+            Log.i(TAG, "Enabling liveness $liveness. Analyzer is ready: ${null != analyzer}")
         }
         // we install the analyzer as a pre-requisite
         installAnalyzer()
@@ -419,7 +419,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
      */
     private fun enableProximity(proximity: Proximity) {
         if (isDebug) {
-            Log.e(TAG, "Enabling proximity $proximity. Analyzer is ready: ${null != analyzer}")
+            Log.i(TAG, "Enabling proximity $proximity. Analyzer is ready: ${null != analyzer}")
         }
         // we install the analyzer as a pre-requisite
         installAnalyzer()
@@ -440,7 +440,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
      */
     private fun installFaceGraphics(liveness: Liveness) {
         if (isDebug) {
-            Log.e(TAG, "Enabling face graphics. Analyzer is ready: ${null != analyzer}")
+            Log.i(TAG, "Enabling face graphics. Analyzer is ready: ${null != analyzer}")
         }
         // clear the face graphics.
         faceGraphic.clear()

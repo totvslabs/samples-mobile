@@ -5,6 +5,9 @@ import android.util.AttributeSet
 import com.totvs.camera.view.CameraView
 import com.totvs.clockin.vision.barcode.VisionBarcodeCamera
 
+/**
+ * * @TODO (jansel) implement barcode camera capabilities
+ */
 class VisionBarcodeCameraView @JvmOverloads internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
