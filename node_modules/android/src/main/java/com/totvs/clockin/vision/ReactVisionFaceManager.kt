@@ -90,8 +90,8 @@ class ReactVisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
     }
 
     /**
-     * Set a default color for overlay graphic color. This is used to control the
-     * color by which landmarks are colored under liveness feature.
+     * Set a default color for overlay graphics. This is used to control the
+     * color with which landmarks are colored under liveness feature.
      */
     @ReactProp(name = "overlayGraphicsColor")
     fun setOverlayGraphicsColor(cameraView: VisionFaceCameraView, rgb: String) {
