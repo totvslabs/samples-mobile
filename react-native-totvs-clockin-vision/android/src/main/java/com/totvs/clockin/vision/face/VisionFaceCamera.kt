@@ -11,6 +11,11 @@ import java.io.File
 interface VisionFaceCamera : VisionCamera {
 
     /**
+     * RGB to be used as color for overlay graphics on this camera view.
+     */
+    var overlayGraphicsColor: String
+
+    /**
      * Configure a liveness strategy to use in this vision camera.
      */
     var liveness: Liveness?

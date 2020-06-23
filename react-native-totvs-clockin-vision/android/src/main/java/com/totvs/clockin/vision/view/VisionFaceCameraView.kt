@@ -168,6 +168,12 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
     }
 
     // [FaceVisionCamera] contract
+    override var overlayGraphicsColor: String = "#FFFFFF"
+        set(value) {
+            field = value
+            faceGraphic.setLandmarksColor(value)
+        }
+
     override var liveness: Liveness? = null
         set(value) {
             field = value
