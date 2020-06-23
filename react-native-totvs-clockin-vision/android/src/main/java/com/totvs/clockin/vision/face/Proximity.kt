@@ -63,6 +63,8 @@ class ProximityByFaceWidth(
         }
     }
 
+    override fun toString(): String = TAG
+
     /**
      * Data representing a proximity detection.
      */
