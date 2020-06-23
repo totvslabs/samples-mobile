@@ -22,7 +22,7 @@ interface VisionFaceCamera : VisionCamera {
 
     /**
      * Face proximity feature
-     */
+     */w
     var proximity: Proximity?
 
     /**
