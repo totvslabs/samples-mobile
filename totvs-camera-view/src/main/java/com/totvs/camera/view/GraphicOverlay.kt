@@ -78,6 +78,11 @@ class GraphicOverlay @JvmOverloads internal constructor(
         protected lateinit var overlay: GraphicOverlay
 
         /**
+         * Determine if this view is attached to [overlay]
+         */
+        val isAttached get() = ::overlay.isInitialized;
+
+        /**
          * Values by which we need to offset scaled values to center then
          * according to this overlay.size center.
          */

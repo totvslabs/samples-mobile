@@ -41,7 +41,9 @@ class FaceGraphic(
 
     fun clear() {
         face = null
-        postInvalidate()
+        if (isAttached) {
+            postInvalidate()
+        }
     }
 
     private fun setBoundingBoxColors() {
