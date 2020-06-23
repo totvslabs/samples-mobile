@@ -14,6 +14,10 @@ import com.totvs.clockin.vision.graphic.StandardBoundsScaler
 /**
  * Scaler to scale face bounds. This scaler is needed for receivers that need face objects
  * bounding box in the same coordinate system as [GraphicOverlay].
+ *
+ * We decided to make a shallow copy here fo landmarks because the way we're using the scaler
+ * is in a way that we don't touch the landmarks, hence no importance to its modifications
+ * is arrtibuted
  */
 class FaceBoundsScaler(overlay: GraphicOverlay) : StandardBoundsScaler<FaceObject>(overlay) {
     override fun FaceObject.clone(sourceSize: Size, boundingBox: RectF?): FaceObject =
@@ -34,13 +38,14 @@ class FaceNoseTranslator(overlay: GraphicOverlay) : StandardBoundsScaler<FaceObj
         // all the scales parameter before calling this method, hence we can use those
         // scales to fix landmark points.
         // We do two things at once: 1. copying the upstream object. 2. fix the landmarks points.
-        return copy(sourceSize = sourceSize, boundingBox = boundingBox).apply {
-            this[Nose]?.let {
-                val x = translateX(it.position.x)
-                val y = translateY(it.position.y)
-
-                this[Nose] = it.copy(position = PointF(x, y))
+        val landmarks = mutableListOf<Landmark>().let { list ->
+            for (l in this) {
+                list.add(if (l is Nose) Nose(position = PointF(
+                    translateX(l.position.x),
+                    translateY(l.position.y),
+                )) else l)
             }
         }
+        return copy(sourceSize = sourceSize, boundingBox = boundingBox, landmarks = landmarks)
     }
 }
