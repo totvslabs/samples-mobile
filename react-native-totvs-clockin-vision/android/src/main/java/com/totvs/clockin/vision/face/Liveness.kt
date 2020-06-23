@@ -192,6 +192,6 @@ class LivenessEyes(
         /**
          * Value to define if eyes are open.
          */
-        private const val EYES_OPEN_THRESHOLD = 0.95f
+        private const val EYES_OPEN_THRESHOLD = 0.90f
     }
 }
