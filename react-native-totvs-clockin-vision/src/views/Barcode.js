@@ -385,6 +385,11 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
   isFlashEnabled = async () => this.isTorchEnabled(); 
 
   /**
+   *  @TODO (jansel) - add here the missing methods related to barcode camera.
+   */
+
+
+  /**
    * View renderization happens here
    */
   render = () => {
