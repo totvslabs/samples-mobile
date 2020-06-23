@@ -42,7 +42,7 @@ class FaceNoseTranslator(overlay: GraphicOverlay) : StandardBoundsScaler<FaceObj
         for (l in this) {
             landmarks.add(if (l is Nose) Nose(position = PointF(
                 translateX(l.position.x),
-                translateY(l.position.y),
+                translateY(l.position.y)
             )) else l)
         }        
         return copy(sourceSize = sourceSize, boundingBox = boundingBox, landmarks = landmarks)
