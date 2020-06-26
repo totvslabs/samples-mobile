@@ -1,4 +1,6 @@
 
+## Android Projects
+
 ### deep-linking
 
 Native android project to showcase the deep-linking capabilities of clock-in apps.
@@ -33,6 +35,7 @@ and detection-like functionalities.
 
 This project depends on `totvs-camera-core`, `totvs-camera-view` and `totvs-camera-vision`
 
+## React Native Projects
 
 ### react-native-totvs-camera
 
@@ -50,3 +53,5 @@ React Native library that uses `totvs-camera-core`, `totvs-camera-view` and `tot
 to expose a react-native interface for functionalities related to clock-in apps.
 
 This project showcase capabilities like: Liveness, Proximity, Recognition.
+
+## iOS Projects

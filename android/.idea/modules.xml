@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android.iml" group="android" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/deep-linking/deep-linking.iml" filepath="$PROJECT_DIR$/.idea/modules/deep-linking/deep-linking.iml" group="android/deep-linking" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/react-native-totvs-camera/react-native-totvs-camera.iml" filepath="$PROJECT_DIR$/.idea/modules/react-native-totvs-camera/react-native-totvs-camera.iml" group="android/react-native-totvs-camera" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/react-native-totvs-clockin-vision/react-native-totvs-clockin-vision.iml" filepath="$PROJECT_DIR$/.idea/modules/react-native-totvs-clockin-vision/react-native-totvs-clockin-vision.iml" group="android/react-native-totvs-clockin-vision" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/totvs-camera-app/totvs-camera-app.iml" filepath="$PROJECT_DIR$/.idea/modules/totvs-camera-app/totvs-camera-app.iml" group="android/totvs-camera-app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/totvs-camera-core/totvs-camera-core.iml" filepath="$PROJECT_DIR$/.idea/modules/totvs-camera-core/totvs-camera-core.iml" group="android/totvs-camera-core" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/totvs-camera-view/totvs-camera-view.iml" filepath="$PROJECT_DIR$/.idea/modules/totvs-camera-view/totvs-camera-view.iml" group="android/totvs-camera-view" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/totvs-camera-vision/totvs-camera-vision.iml" filepath="$PROJECT_DIR$/.idea/modules/totvs-camera-vision/totvs-camera-vision.iml" group="android/totvs-camera-vision" />
+    </modules>
+  </component>
+</project>

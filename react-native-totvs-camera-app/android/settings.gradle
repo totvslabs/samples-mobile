@@ -1,8 +1,0 @@
-rootProject.name = 'TotvsCameraApp'
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
-include ':app'
-include ':totvs-camera-core'
-include ':totvs-camera-view'
-// Map project reference to physical location
-project(':totvs-camera-core').projectDir = new File(rootProject.projectDir, './totvs-camera-core')
-project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './totvs-camera-view')
