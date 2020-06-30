@@ -1,0 +1,4 @@
+framework module CameraView {
+  header "CameraView-Swift.h"
+  requires objc
+}

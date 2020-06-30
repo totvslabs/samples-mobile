@@ -20,7 +20,7 @@ interface ImageProxy : AutoCloseable {
     override fun close()
 
     /**
-     * raw image for a single capture.
+     * Raw image for a single capture.
      *
      * Since this is a proxy around an image, is possible that over time
      * we wrap here another representation of image, hence this might return null

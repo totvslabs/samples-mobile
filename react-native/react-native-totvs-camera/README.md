@@ -25,7 +25,7 @@ project(':totvs-camera-view').projectDir = new File(rootProject.projectDir, './t
 This step will map any reference to the dependencies of the libraries to the physical location
 of the libraries we already copied.
 
-4. To each of `camera-app/android/totvs-camera-view` and `camera-app/android/totvs-camera-core`
+4. (If the lines are not already there) To each of `camera-app/android/totvs-camera-view` and `camera-app/android/totvs-camera-core`
     append to their `build.gradle` file, the following lines:
 
 ```javascript
