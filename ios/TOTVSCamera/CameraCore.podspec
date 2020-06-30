@@ -28,5 +28,4 @@ s.source_files  = "CameraCore/**/*.{swift,h,m}"
   
 s.ios.deployment_target = '8.0'
 s.swift_version = '5.0'
-
 end
