@@ -7,9 +7,6 @@
 //
 
 import UIKit
-import RxSwift
-import FirebaseAnalytics
-import FirebaseMLVision
 
 open class CameraView : UIView {
 

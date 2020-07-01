@@ -68,20 +68,20 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				6577A37E24AC299000C4B127 /* Vision */,
-				6577A37D24AC298A00C4B127 /* View */,
 				6577A37C24AC295D00C4B127 /* Core */,
-				652693A224AC2C5400390E02 /* Supporting Files */,
+				6577A37D24AC298A00C4B127 /* View */,
+				6577A37E24AC299000C4B127 /* Vision */,
+				65415F1224ACF51100C81E16 /* Support */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		652693A224AC2C5400390E02 /* Supporting Files */ = {
+		65415F1224ACF51100C81E16 /* Support */ = {
 			isa = PBXGroup;
 			children = (
 				6526939F24AC2B5C00390E02 /* Bridging-Header.h */,
 			);
-			name = "Supporting Files";
+			path = Support;
 			sourceTree = "<group>";
 		};
 		6577A37C24AC295D00C4B127 /* Core */ = {
@@ -286,7 +286,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = TOTVSCameraKit;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Support/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -308,7 +308,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = TOTVSCameraKit;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Support/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
