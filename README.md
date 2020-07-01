@@ -55,3 +55,6 @@ to expose a react-native interface for functionalities related to clock-in apps.
 This project showcase capabilities like: Liveness, Proximity, Recognition.
 
 ## iOS Projects
+
+The architecture of the iOS projects is quite different from the android equivalent in the sense that
+while android modules are more granular, iOS is distributed into two main .... 
