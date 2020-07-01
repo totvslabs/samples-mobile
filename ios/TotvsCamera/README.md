@@ -1,1 +1,0 @@
-As Illustration purpose you can find here the modules `CameraCore` and `CameraView` exposed as pod modules.

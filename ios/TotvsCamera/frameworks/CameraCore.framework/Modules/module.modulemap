@@ -1,4 +1,0 @@
-framework module CameraCore {
-  header "CameraCore-Swift.h"
-  requires objc
-}

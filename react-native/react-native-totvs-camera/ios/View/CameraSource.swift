@@ -8,7 +8,6 @@
 
 import AVFoundation
 import UIKit
-import CameraCore
 
 fileprivate let TAG = "CameraSource"
 
