@@ -17,6 +17,8 @@
 		652693B424AC2CF300390E02 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693AE24AC2CF300390E02 /* Camera.swift */; };
 		652693B524AC2CF300390E02 /* CameraFacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693AF24AC2CF300390E02 /* CameraFacing.swift */; };
 		652693B624AC2CF300390E02 /* ImageProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693B024AC2CF300390E02 /* ImageProxy.swift */; };
+		65415F1824ACFAC300C81E16 /* CounterModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 65415F1724ACFAC300C81E16 /* CounterModule.m */; };
+		65415F1A24ACFAD100C81E16 /* CounterModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65415F1924ACFAD100C81E16 /* CounterModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +46,8 @@
 		652693AE24AC2CF300390E02 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		652693AF24AC2CF300390E02 /* CameraFacing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraFacing.swift; sourceTree = "<group>"; };
 		652693B024AC2CF300390E02 /* ImageProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProxy.swift; sourceTree = "<group>"; };
+		65415F1724ACFAC300C81E16 /* CounterModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CounterModule.m; sourceTree = "<group>"; };
+		65415F1924ACFAD100C81E16 /* CounterModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +91,8 @@
 		6577A37C24AC295D00C4B127 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				65415F1924ACFAD100C81E16 /* CounterModule.swift */,
+				65415F1724ACFAC300C81E16 /* CounterModule.m */,
 				652693AE24AC2CF300390E02 /* Camera.swift */,
 				652693AF24AC2CF300390E02 /* CameraFacing.swift */,
 				652693AC24AC2CF300390E02 /* CaptureCallbacks.swift */,
@@ -173,6 +179,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65415F1824ACFAC300C81E16 /* CounterModule.m in Sources */,
 				652693B424AC2CF300390E02 /* Camera.swift in Sources */,
 				652693A924AC2CE300390E02 /* CameraView.swift in Sources */,
 				652693B324AC2CF300390E02 /* ImageAnalyzer.swift in Sources */,
@@ -180,6 +187,7 @@
 				652693B624AC2CF300390E02 /* ImageProxy.swift in Sources */,
 				652693B124AC2CF300390E02 /* OutputFileOptions.swift in Sources */,
 				652693B224AC2CF300390E02 /* CaptureCallbacks.swift in Sources */,
+				65415F1A24ACFAD100C81E16 /* CounterModule.swift in Sources */,
 				652693A724AC2CE300390E02 /* PreviewView.swift in Sources */,
 				652693B524AC2CF300390E02 /* CameraFacing.swift in Sources */,
 				652693A824AC2CE300390E02 /* CameraSource.swift in Sources */,

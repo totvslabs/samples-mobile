@@ -10,8 +10,8 @@ Pod::Spec.new do |s|
   s.homepage      = package["repository"]["url"]
   s.license       = 'MIT'
   s.author        = package["author"]
-  s.source        = { :git => package["repository"]["url"], :tag => "v#{s.version}" }
-  
+  s.source        = { :git => package["repository"]["url"], :tag => "v#{s.version}" }  
+
   s.requires_arc   = true
   s.swift_version  = '5.0'
   s.platform       = :ios, "13.0"
