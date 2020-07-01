@@ -1,4 +1,4 @@
-platform :ios, '9.0'
+platform :ios, '13.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 def add_flipper_pods!(versions = {})
@@ -76,6 +76,9 @@ target 'TotvsCameraApp' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+  # after development, it needs to point to '../node_modules/react-native-totvs-camera'
+  pod 'react-native-totvs-camera', :path => '../../react-native-totvs-camera'
 
   target 'TotvsCameraAppTests' do
     inherit! :complete

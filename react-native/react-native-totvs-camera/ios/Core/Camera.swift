@@ -9,6 +9,8 @@
 /**
  * Representation of a camera device. Operations here are the one performed
  * with either an standard camera device or with outputs of such device.
+ *
+ * This is a test modification
  */
 public protocol Camera {
     /**
