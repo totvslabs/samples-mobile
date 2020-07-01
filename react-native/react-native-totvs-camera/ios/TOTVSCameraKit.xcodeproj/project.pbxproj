@@ -33,7 +33,7 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libTOTVSCameraKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTOTVSCameraKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		6526939F24AC2B5C00390E02 /* TOTVSCameraKit-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TOTVSCameraKit-Bridging-Header.h"; sourceTree = "<group>"; };
+		6526939F24AC2B5C00390E02 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		652693A324AC2CE300390E02 /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		652693A424AC2CE300390E02 /* CameraSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraSource.swift; sourceTree = "<group>"; };
 		652693A524AC2CE300390E02 /* CameraView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
@@ -79,7 +79,7 @@
 		652693A224AC2C5400390E02 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				6526939F24AC2B5C00390E02 /* TOTVSCameraKit-Bridging-Header.h */,
+				6526939F24AC2B5C00390E02 /* Bridging-Header.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -286,7 +286,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = TOTVSCameraKit;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TOTVSCameraKit-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -308,7 +308,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = TOTVSCameraKit;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TOTVSCameraKit-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
