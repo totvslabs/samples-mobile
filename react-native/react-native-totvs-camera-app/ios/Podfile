@@ -78,7 +78,7 @@ target 'TotvsCameraApp' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   # after development, it needs to point to '../node_modules/react-native-totvs-camera'
-  pod 'react-native-totvs-camera/view', :path => '../../react-native-totvs-camera'
+  pod 'react-native-totvs-camera/react-view', :path => '../../react-native-totvs-camera'
 
   target 'TotvsCameraAppTests' do
     inherit! :complete

@@ -235,6 +235,9 @@ PODS:
   - React-jsinspector (0.62.2)
   - react-native-totvs-camera/core (1.0.0):
     - React
+  - react-native-totvs-camera/react-view (1.0.0):
+    - React
+    - react-native-totvs-camera/view
   - react-native-totvs-camera/view (1.0.0):
     - React
     - react-native-totvs-camera/core
@@ -337,7 +340,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
-  - react-native-totvs-camera/view (from `../../react-native-totvs-camera`)
+  - react-native-totvs-camera/react-view (from `../../react-native-totvs-camera`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -446,7 +449,7 @@ SPEC CHECKSUMS:
   React-jsi: b6dc94a6a12ff98e8877287a0b7620d365201161
   React-jsiexecutor: 1540d1c01bb493ae3124ed83351b1b6a155db7da
   React-jsinspector: 512e560d0e985d0e8c479a54a4e5c147a9c83493
-  react-native-totvs-camera: b65b82fd84425b4fac6beb738df244c102528112
+  react-native-totvs-camera: 03d01d017eb3678cb4804d020462446cd508a01d
   React-RCTActionSheet: f41ea8a811aac770e0cc6e0ad6b270c644ea8b7c
   React-RCTAnimation: 49ab98b1c1ff4445148b72a3d61554138565bad0
   React-RCTBlob: a332773f0ebc413a0ce85942a55b064471587a71
@@ -460,6 +463,6 @@ SPEC CHECKSUMS:
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 64dd772a3921d996df10d16e4073ba018e96e6ab
+PODFILE CHECKSUM: 9f33d67de2c2faa16341d02a3e3a6927e49351fd
 
 COCOAPODS: 1.8.4

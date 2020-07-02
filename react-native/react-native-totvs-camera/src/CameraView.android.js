@@ -12,7 +12,6 @@ import {
   findNodeHandle,  
   NativeModules,
   requireNativeComponent, 
-  Platform,
   ViewPropTypes,
   View,
   ActivityIndicator,
@@ -32,19 +31,13 @@ import styles from './styles';
 // Import Native Components
 /////////////////////////////
 
-const NativeCamera = Platform.select({
-  ios: View, 
-  android: requireNativeComponent('CameraView')
-});
+const NativeCamera = requireNativeComponent('CameraView');
 
 /////////////////////////////
 // Import Native Modules
 /////////////////////////////
 
-const CameraModule = Platform.select({
-  ios: { },
-  android: NativeModules.CameraModule
-});
+const CameraModule = NativeModules.CameraModule;
 
 /////////////////////////////
 // Type System
@@ -257,17 +250,15 @@ export default class CameraView extends Component<PropsType, StateType> {
    * Selectively request poermissions required to render the native component apropriately.
    */
   _requestCameraPermissions = async (rationale: Rationale) => {
-    if (Platform.OS === 'android') {
-      const result = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA, rationale
-      );
+    const result = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA, rationale
+    );
 
-      if (typeof result === 'boolean') {
-        return result;
-      } else {
-        return PermissionsAndroid.RESULTS.GRANTED === result;
-      }
-    }
+    if (typeof result === 'boolean') {
+      return result;
+    } else {
+      return PermissionsAndroid.RESULTS.GRANTED === result;
+    }    
     return false;
   }
 
@@ -352,7 +343,7 @@ export default class CameraView extends Component<PropsType, StateType> {
    * Toggle the camera lens facing
    */
   toggleCamera = async () => {    
-    this._onHandle('setFacing');
+    this._onHandle('toggleCamera');
 
     return this._handle && CameraModule.toggleCamera(this._handle);
   }

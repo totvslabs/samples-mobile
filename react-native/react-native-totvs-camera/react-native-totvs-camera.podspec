@@ -35,6 +35,12 @@ Pod::Spec.new do |s|
     ss.dependency 'Firebase/MLVisionBarcodeModel'
   end   
 
+  s.subspec "react-view" do |ss|
+    ss.source_files = "ios/ReactView/**/*.{swift,h,m}"
+
+    ss.dependency 'react-native-totvs-camera/view'
+  end  
+
   s.default_subspecs = "core", "view", "vision"
 
   s.dependency 'React'

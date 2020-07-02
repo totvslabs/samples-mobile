@@ -44,12 +44,12 @@ const App = () => {
   const performAction = () => {
     // cameraView && cameraView.setFacing(BACK);
     // cameraView && cameraView.setZoom(0.5);
-    // cameraView && cameraView.toggleCamera()
+    cameraView && cameraView.toggleCamera()
     // cameraView && cameraView.enableFlash(false);
     // cameraView && cameraView.enableTorch(true); // synonyms for the previous
-    cameraView && cameraView.takePicture()
-      .then(console.log)
-      .catch(console.warn);
+    // cameraView && cameraView.takePicture()
+    //   .then(console.log)
+    //   .catch(console.warn);
   };
 
 
@@ -82,15 +82,16 @@ const App = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: 'black'
   },
   camera: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   touchableOpacity: {
     position: 'absolute',
-    bottom: 16,
+    bottom: 36,
     backgroundColor: 'white',
     width: 200,
     height: 48,

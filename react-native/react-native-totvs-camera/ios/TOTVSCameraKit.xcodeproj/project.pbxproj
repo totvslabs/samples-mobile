@@ -72,6 +72,7 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				65C68C7A24AE16D300252A55 /* ReactView */,
 				6577A37C24AC295D00C4B127 /* Core */,
 				6577A37D24AC298A00C4B127 /* View */,
 				6577A37E24AC299000C4B127 /* Vision */,
@@ -119,6 +120,13 @@
 			children = (
 			);
 			path = Vision;
+			sourceTree = "<group>";
+		};
+		65C68C7A24AE16D300252A55 /* ReactView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ReactView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
