@@ -43,7 +43,7 @@ import java.io.File
  *
  * @see also [ReactCameraModule]
  */
-class ReactCameraModule(
+class CameraViewModule(
     context: ReactApplicationContext
 ) : ReactContextBaseJavaModule(context) {
 
