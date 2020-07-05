@@ -51,3 +51,25 @@ repositories {
 5. Done
 
 
+#### iOS
+
+This library depends on `TOTVSCameraKit/View` pod. in order to install properly this library into a 
+react-native application we can do manual linking following the next steps:
+
+1. Copy this library into `camera-app/node_modules`
+2. Open `camera-app/ios/camera-app.xcworspace`. Do notice that this is the `.xcworkspace` file not the project
+  file. We require this in order to work with the loaded pods, also, because once our libraries are load to the `Pods.xcodeproj` we'll be able to modify our libraries source code.
+3. open `camera-app/ios/Podfile` and add:
+```javascript
+  // after development, it needs to point to '../node_modules/react-native-totvs-camera'
+  pod 'react-native-totvs-camera', :path => '../../react-native-totvs-camera'
+  // must be imported in order react-native-totvs-camera dependencies be resolved
+  pod 'TOTVSCameraKit', :path => '../../../ios/TOTVSCameraKit'
+```
+You need to replace `../../react-native-totvs-camera` and `../../../ios/TOTVSCameraKit` by the appropriate
+location of these libraries in your PC.
+4. Inside `camera-app/ios` run `pod install`
+5. Done
+
+
+Also note that this is the approach recomended when a need to modify this or any submodule of `TOTVSCameraKit` libraries. You'll find the project `TOTVSCameraKit` and `react-native-totvs-camera` in the `Pods.xcodeproj` of `camera-app/ios`. Modify source code from these projects.

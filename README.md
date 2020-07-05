@@ -56,5 +56,8 @@ This project showcase capabilities like: Liveness, Proximity, Recognition.
 
 ## iOS Projects
 
-The architecture of the iOS projects is quite different from the android equivalent in the sense that
-while android modules are more granular, iOS is distributed into two main .... 
+### TOTVSCameraKit 
+
+Native iOS library written in Swift that compress the functionalities exposed as `core`, `view`, `vision` in
+the android counterpart. This library offers the posibility to use subsets of functionalities through CocoaPods.
+i.e one can only use `pod 'TOTVSCameraKit/Core'`, `pod 'TOTVSCameraKit/View'` and so on.
