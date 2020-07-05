@@ -1,5 +1,7 @@
 
 import Foundation
+import UIKit
+import TOTVSCameraKit
 
 @objc(CameraViewManager)
 class CameraViewManager : RCTViewManager {

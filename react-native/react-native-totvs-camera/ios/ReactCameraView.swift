@@ -1,6 +1,7 @@
 
 
 import UIKit
+import TOTVSCameraKit
 
 @objc(ReactCameraView)
 class ReactCameraView : CameraView { }

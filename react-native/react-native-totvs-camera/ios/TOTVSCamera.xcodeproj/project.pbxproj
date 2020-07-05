@@ -7,18 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		652693A724AC2CE300390E02 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693A324AC2CE300390E02 /* PreviewView.swift */; };
-		652693A824AC2CE300390E02 /* CameraSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693A424AC2CE300390E02 /* CameraSource.swift */; };
-		652693A924AC2CE300390E02 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693A524AC2CE300390E02 /* CameraView.swift */; };
-		652693AA24AC2CE300390E02 /* CaptureProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693A624AC2CE300390E02 /* CaptureProcessor.swift */; };
-		652693B124AC2CF300390E02 /* OutputFileOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693AB24AC2CF300390E02 /* OutputFileOptions.swift */; };
-		652693B224AC2CF300390E02 /* CaptureCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693AC24AC2CF300390E02 /* CaptureCallbacks.swift */; };
-		652693B324AC2CF300390E02 /* ImageAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693AD24AC2CF300390E02 /* ImageAnalyzer.swift */; };
-		652693B424AC2CF300390E02 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693AE24AC2CF300390E02 /* Camera.swift */; };
-		652693B524AC2CF300390E02 /* CameraFacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693AF24AC2CF300390E02 /* CameraFacing.swift */; };
-		652693B624AC2CF300390E02 /* ImageProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652693B024AC2CF300390E02 /* ImageProxy.swift */; };
-		65415F1824ACFAC300C81E16 /* CounterModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 65415F1724ACFAC300C81E16 /* CounterModule.m */; };
-		65415F1A24ACFAD100C81E16 /* CounterModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65415F1924ACFAD100C81E16 /* CounterModule.swift */; };
+		658BF34224B24669006B5ED8 /* CameraViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 658BF33F24B24669006B5ED8 /* CameraViewManager.m */; };
+		658BF34324B24669006B5ED8 /* ReactCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF34024B24669006B5ED8 /* ReactCameraView.swift */; };
+		658BF34424B24669006B5ED8 /* CameraViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF34124B24669006B5ED8 /* CameraViewManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,20 +25,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		134814201AA4EA6300B7C361 /* libTOTVSCameraKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTOTVSCameraKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		134814201AA4EA6300B7C361 /* libTOTVSCamera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTOTVSCamera.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6526939F24AC2B5C00390E02 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
-		652693A324AC2CE300390E02 /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
-		652693A424AC2CE300390E02 /* CameraSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraSource.swift; sourceTree = "<group>"; };
-		652693A524AC2CE300390E02 /* CameraView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
-		652693A624AC2CE300390E02 /* CaptureProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureProcessor.swift; sourceTree = "<group>"; };
-		652693AB24AC2CF300390E02 /* OutputFileOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutputFileOptions.swift; sourceTree = "<group>"; };
-		652693AC24AC2CF300390E02 /* CaptureCallbacks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureCallbacks.swift; sourceTree = "<group>"; };
-		652693AD24AC2CF300390E02 /* ImageAnalyzer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageAnalyzer.swift; sourceTree = "<group>"; };
-		652693AE24AC2CF300390E02 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
-		652693AF24AC2CF300390E02 /* CameraFacing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraFacing.swift; sourceTree = "<group>"; };
-		652693B024AC2CF300390E02 /* ImageProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProxy.swift; sourceTree = "<group>"; };
-		65415F1724ACFAC300C81E16 /* CounterModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CounterModule.m; sourceTree = "<group>"; };
-		65415F1924ACFAD100C81E16 /* CounterModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterModule.swift; sourceTree = "<group>"; };
+		658BF33F24B24669006B5ED8 /* CameraViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraViewManager.m; sourceTree = "<group>"; };
+		658BF34024B24669006B5ED8 /* ReactCameraView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactCameraView.swift; sourceTree = "<group>"; };
+		658BF34124B24669006B5ED8 /* CameraViewManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,7 +46,7 @@
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				134814201AA4EA6300B7C361 /* libTOTVSCameraKit.a */,
+				134814201AA4EA6300B7C361 /* libTOTVSCamera.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,69 +54,20 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				65C68C7A24AE16D300252A55 /* ReactView */,
-				6577A37C24AC295D00C4B127 /* Core */,
-				6577A37D24AC298A00C4B127 /* View */,
-				6577A37E24AC299000C4B127 /* Vision */,
-				65415F1224ACF51100C81E16 /* Support */,
+				6526939F24AC2B5C00390E02 /* Bridging-Header.h */,
+				658BF33F24B24669006B5ED8 /* CameraViewManager.m */,
+				658BF34124B24669006B5ED8 /* CameraViewManager.swift */,
+				658BF34024B24669006B5ED8 /* ReactCameraView.swift */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		65415F1224ACF51100C81E16 /* Support */ = {
-			isa = PBXGroup;
-			children = (
-				6526939F24AC2B5C00390E02 /* Bridging-Header.h */,
-			);
-			path = Support;
-			sourceTree = "<group>";
-		};
-		6577A37C24AC295D00C4B127 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				65415F1924ACFAD100C81E16 /* CounterModule.swift */,
-				65415F1724ACFAC300C81E16 /* CounterModule.m */,
-				652693AE24AC2CF300390E02 /* Camera.swift */,
-				652693AF24AC2CF300390E02 /* CameraFacing.swift */,
-				652693AC24AC2CF300390E02 /* CaptureCallbacks.swift */,
-				652693AD24AC2CF300390E02 /* ImageAnalyzer.swift */,
-				652693B024AC2CF300390E02 /* ImageProxy.swift */,
-				652693AB24AC2CF300390E02 /* OutputFileOptions.swift */,
-			);
-			path = Core;
-			sourceTree = "<group>";
-		};
-		6577A37D24AC298A00C4B127 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				652693A424AC2CE300390E02 /* CameraSource.swift */,
-				652693A524AC2CE300390E02 /* CameraView.swift */,
-				652693A624AC2CE300390E02 /* CaptureProcessor.swift */,
-				652693A324AC2CE300390E02 /* PreviewView.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		6577A37E24AC299000C4B127 /* Vision */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Vision;
-			sourceTree = "<group>";
-		};
-		65C68C7A24AE16D300252A55 /* ReactView */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ReactView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		58B511DA1A9E6C8500147676 /* TOTVSCameraKit */ = {
+		58B511DA1A9E6C8500147676 /* TOTVSCamera */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "TOTVSCameraKit" */;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "TOTVSCamera" */;
 			buildPhases = (
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
@@ -144,9 +77,9 @@
 			);
 			dependencies = (
 			);
-			name = TOTVSCameraKit;
+			name = TOTVSCamera;
 			productName = RCTDataManager;
-			productReference = 134814201AA4EA6300B7C361 /* libTOTVSCameraKit.a */;
+			productReference = 134814201AA4EA6300B7C361 /* libTOTVSCamera.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -164,7 +97,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "TOTVSCameraKit" */;
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "TOTVSCamera" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -177,7 +110,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				58B511DA1A9E6C8500147676 /* TOTVSCameraKit */,
+				58B511DA1A9E6C8500147676 /* TOTVSCamera */,
 			);
 		};
 /* End PBXProject section */
@@ -187,18 +120,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65415F1824ACFAC300C81E16 /* CounterModule.m in Sources */,
-				652693B424AC2CF300390E02 /* Camera.swift in Sources */,
-				652693A924AC2CE300390E02 /* CameraView.swift in Sources */,
-				652693B324AC2CF300390E02 /* ImageAnalyzer.swift in Sources */,
-				652693AA24AC2CE300390E02 /* CaptureProcessor.swift in Sources */,
-				652693B624AC2CF300390E02 /* ImageProxy.swift in Sources */,
-				652693B124AC2CF300390E02 /* OutputFileOptions.swift in Sources */,
-				652693B224AC2CF300390E02 /* CaptureCallbacks.swift in Sources */,
-				65415F1A24ACFAD100C81E16 /* CounterModule.swift in Sources */,
-				652693A724AC2CE300390E02 /* PreviewView.swift in Sources */,
-				652693B524AC2CF300390E02 /* CameraFacing.swift in Sources */,
-				652693A824AC2CE300390E02 /* CameraSource.swift in Sources */,
+				658BF34424B24669006B5ED8 /* CameraViewManager.swift in Sources */,
+				658BF34224B24669006B5ED8 /* CameraViewManager.m in Sources */,
+				658BF34324B24669006B5ED8 /* ReactCameraView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,9 +224,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = TOTVSCameraKit;
+				PRODUCT_NAME = TOTVSCamera;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Support/Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -322,9 +246,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = TOTVSCameraKit;
+				PRODUCT_NAME = TOTVSCamera;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Support/Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -332,7 +256,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "TOTVSCameraKit" */ = {
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "TOTVSCamera" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511ED1A9E6C8500147676 /* Debug */,
@@ -341,7 +265,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "TOTVSCameraKit" */ = {
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "TOTVSCamera" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511F01A9E6C8500147676 /* Debug */,

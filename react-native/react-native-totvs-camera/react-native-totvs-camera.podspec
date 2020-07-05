@@ -16,32 +16,9 @@ Pod::Spec.new do |s|
   s.swift_version  = '5.0'
   s.platform       = :ios, "13.0"
   
-  s.subspec "core" do |ss|
-    ss.source_files = "ios/Core/**/*.{swift,h,m}"
-  end
-
-  s.subspec "view" do |ss|
-    ss.source_files = "ios/View/**/*.{swift,h,m}"
-
-    ss.dependency 'react-native-totvs-camera/core'
-  end
-
-  s.subspec "vision" do |ss|
-    ss.source_files = "ios/Vision/**/*.{swift,h,m}"
-
-    ss.dependency 'react-native-totvs-camera/core'            
-    ss.dependency 'Firebase/MLVision'
-    ss.dependency 'Firebase/MLVisionFaceModel'
-    ss.dependency 'Firebase/MLVisionBarcodeModel'
-  end   
-
-  s.subspec "react-view" do |ss|
-    ss.source_files = "ios/ReactView/**/*.{swift,h,m}"
-
-    ss.dependency 'react-native-totvs-camera/view'
-  end  
-
-  s.default_subspecs = "core", "view", "vision"
+  s.source_files = "ios/**/*.{swift,h,m}"
 
   s.dependency 'React'
+  s.dependency 'TOTVSCameraKit/View'
+  
 end
