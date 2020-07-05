@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import {
   findNodeHandle,  
   NativeModules,
+  Platform,
   requireNativeComponent, 
   ViewPropTypes,
   View,
@@ -25,7 +26,7 @@ import React, { Component } from 'react';
 // Import Styles
 /////////////////////////////
 
-import styles from './styles';
+import styles from 'react-native-totvs-camera/src/styles';
 
 /////////////////////////////
 // Import Native Components
@@ -37,7 +38,8 @@ const NativeCamera = requireNativeComponent('CameraView');
 // Import Native Modules
 /////////////////////////////
 
-const CameraModule = NativeModules.CameraModule;
+// android: CameraModule, ios: CameraViewManager
+const CameraModule = NativeModules.CameraModule || NativeModules.CameraViewManager;
 
 /////////////////////////////
 // Type System
@@ -92,6 +94,11 @@ export const Constants = {
   ZOOM_LIMITS: CameraModule.ZOOM_LIMITS,
 };
 
+/**
+ * Unlike android, iOS call the property setters on the manager/view even
+ * when they are underfined. we default to an appropriate facing.
+ */
+const DEFAULT_FACING = Constants.LENS_FACING.BACK;
 
 /////////////////////////////
 // Utilities
@@ -172,6 +179,8 @@ const PermissionsDeniedView = () => {
  * by itself. If these properties are not set and is disallowed to the camera to
  * ask for permissions, then the caller would be responsible to requests permission
  * required by this underlying component.
+ * 
+ * This camera component doesn't support permissions settings on iOS platform.
  */
 export default class CameraView extends Component<PropsType, StateType> {
   /**
@@ -208,8 +217,8 @@ export default class CameraView extends Component<PropsType, StateType> {
     this._isMounted = true;
     // set state initial values
     this.state = { 
-      isAuthorized: false,
-      isAuthorizationRequested: false,      
+      isAuthorized: (Platform.OS == 'ios'), // false otherwise
+      isAuthorizationRequested: (Platform.OS == 'ios'), // false otherwise
     };
   }
 
@@ -236,6 +245,10 @@ export default class CameraView extends Component<PropsType, StateType> {
       props.permissionsCameraOptions
     ) && isAbsent(props.requestPermissions) ? true : props.requestPermissions;
 
+    if (Platform.OS == 'ios') {
+      expanded.facing = isAbsent(props.facing) ? DEFAULT_FACING : props.facing;      
+    }
+
     return expanded;
   }
 
@@ -258,8 +271,7 @@ export default class CameraView extends Component<PropsType, StateType> {
       return result;
     } else {
       return PermissionsAndroid.RESULTS.GRANTED === result;
-    }    
-    return false;
+    }
   }
 
   /**
@@ -300,6 +312,10 @@ export default class CameraView extends Component<PropsType, StateType> {
    * Check if the app has camera permissions
    */
   hasCameraPermission = async () => {
+    if (Platform.OS == 'ios') {
+      throw 'Operation not supported on iOS';
+    }
+
     const defaults = { 
       title: '', message: '',
       buttonPositive: '',
@@ -314,6 +330,10 @@ export default class CameraView extends Component<PropsType, StateType> {
   }
 
   refreshCameraState = async () => {
+    if (Platform.OS == 'ios') {
+      throw 'Operation not supported on iOS';
+    }
+
     const { 
       requestPermissions 
     } = this._expandProps(this.props);
@@ -326,7 +346,7 @@ export default class CameraView extends Component<PropsType, StateType> {
   };
 
   componentDidMount = async () => {
-    await this.refreshCameraState();
+    Platform.OS != 'ios' && await this.refreshCameraState();
     
     // if this view as a delegated `ref` let's rebind the ref to 
     // reflect the fact that now we received the native camera reference
@@ -446,7 +466,7 @@ export default class CameraView extends Component<PropsType, StateType> {
   takePicture = async (outputDir) => {
     this._onHandle('takePicture');
 
-    return this._handle && CameraModule.takePicture(this._handle, outputDir);
+    return this._handle && CameraModule.takePicture(outputDir, this._handle);
   }
 
   /**

@@ -43,13 +43,13 @@ const App = () => {
   // to test different operations.
   const performAction = () => {
     // cameraView && cameraView.setFacing(BACK);
-    // cameraView && cameraView.setZoom(0.5);
-    cameraView && cameraView.toggleCamera()
-    // cameraView && cameraView.enableFlash(false);
-    // cameraView && cameraView.enableTorch(true); // synonyms for the previous
-    // cameraView && cameraView.takePicture()
-    //   .then(console.log)
-    //   .catch(console.warn);
+    // cameraView && cameraView.setZoom(0.0);
+    // cameraView && cameraView.toggleCamera()
+    // cameraView && cameraView.enableFlash(true);
+    // cameraView && cameraView.enableTorch(false); // synonyms for the previous
+    cameraView && cameraView.takePicture()
+      .then(console.log)
+      .catch(console.warn);
   };
 
 
@@ -67,7 +67,7 @@ const App = () => {
         ref={ref => setCameraView(ref)}
         style={styles.camera}
         zoom={MIN}
-        cameraPermissionOptions={rationale}> 
+        permissionsCameraOptions={rationale}> 
         {childFunction} 
       </CameraView>
 

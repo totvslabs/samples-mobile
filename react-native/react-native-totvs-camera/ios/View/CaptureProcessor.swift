@@ -77,6 +77,7 @@ extension CaptureProcessor : AVCapturePhotoCaptureDelegate {
                     if let error = error {
                         print("Error occurred while saving photo to photo library: \(error)")
                     }
+                    self.onSave(nil)
                     self.didFinish()
                 })
             } else {

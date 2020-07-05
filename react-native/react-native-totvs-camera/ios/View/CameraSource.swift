@@ -562,7 +562,7 @@ extension CameraSource {
                 with: photoSettings,
                 savePhoto: true,
                 onSave: { _ in
-                    
+                    onSaved(nil, nil)
                 }, onComplete: { processor in
                     self.sessionQueue.async {
                         self.inProgressCaptures[processor.photoSettings.uniqueID] = nil
