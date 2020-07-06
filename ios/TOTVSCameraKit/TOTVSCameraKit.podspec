@@ -24,14 +24,14 @@ Pod::Spec.new do |s|
     ss.dependency 'TOTVSCameraKit/Core'
   end
 
-  # s.subspec "Vision" do |ss|
-  #   ss.source_files = "Vision/**/*.{swift,h,m}"
+  s.subspec "Vision" do |ss|
+    ss.source_files = "Vision/**/*.{swift,h,m}"
 
-  #   ss.dependency 'TOTVSCameraKit/Core'
-  #   # ss.dependency 'Firebase/MLVision'
-  #   # ss.dependency 'Firebase/MLVisionFaceModel'
-  #   # ss.dependency 'Firebase/MLVisionBarcodeModel'
-  # end   
+    ss.dependency 'TOTVSCameraKit/Core'
+    # ss.dependency 'Firebase/MLVision'
+    # ss.dependency 'Firebase/MLVisionFaceModel'
+    # ss.dependency 'Firebase/MLVisionBarcodeModel'
+  end   
 
   s.default_subspecs = "Core", "View"
 end

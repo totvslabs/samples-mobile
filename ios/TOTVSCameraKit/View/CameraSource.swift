@@ -85,8 +85,10 @@ extension CameraSource {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             if sessionSetupState == .undetermined {
-                previewView.session = session
-                    
+                DispatchQueue.main.async {
+                    self.previewView.session = self.session
+                }
+
                 sessionQueue.async {
                     self.configureSession()
                 }
@@ -574,25 +576,6 @@ extension CameraSource {
         }
     }
 }
-
-/// MARK: camera device lifecycle2 - @TODO(jansel) - find a better way to handle this.
-extension CameraSource {
-    func viewDidLoad() {
-    }
-    
-    func viewWillAppear() {
-        startRunning()
-    }
-    
-    func viewWillDisapear() {
-        stopRunning()
-    }
-    
-    func viewWillTransition() {
-        setCameraOrientation(orientation: UIDevice.current.orientation)
-    }
-}
-
 
 fileprivate extension AVCaptureVideoOrientation {
     init?(deviceOrientation: UIDeviceOrientation) {
