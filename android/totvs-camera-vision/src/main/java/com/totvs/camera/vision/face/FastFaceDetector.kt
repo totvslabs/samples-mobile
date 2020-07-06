@@ -41,7 +41,7 @@ import java.util.concurrent.Executor
 
 private typealias GMSLandmark = com.google.android.gms.vision.face.Landmark
 
-class FastFaceDetector(
+open class FastFaceDetector(
     private val context: Context,
     private val selectFace: SelectionStrategy<Face> = MOST_PROMINENT
 ) : AbstractVisionDetector<FaceObject>(FastFaceDetector) {
