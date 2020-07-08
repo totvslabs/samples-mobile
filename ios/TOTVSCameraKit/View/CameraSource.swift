@@ -15,8 +15,6 @@ fileprivate enum SessionSetupState {
     case configured
     case undetermined
 }
-
-fileprivate let SUPPORT_ANALYSIS = true
 /**
  * This controller is backed fully by `AVFoudnation` implementation, in order to change the
  * source of the camera device, this is the class that needs to be checked for.
@@ -33,6 +31,17 @@ class CameraSource : NSObject {
     /// `PreviewView` owner of the camera device layer
     private var previewView: PreviewView {
         cameraView.previewView
+    }
+    
+    var analyzer: ImageAnalyzer? = nil {
+        didSet {
+            if let _ = analyzer, sessionSetupState != .undetermined {
+                installAnalyzer()
+            }
+            if nil == analyzer {
+                uninstallAnalyzer()
+            }
+        }
     }
      
     /// Capture Session for the current camera device
@@ -186,7 +195,7 @@ private extension CameraSource {
             return
         }
         
-        if SUPPORT_ANALYSIS {
+        if nil != analyzer {
             if session.canAddOutput(dataOutput) {
                 session.addOutput(dataOutput)
                 dataOutput.setSampleBufferDelegate(self, queue: analysisQueue)
@@ -224,9 +233,11 @@ private extension CameraSource {
         // change preview orientation
         previewView.videoPreviewLayer.connection?.videoOrientation = videoOrientation
         // change image data output orientation
-        sessionQueue.async {
-            if let dataConnection = self.dataOutput.connection(with: .video) {
-                dataConnection.videoOrientation = videoOrientation
+        if nil != analyzer {
+            sessionQueue.async {
+                if let dataConnection = self.dataOutput.connection(with: .video) {
+                    dataConnection.videoOrientation = videoOrientation
+                }
             }
         }
     }
@@ -240,13 +251,43 @@ private extension CameraSource {
             // change preview orientation
             connection.videoOrientation = deviceOrientation
             
-            // change image data output orientation
-            sessionQueue.async {
-                if let dataConnection = self.dataOutput.connection(with: .video) {
-                    dataConnection.videoOrientation = deviceOrientation
+            if nil != analyzer {
+                // change image data output orientation
+                sessionQueue.async {
+                    if let dataConnection = self.dataOutput.connection(with: .video) {
+                        dataConnection.videoOrientation = deviceOrientation
+                    }
                 }
             }
         }        
+    }
+}
+
+/// MARK: Install Image Analyzer
+private extension CameraSource {
+    func installAnalyzer() {
+        sessionQueue.async {
+            self.session.beginConfiguration()
+            if self.session.canAddOutput(self.dataOutput) {
+                self.session.addOutput(self.dataOutput)
+                self.dataOutput.setSampleBufferDelegate(self, queue: self.analysisQueue)
+                
+                DispatchQueue.main.async {
+                    self.setCameraOrientation(orientation: self.cameraView.windowOrientation)
+                }
+            } else {
+                print("\(TAG): Couldn't add data output to session")
+            }
+            self.session.commitConfiguration()
+        }
+    }
+    
+    func uninstallAnalyzer() {
+        sessionQueue.async {
+            self.session.beginConfiguration()
+            self.session.removeOutput(self.dataOutput)
+            self.session.commitConfiguration()
+        }
     }
 }
 

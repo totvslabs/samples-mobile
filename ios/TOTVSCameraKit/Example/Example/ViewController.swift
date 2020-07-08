@@ -8,13 +8,10 @@
 
 import UIKit
 import TOTVSCameraKit
-import FirebaseMLVision
 
 class ViewController: UIViewController {
     
     private var cameraView: CameraView!
-    
-    private lazy var vision = Vision.vision()
     
     override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
     
@@ -51,7 +48,3 @@ extension ViewController {
     }
 }
 
-extension ViewController {
-    private func faceDetector() {
-    }
-}

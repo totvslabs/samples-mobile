@@ -15,6 +15,14 @@ open class CameraView : UIView {
     
     /// CameraSource module that handle the camera device
     private lazy var cameraSource = CameraSource(cameraView: self)
+    
+    var analyzer: ImageAnalyzer? = nil {
+        didSet {
+            if let analzyer = analyzer {
+                cameraSource.analyzer = analzyer
+            }
+        }
+    }
         
     /// Current device orienation
     internal var windowOrientation: UIInterfaceOrientation {
