@@ -1,0 +1,46 @@
+{
+  "name": "TOTVSCameraKit",
+  "version": "1.0.0",
+  "summary": "TODO: description",
+  "homepage": "https://github.com/totvslabs/samples-mobile.git",
+  "license": "MIT",
+  "authors": "TOTVS Labs <info@totvslabs.com> (https://www.totvslabs.com/)",
+  "source": {
+    "git": "https://github.com/totvslabs/samples-mobile.git",
+    "tag": "v1.0.0"
+  },
+  "requires_arc": true,
+  "swift_versions": "5.0",
+  "platforms": {
+    "ios": "13.0"
+  },
+  "default_subspecs": [
+    "Core",
+    "View"
+  ],
+  "subspecs": [
+    {
+      "name": "Core",
+      "source_files": "Core/**/*.{swift,h,m}"
+    },
+    {
+      "name": "View",
+      "source_files": "View/**/*.{swift,h,m}",
+      "dependencies": {
+        "TOTVSCameraKit/Core": [
+
+        ]
+      }
+    },
+    {
+      "name": "Vision",
+      "source_files": "Vision/**/*.{swift,h,m}",
+      "dependencies": {
+        "TOTVSCameraKit/Core": [
+
+        ]
+      }
+    }
+  ],
+  "swift_version": "5.0"
+}

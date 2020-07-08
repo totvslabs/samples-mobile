@@ -15,13 +15,17 @@ fileprivate enum SessionSetupState {
     case configured
     case undetermined
 }
+
+fileprivate let SUPPORT_ANALYSIS = true
 /**
  * This controller is backed fully by `AVFoudnation` implementation, in order to change the
  * source of the camera device, this is the class that needs to be checked for.
  */
 class CameraSource : NSObject {
     /// Dispatch queue for camera operations
-    private let sessionQueue = DispatchQueue(label: "CameraView")
+    private let sessionQueue  = DispatchQueue(label: "CameraView")
+    /// Dispatch queue for camera data output
+    private let analysisQueue = DispatchQueue(label: "ImageAnalysis")
         
     /// `CameraView` holding the device preview
     private weak var cameraView: CameraView!
@@ -39,6 +43,9 @@ class CameraSource : NSObject {
     
     /// Capture Output
     private let photoOutput = AVCapturePhotoOutput()
+    
+    /// Analysis Data Output
+    private let dataOutput = AVCaptureVideoDataOutput()
     
     /// Flag that indicate if the current session is running
     private var isSessionRunning = false
@@ -82,13 +89,11 @@ class CameraSource : NSObject {
 /// MARK: Lifecycle
 extension CameraSource {
     func startRunning() {
+        previewView.session = session
+        
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             if sessionSetupState == .undetermined {
-                DispatchQueue.main.async {
-                    self.previewView.session = self.session
-                }
-
                 sessionQueue.async {
                     self.configureSession()
                 }
@@ -158,11 +163,6 @@ private extension CameraSource {
             if session.canAddInput(cameraInput) {
                 session.addInput(cameraInput)
                 cameraDeviceInput = cameraInput
-                
-                // initial orientation
-                DispatchQueue.main.async {
-                    self.setCameraOrientation(orientation: self.cameraView.windowOrientation)
-                }
             } else {
                 print("\(TAG): Couldn't add video device input to the session.")
                 session.commitConfiguration()
@@ -181,10 +181,27 @@ private extension CameraSource {
             photoOutput.isHighResolutionCaptureEnabled = true
             photoOutput.maxPhotoQualityPrioritization = .balanced
         } else {
-            print("\(TAG): Couldn't add phot output to session")
+            print("\(TAG): Couldn't add photo output to session")
             session.commitConfiguration()
             return
         }
+        
+        if SUPPORT_ANALYSIS {
+            if session.canAddOutput(dataOutput) {
+                session.addOutput(dataOutput)
+                dataOutput.setSampleBufferDelegate(self, queue: analysisQueue)
+            } else {
+                print("\(TAG): Couldn't add data output to session")
+                session.commitConfiguration()
+                return
+            }
+        }
+        
+        // initial orientation to all interested
+        DispatchQueue.main.async {
+            self.setCameraOrientation(orientation: self.cameraView.windowOrientation)
+        }
+        
         session.commitConfiguration()
         
         sessionSetupState = .configured
@@ -198,12 +215,20 @@ private extension CameraSource {
     
     func setCameraOrientation(orientation: UIInterfaceOrientation) {
         var videoOrientation: AVCaptureVideoOrientation = .portrait
-        if cameraView.windowOrientation != .unknown {
+            
+        if orientation != .unknown {
             if let orientation = AVCaptureVideoOrientation(interfaceOrientation: orientation) {
                 videoOrientation = orientation
             }
         }
+        // change preview orientation
         previewView.videoPreviewLayer.connection?.videoOrientation = videoOrientation
+        // change image data output orientation
+        sessionQueue.async {
+            if let dataConnection = self.dataOutput.connection(with: .video) {
+                dataConnection.videoOrientation = videoOrientation
+            }
+        }
     }
     
     func setCameraOrientation(orientation: UIDeviceOrientation) {
@@ -212,7 +237,15 @@ private extension CameraSource {
                 orientation.isPortrait || orientation.isLandscape else {
                 return 
             }
+            // change preview orientation
             connection.videoOrientation = deviceOrientation
+            
+            // change image data output orientation
+            sessionQueue.async {
+                if let dataConnection = self.dataOutput.connection(with: .video) {
+                    dataConnection.videoOrientation = deviceOrientation
+                }
+            }
         }        
     }
 }
@@ -573,6 +606,15 @@ extension CameraSource {
             // The photo output holds a weak reference to the photo capture delegate and stores it in an array to maintain a strong reference.
             self.inProgressCaptures[photoSettings.uniqueID] = processor
             self.photoOutput.capturePhoto(with: photoSettings, delegate: processor)
+        }
+    }
+}
+
+/// MARK: Image Data Analysis
+extension CameraSource : AVCaptureVideoDataOutputSampleBufferDelegate {
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        if let connection = output.connection(with: .video) {
+            print("Receiving images: orientation: \(connection.videoOrientation.rawValue)")
         }
     }
 }
