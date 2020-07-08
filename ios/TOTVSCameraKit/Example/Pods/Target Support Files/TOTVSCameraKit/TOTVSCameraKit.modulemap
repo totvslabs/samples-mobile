@@ -1,6 +1,0 @@
-framework module TOTVSCameraKit {
-  umbrella header "TOTVSCameraKit-umbrella.h"
-
-  export *
-  module * { export * }
-}
