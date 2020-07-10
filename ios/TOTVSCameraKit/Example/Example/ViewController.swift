@@ -15,6 +15,15 @@ class ViewController: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
     
+    fileprivate lazy var faceDetector = CIDetector(
+        ofType: CIDetectorTypeFace,
+        context: nil,
+        options: [
+            CIDetectorAccuracy: CIDetectorAccuracyHigh,
+            CIDetectorTracking: false,
+        ]
+    )!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -22,13 +31,15 @@ class ViewController: UIViewController {
     }
     
     @IBAction func capture(_ button: UIButton) {
-        cameraView.takePicture(with: OutputFileOptions()) { (url, error) in
-            print("saved")
-        }
+//        cameraView.takePicture(with: OutputFileOptions()) { (url, error) in
+//            print("saved")
+//        }
+        cameraView.analyzer = self
     }
     
     @IBAction func flipCamera(_ button: UIButton) {
-        cameraView.toggleCamera()    
+//        cameraView.toggleCamera()
+        cameraView.analyzer = nil
     }
 }
 
@@ -48,3 +59,18 @@ extension ViewController {
     }
 }
 
+/// MARK: Image Analyzer
+extension ViewController : ImageAnalyzer {
+    func analyze(image: ImageProxy) {
+        guard let buffer = image.buffer else {
+            return
+        }
+        image.use { _ in
+            let ciImage = CIImage(cvPixelBuffer: buffer)
+            let features = faceDetector.features(in: ciImage, options: [
+                CIDetectorSmile: true,
+                CIDetectorEyeBlink: true
+            ]).compactMap({ $0 as? CIFaceFeature })
+        }
+    }
+}

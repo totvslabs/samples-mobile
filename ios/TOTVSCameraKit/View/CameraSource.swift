@@ -33,7 +33,7 @@ class CameraSource : NSObject {
         cameraView.previewView
     }
     
-    var analyzer: ImageAnalyzer? = nil {
+    weak var analyzer: ImageAnalyzer? = nil {
         didSet {
             if let _ = analyzer, sessionSetupState != .undetermined {
                 installAnalyzer()
@@ -655,7 +655,20 @@ extension CameraSource {
 extension CameraSource : AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if let connection = output.connection(with: .video) {
-            print("Receiving images: orientation: \(connection.videoOrientation.rawValue)")
+            
+            let desc = CMSampleBufferGetFormatDescription(sampleBuffer)!
+            let bufferRect = CMVideoFormatDescriptionGetCleanAperture(desc, originIsAtTopLeft: false)
+            
+            let info = ImageInfoImpl(
+                timestamp: Int64(Date().timeIntervalSince1970 * 1000),
+                orientation: UIDeviceOrientation(videoOrientation: connection.videoOrientation) ?? UIDevice.current.orientation
+            )
+            let proxy = ImageProxyImpl(
+                buffer: CMSampleBufferGetImageBuffer(sampleBuffer),
+                imageRect: bufferRect,
+                imageInfo: info
+            )
+            analyzer?.analyze(image: proxy)
         }
     }
 }
@@ -673,6 +686,18 @@ fileprivate extension AVCaptureVideoOrientation {
     
     init?(interfaceOrientation: UIInterfaceOrientation) {
         switch interfaceOrientation {
+        case .portrait: self = .portrait
+        case .portraitUpsideDown: self = .portraitUpsideDown
+        case .landscapeLeft: self = .landscapeLeft
+        case .landscapeRight: self = .landscapeRight
+        default: return nil
+        }
+    }
+}
+
+fileprivate extension UIDeviceOrientation {
+    init?(videoOrientation: AVCaptureVideoOrientation) {
+        switch videoOrientation {
         case .portrait: self = .portrait
         case .portraitUpsideDown: self = .portraitUpsideDown
         case .landscapeLeft: self = .landscapeLeft

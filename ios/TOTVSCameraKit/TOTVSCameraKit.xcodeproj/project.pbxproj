@@ -17,6 +17,10 @@
 		658BF33724B242BB006B5ED8 /* OutputFileOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF33124B242BB006B5ED8 /* OutputFileOptions.swift */; };
 		658BF33824B242BB006B5ED8 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF33224B242BB006B5ED8 /* Camera.swift */; };
 		658BF33924B242BB006B5ED8 /* CaptureCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF33324B242BB006B5ED8 /* CaptureCallbacks.swift */; };
+		65DF07DC24B66A0500E6B4C6 /* ImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DF07DB24B66A0500E6B4C6 /* ImageInfo.swift */; };
+		65DFAE9624B78346008E8317 /* ImageInfoImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DFAE9524B78346008E8317 /* ImageInfoImpl.swift */; };
+		65DFAE9824B78355008E8317 /* ImageProxyImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DFAE9724B78355008E8317 /* ImageProxyImpl.swift */; };
+		65DFAE9B24B79113008E8317 /* GraphicOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DFAE9A24B79113008E8317 /* GraphicOverlay.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +36,10 @@
 		658BF33124B242BB006B5ED8 /* OutputFileOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutputFileOptions.swift; sourceTree = "<group>"; };
 		658BF33224B242BB006B5ED8 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		658BF33324B242BB006B5ED8 /* CaptureCallbacks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaptureCallbacks.swift; sourceTree = "<group>"; };
+		65DF07DB24B66A0500E6B4C6 /* ImageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInfo.swift; sourceTree = "<group>"; };
+		65DFAE9524B78346008E8317 /* ImageInfoImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInfoImpl.swift; sourceTree = "<group>"; };
+		65DFAE9724B78355008E8317 /* ImageProxyImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProxyImpl.swift; sourceTree = "<group>"; };
+		65DFAE9A24B79113008E8317 /* GraphicOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphicOverlay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +81,7 @@
 				658BF33024B242BB006B5ED8 /* ImageAnalyzer.swift */,
 				658BF32F24B242BB006B5ED8 /* ImageProxy.swift */,
 				658BF33124B242BB006B5ED8 /* OutputFileOptions.swift */,
+				65DF07DB24B66A0500E6B4C6 /* ImageInfo.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -80,10 +89,12 @@
 		658BF32424B24162006B5ED8 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				65DFAE9924B7876C008E8317 /* Core */,
 				658BF32624B242B1006B5ED8 /* CameraSource.swift */,
 				658BF32924B242B2006B5ED8 /* CameraView.swift */,
 				658BF32824B242B2006B5ED8 /* CaptureProcessor.swift */,
 				658BF32724B242B1006B5ED8 /* PreviewView.swift */,
+				65DFAE9A24B79113008E8317 /* GraphicOverlay.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -93,6 +104,15 @@
 			children = (
 			);
 			path = Vision;
+			sourceTree = "<group>";
+		};
+		65DFAE9924B7876C008E8317 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				65DFAE9524B78346008E8317 /* ImageInfoImpl.swift */,
+				65DFAE9724B78355008E8317 /* ImageProxyImpl.swift */,
+			);
+			path = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,9 +197,13 @@
 				658BF33424B242BB006B5ED8 /* CameraFacing.swift in Sources */,
 				658BF33924B242BB006B5ED8 /* CaptureCallbacks.swift in Sources */,
 				658BF33624B242BB006B5ED8 /* ImageAnalyzer.swift in Sources */,
+				65DFAE9B24B79113008E8317 /* GraphicOverlay.swift in Sources */,
 				658BF32A24B242B2006B5ED8 /* CameraSource.swift in Sources */,
 				658BF32C24B242B2006B5ED8 /* CaptureProcessor.swift in Sources */,
 				658BF32B24B242B2006B5ED8 /* PreviewView.swift in Sources */,
+				65DFAE9824B78355008E8317 /* ImageProxyImpl.swift in Sources */,
+				65DF07DC24B66A0500E6B4C6 /* ImageInfo.swift in Sources */,
+				65DFAE9624B78346008E8317 /* ImageInfoImpl.swift in Sources */,
 				658BF33524B242BB006B5ED8 /* ImageProxy.swift in Sources */,
 				658BF32D24B242B2006B5ED8 /* CameraView.swift in Sources */,
 				658BF33724B242BB006B5ED8 /* OutputFileOptions.swift in Sources */,

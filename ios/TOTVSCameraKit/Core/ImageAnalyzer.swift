@@ -11,7 +11,7 @@ import UIKit
 /**
  * Interface to plug analysis on the camera device.
  */
-public protocol ImageAnalyzer {
+public protocol ImageAnalyzer : class {
     /**
      @method analyze(image:):
      @abstract

@@ -3,6 +3,8 @@ package com.totvs.clockin.vision
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
+import com.totvs.camera.view.CameraView
+import com.totvs.camera.view.GraphicOverlay
 import com.totvs.clockin.vision.annotations.LivenessMode
 import com.totvs.clockin.vision.core.LivenessModes
 import com.totvs.clockin.vision.core.Model

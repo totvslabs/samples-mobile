@@ -156,7 +156,6 @@ class MainActivity : AppCompatActivity() {
         val faceGraphics = FaceGraphic(this).apply {
             camera.addOverlayGraphic(this)
         }
-
         // face detections
         analyzer.detections
             .filterIsInstance<FaceObject>()

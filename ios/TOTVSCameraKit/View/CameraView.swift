@@ -13,15 +13,16 @@ open class CameraView : UIView {
     /// CameraDevice preview view
     private(set) var previewView: PreviewView!
     
+    /// [GraphicOverlay] offered by the [CameraView] so that graphics can be rendered on top
+    /// of the preview images
+    public private(set) var graphicOverlay: GraphicOverlay!
+    
     /// CameraSource module that handle the camera device
     private lazy var cameraSource = CameraSource(cameraView: self)
     
-    var analyzer: ImageAnalyzer? = nil {
-        didSet {
-            if let analzyer = analyzer {
-                cameraSource.analyzer = analzyer
-            }
-        }
+    open var analyzer: ImageAnalyzer? {
+        get { cameraSource.analyzer }
+        set { cameraSource.analyzer = newValue }
     }
         
     /// Current device orienation
@@ -56,8 +57,12 @@ open class CameraView : UIView {
 private extension CameraView {
     func applyInit() {
         previewView = addPreviewView()
+        graphicOverlay = addGraphicOverlay()
         
         focusRecogninzer = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        // TODO(jansel) - if it remains that GraphicOverlay is a non-user-interactive view then, this is
+        //                OK, otherwise we might change isUserInteractionEnabled down below and set GraphicOverlay
+        //                as the top level tap receiver.
         previewView.addGestureRecognizer(focusRecogninzer)
     }
     
@@ -78,6 +83,23 @@ private extension CameraView {
         ])
         return previewView
     }
+    
+    func addGraphicOverlay() -> GraphicOverlay {
+        let overlay = GraphicOverlay()
+        /// drop inferred constraints.
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+        /// let's disable user interaction on the overlay
+        overlay.isUserInteractionEnabled = false
+        addSubview(overlay)
+        /// properly adjust preview view.
+        NSLayoutConstraint.activate([
+            overlay.leadingAnchor.constraint(equalTo: leadingAnchor),
+            overlay.trailingAnchor.constraint(equalTo: trailingAnchor),
+            overlay.topAnchor.constraint(equalTo: topAnchor),
+            overlay.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+        return overlay
+    }
 }
 
 
@@ -85,6 +107,21 @@ private extension CameraView {
 extension CameraView {
     @objc private func handleTap(_ recognizer: UITapGestureRecognizer) {
         cameraSource.focusAndExpose(at: recognizer.location(in: self))
+    }
+}
+
+/// MARK: Graphic Overlay
+extension CameraView {
+    public func addGraphic(_ view: UIView) {
+        view.removeFromSuperview()
+        graphicOverlay.addSubview(view)
+    }
+    
+    public func removeGraphic(_ view: UIView) {
+        guard view.superview == graphicOverlay else {
+            return
+        }
+        view.removeFromSuperview()
     }
 }
 
