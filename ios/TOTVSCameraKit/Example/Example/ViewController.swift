@@ -111,7 +111,7 @@ extension ViewController {
     }
     
     func renderOverlays(of faces: [Face], width: CGFloat, height: CGFloat) {
-        for face in faces {             
+        for face in faces {
             // this step is needed because we need a unit rectangle for the next step.
             let normalizedFrame = CGRect(
                 x: face.frame.origin.x / width,
