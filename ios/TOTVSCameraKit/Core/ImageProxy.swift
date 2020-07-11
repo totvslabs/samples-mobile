@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreMedia
 
 /**
  A public proxy with the same interface as `CGImage`.
@@ -35,53 +36,37 @@ public protocol ImageProxy {
      @discussion
         Since this is a proxy around an image, is possible that over time
         we wrap here another representation of image, hence this might return null
-        under those conditions.
-     
-        We recommend to use [buffer] for analysis instead, since accesing the underlying CGImage
-        requires a creation of such image from the buffer. It might be more optimized to use
-        the buffer directly.    
+        under those conditions.            
      */
-    var image: CGImage? { get }
-    
+    var image: CIImage? { get }
+
     /**
      @property buffer
      @abstract
-        Raw image buffer for a single capture.
+        Raw buffer for a single capture.
      
      @discussion
         Since this is a proxy around an image buffer, is possible that over time
         we wrap here another representation of image buffer, hence this might return null
         under those conditions.
      
-         We recommend to use [buffer] for analysis instead, since accesing the underlying CGImage
-         requires a creation of such image from the buffer. It might be more optimized to use
-         the buffer directly.
+        This is preffered over [image]
      */
-    var buffer: CVImageBuffer? { get }
-    
-    /**
-     @property cropRect
-     @abstract
-        Get/Set the crop rectangle of the image.
-     
-     @discussion
-        This can be set to mirror the image size
-     */
-    var cropRect: CGRect  { get }
-    
+    var buffer: CMSampleBuffer? { get }
+        
     /**
      @property width
      @abstract
         Returns the image width.
      */
-    var width: Float { get }
+    var width: Int { get }
 
     /**
      @property height
      @abstract
         Returns the image height.
      */
-    var height: Float { get }
+    var height: Int { get }
     
     /**
      @property imageInfo
@@ -93,14 +78,13 @@ public protocol ImageProxy {
 
 /// MARK: Use handy extension
 public extension ImageProxy {
-    func use<R>(_ block: (ImageProxy) throws -> R) -> R? {
+    func use(_ block: (ImageProxy) throws -> Void) {
         defer {
             close()
         }
         do {
-            return try block(self)
+            try block(self)
         } catch {
         }
-        return nil
     }
 }

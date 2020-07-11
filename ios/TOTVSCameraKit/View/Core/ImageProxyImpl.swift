@@ -7,40 +7,46 @@
 //
 
 import UIKit
+import CoreMedia
 
 /**
 * Concrete implementation of [ImageProxy]
 */
 class ImageProxyImpl : ImageProxy {
     
-    private(set )var buffer: CVImageBuffer?
-    
     let imageInfo: ImageInfo
     
-    var image: CGImage? {
-        get {
-            guard let buffer = buffer else {
-                return nil
-            }
-            let context = CIContext()
-            let image = CIImage(cvPixelBuffer: buffer)
-            return context.createCGImage(image, from: image.extent)
-        }
-    }
+    var image: CIImage?
     
-    var cropRect: CGRect
+    var buffer: CMSampleBuffer?
     
-    var width: Float  { Float(cropRect.width)  }
+    var width: Int
     
-    var height: Float { Float(cropRect.height) }
+    var height: Int
     
-    init(buffer: CVImageBuffer?, imageRect: CGRect, imageInfo: ImageInfo) {
-        self.buffer = buffer
+    init(image: CIImage, width: Int, height: Int, imageInfo: ImageInfo) {
+        self.image = image
+        self.buffer = nil
+        self.width = width
+        self.height = height
         self.imageInfo = imageInfo
-        self.cropRect = imageRect
     }
+    
+    init(buffer: CMSampleBuffer, width: Int, height: Int, imageInfo: ImageInfo) {
+        self.image = nil
+        self.buffer = buffer
+        self.width = width
+        self.height = height
+        self.imageInfo = imageInfo
+    }
+    
     
     func close() {
+        image = nil
         buffer = nil
+    }
+    
+    deinit {
+        close()
     }
 }

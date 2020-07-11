@@ -1,55 +1,13 @@
 PODS:
-  - Firebase/CoreOnly (6.27.0):
-    - FirebaseCore (= 6.8.0)
-  - Firebase/MLVision (6.27.0):
-    - Firebase/CoreOnly
-    - FirebaseMLVision (~> 0.20.1)
-  - FirebaseCore (6.8.0):
-    - FirebaseCoreDiagnostics (~> 1.3)
-    - GoogleUtilities/Environment (~> 6.5)
-    - GoogleUtilities/Logger (~> 6.5)
-  - FirebaseCoreDiagnostics (1.4.0):
-    - GoogleDataTransportCCTSupport (~> 3.1)
-    - GoogleUtilities/Environment (~> 6.5)
-    - GoogleUtilities/Logger (~> 6.5)
-    - nanopb (~> 1.30905.0)
-  - FirebaseInstallations (1.4.0):
-    - FirebaseCore (~> 6.8)
-    - GoogleUtilities/Environment (~> 6.6)
-    - GoogleUtilities/UserDefaults (~> 6.6)
-    - PromisesObjC (~> 1.2)
-  - FirebaseInstanceID (4.4.0):
-    - FirebaseCore (~> 6.8)
-    - FirebaseInstallations (~> 1.0)
-    - GoogleUtilities/Environment (~> 6.5)
-    - GoogleUtilities/UserDefaults (~> 6.5)
-  - FirebaseMLCommon (0.20.1):
-    - FirebaseCore (~> 6.7)
-    - FirebaseInstanceID (~> 4.3)
-    - GoogleToolboxForMac/Logger (~> 2.1)
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
-    - GoogleUtilities/UserDefaults (~> 6.0)
-    - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.12)
-  - FirebaseMLVision (0.20.1):
-    - FirebaseCore (~> 6.7)
-    - FirebaseMLCommon (~> 0.20)
-    - GoogleAPIClientForREST/Core (~> 1.3)
-    - GoogleAPIClientForREST/Vision (~> 1.3)
-    - GoogleToolboxForMac/Logger (~> 2.1)
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-    - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.12)
-  - GoogleAPIClientForREST/Core (1.4.2):
-    - GTMSessionFetcher (>= 1.1.7)
-  - GoogleAPIClientForREST/Vision (1.4.2):
-    - GoogleAPIClientForREST/Core
-    - GTMSessionFetcher (>= 1.1.7)
-  - GoogleDataTransport (6.2.1)
-  - GoogleDataTransportCCTSupport (3.2.0):
-    - GoogleDataTransport (~> 6.1)
-    - nanopb (~> 1.30905.0)
+  - GoogleDataTransport (3.3.1)
+  - GoogleDataTransportCCTSupport (1.3.1):
+    - GoogleDataTransport (~> 3.3)
+    - nanopb (~> 0.3.901)
+  - GoogleMLKit/FaceDetection (0.61.0):
+    - GoogleMLKit/MLKitCore
+    - MLKitFaceDetection (~> 0.61.0)
+  - GoogleMLKit/MLKitCore (0.61.0):
+    - MLKitCommon (~> 0.61.0)
   - GoogleToolboxForMac/DebugUtils (2.2.2):
     - GoogleToolboxForMac/Defines (= 2.2.2)
   - GoogleToolboxForMac/Defines (2.2.2)
@@ -68,16 +26,33 @@ PODS:
     - GoogleUtilities/Environment
   - GoogleUtilities/UserDefaults (6.6.0):
     - GoogleUtilities/Logger
-  - GTMSessionFetcher (1.4.0):
-    - GTMSessionFetcher/Full (= 1.4.0)
+  - GoogleUtilitiesComponents (1.0.0):
+    - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.4.0)
-  - GTMSessionFetcher/Full (1.4.0):
-    - GTMSessionFetcher/Core (= 1.4.0)
-  - nanopb (1.30905.0):
-    - nanopb/decode (= 1.30905.0)
-    - nanopb/encode (= 1.30905.0)
-  - nanopb/decode (1.30905.0)
-  - nanopb/encode (1.30905.0)
+  - MLKitCommon (0.61.0):
+    - GoogleDataTransport (~> 3.2)
+    - GoogleDataTransportCCTSupport (~> 1.2)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
+    - GoogleUtilities/UserDefaults (~> 6.0)
+    - GoogleUtilitiesComponents (~> 1.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+    - Protobuf (~> 3.12)
+  - MLKitFaceDetection (0.61.0):
+    - MLKitCommon (~> 0.61)
+    - MLKitVision (~> 0.61)
+  - MLKitVision (0.61.0):
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - GTMSessionFetcher/Core (~> 1.1)
+    - MLKitCommon (~> 0.61)
+    - Protobuf (~> 3.12)
+  - nanopb (0.3.9011):
+    - nanopb/decode (= 0.3.9011)
+    - nanopb/encode (= 0.3.9011)
+  - nanopb/decode (0.3.9011)
+  - nanopb/encode (0.3.9011)
   - PromisesObjC (1.2.9)
   - Protobuf (3.12.0)
   - TOTVSCameraKit (1.0.0):
@@ -88,24 +63,21 @@ PODS:
     - TOTVSCameraKit/Core
 
 DEPENDENCIES:
-  - Firebase/MLVision (= 6.27.0)
+  - GoogleMLKit/FaceDetection
   - TOTVSCameraKit (from `../`)
 
 SPEC REPOS:
   trunk:
-    - Firebase
-    - FirebaseCore
-    - FirebaseCoreDiagnostics
-    - FirebaseInstallations
-    - FirebaseInstanceID
-    - FirebaseMLCommon
-    - FirebaseMLVision
-    - GoogleAPIClientForREST
     - GoogleDataTransport
     - GoogleDataTransportCCTSupport
+    - GoogleMLKit
     - GoogleToolboxForMac
     - GoogleUtilities
+    - GoogleUtilitiesComponents
     - GTMSessionFetcher
+    - MLKitCommon
+    - MLKitFaceDetection
+    - MLKitVision
     - nanopb
     - PromisesObjC
     - Protobuf
@@ -115,24 +87,21 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Firebase: fc4cbf6f1592636431821ef9a3c557e4dfd9f268
-  FirebaseCore: feda061cb1ee6d8ad4824f4a4a8ffbcfe284f595
-  FirebaseCoreDiagnostics: 4505e4d4009b1d93f605088ee7d7764d5f0d1c84
-  FirebaseInstallations: 293f567159b6d66d1c990f13bb868066096c94ec
-  FirebaseInstanceID: 3b119bfe90e904851218159c9a4ecb847cc51d18
-  FirebaseMLCommon: 5e1184cfdddbd097f55cad75b598881d348d900f
-  FirebaseMLVision: 485358b97d3332669ecc4fed55ee360aaef2813d
-  GoogleAPIClientForREST: 9f49df9fac7867b459187e687fed3066b2be049a
-  GoogleDataTransport: 9a8a16f79feffc7f42096743de2a7c4815e84020
-  GoogleDataTransportCCTSupport: 489c1265d2c85b68187a83a911913d190012158d
+  GoogleDataTransport: 0048df6388dab1c254799f2a30365b1dffe20422
+  GoogleDataTransportCCTSupport: f880d70972efa2ed1be4e9173a0f4c5f3dc2d176
+  GoogleMLKit: e05f6a167cfddf82593168561917bebd920f6a82
   GoogleToolboxForMac: 800648f8b3127618c1b59c7f97684427630c5ea3
   GoogleUtilities: 39530bc0ad980530298e9c4af8549e991fd033b1
+  GoogleUtilitiesComponents: a69c0b3b369ba443e988141e75ef49d9010b1c80
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
-  nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
+  MLKitCommon: 820fbd1d5af7bb75c4d697ed44397e0ba7443ccb
+  MLKitFaceDetection: a199f6b8196b1394ba113b098b85f91ea9f33ed8
+  MLKitVision: 192a127e63701d1c061c7a45538557486bc7a4d6
+  nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
   Protobuf: 2793fcd0622a00b546c60e7cbbcc493e043e9bb9
   TOTVSCameraKit: 9b1b194752e814f4a16a79723acb6eeacd0918c9
 
-PODFILE CHECKSUM: 7251d0943014b2db2f98c675bb87ce26b1f8bc5a
+PODFILE CHECKSUM: d5ec264c9733e6fae156dd73e0ad794e04ceaf33
 
 COCOAPODS: 1.8.4

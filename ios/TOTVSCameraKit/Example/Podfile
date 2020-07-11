@@ -7,6 +7,6 @@ target 'Example' do
 
   # Pods for Example
   
-  pod 'Firebase/MLVision', '6.27.0'
+  pod 'GoogleMLKit/FaceDetection'
   pod 'TOTVSCameraKit', :path => '../'
 end

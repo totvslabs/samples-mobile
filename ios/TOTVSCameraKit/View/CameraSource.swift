@@ -95,7 +95,7 @@ class CameraSource : NSObject {
 }
 
 
-/// MARK: Lifecycle
+// MARK: - Lifecycle
 extension CameraSource {
     func startRunning() {
         previewView.session = session
@@ -147,7 +147,7 @@ extension CameraSource {
     }
 }
 
-/// MARK: Session Management
+// MARK: - Session Management
 private extension CameraSource {
     func configureSession() {
         guard sessionSetupState == .undetermined else {
@@ -155,10 +155,10 @@ private extension CameraSource {
         }
         session.beginConfiguration()
         /**
-         Do not create an AVCaptureMovieFileOutput when setting up the session because
-         Live Photo is not supported when AVCCaptureMovieFileOutput is added to the session.
+         Set this property to control the quality of the images captured from the camera device.
+         This will help with performance, quality of frames, speed of response, FPS, etc.
          */
-        session.sessionPreset = .photo
+        session.sessionPreset = .iFrame1280x720
             
         /// - TAG: CameraDeviceInput
         do {
@@ -198,7 +198,7 @@ private extension CameraSource {
         if nil != analyzer {
             if session.canAddOutput(dataOutput) {
                 session.addOutput(dataOutput)
-                dataOutput.setSampleBufferDelegate(self, queue: analysisQueue)
+                configureVideoDataOutput()
             } else {
                 print("\(TAG): Couldn't add data output to session")
                 session.commitConfiguration()
@@ -214,6 +214,14 @@ private extension CameraSource {
         session.commitConfiguration()
         
         sessionSetupState = .configured
+    }
+    
+    func configureVideoDataOutput() {
+        dataOutput.videoSettings = [
+            (kCVPixelBufferPixelFormatTypeKey as String): kCVPixelFormatType_32BGRA,
+        ]
+        dataOutput.alwaysDiscardsLateVideoFrames = true
+        dataOutput.setSampleBufferDelegate(self, queue: analysisQueue)
     }
     
     func bestCameraDevice(forFacing facing: CameraFacing) -> AVCaptureDevice? {
@@ -232,49 +240,29 @@ private extension CameraSource {
         }
         // change preview orientation
         previewView.videoPreviewLayer.connection?.videoOrientation = videoOrientation
-        // change image data output orientation
-        if nil != analyzer {
-            sessionQueue.async {
-                if let dataConnection = self.dataOutput.connection(with: .video) {
-                    dataConnection.videoOrientation = videoOrientation
-                }
-            }
-        }
     }
     
     func setCameraOrientation(orientation: UIDeviceOrientation) {
         if let connection = previewView.videoPreviewLayer.connection {
             guard let deviceOrientation = AVCaptureVideoOrientation(deviceOrientation: orientation),
-                orientation.isPortrait || orientation.isLandscape else {
+                orientation.isPortrait || orientation.isLandscape, deviceOrientation != connection.videoOrientation
+            else {
                 return 
             }
             // change preview orientation
             connection.videoOrientation = deviceOrientation
-            
-            if nil != analyzer {
-                // change image data output orientation
-                sessionQueue.async {
-                    if let dataConnection = self.dataOutput.connection(with: .video) {
-                        dataConnection.videoOrientation = deviceOrientation
-                    }
-                }
-            }
         }        
     }
 }
 
-/// MARK: Install Image Analyzer
+// MARK: - Install Image Analyzer
 private extension CameraSource {
     func installAnalyzer() {
         sessionQueue.async {
             self.session.beginConfiguration()
             if self.session.canAddOutput(self.dataOutput) {
                 self.session.addOutput(self.dataOutput)
-                self.dataOutput.setSampleBufferDelegate(self, queue: self.analysisQueue)
-                
-                DispatchQueue.main.async {
-                    self.setCameraOrientation(orientation: self.cameraView.windowOrientation)
-                }
+                self.configureVideoDataOutput()
             } else {
                 print("\(TAG): Couldn't add data output to session")
             }
@@ -291,7 +279,7 @@ private extension CameraSource {
     }
 }
 
-/// MARK: Observer Interruption / KVO and Notifications
+// MARK: - Observer Interruption / KVO and Notifications
 private extension CameraSource {
     func addObservers() {
         observeSessionStatus()
@@ -374,7 +362,7 @@ private extension CameraSource {
     }
 }
 
-/// MARK: Focus Changes
+// MARK: - Focus Changes
 extension CameraSource {
     
     @objc private func subjectAreaDidChange(notification: NSNotification) {
@@ -421,7 +409,7 @@ extension CameraSource {
     }
 }
 
-/// MARK: Handle Runtime Error
+// MARK: - Handle Runtime Error
 private extension CameraSource {
     @objc func sessionRuntimeError(notification: NSNotification) {
         guard let error = notification.userInfo?[AVCaptureSessionErrorKey] as? AVError else {
@@ -440,7 +428,7 @@ private extension CameraSource {
     }
 }
 
-/// MARK: Handle Interruptionss
+// MARK: - Handle Interruptionss
 /**
  * A session can only run when the app is still full screen. It will be interrupted
  * in a multi-app layout, introduced in iOS 9, see also the documentation of
@@ -470,7 +458,7 @@ private extension CameraSource {
     }
 }
 
-/// MARK: Handle System Pressure
+// MARK: - Handle System Pressure
 private extension CameraSource {
     func adjustFrameRateFor(systemPressureState: AVCaptureDevice.SystemPressureState) {
         let pressureLevel = systemPressureState.level
@@ -491,13 +479,14 @@ private extension CameraSource {
     }
 }
 
+// MARK: - Video Orientation
 private extension CameraSource {
     @objc func adjustVideoOrientation(notification: NSNotification) {
         setCameraOrientation(orientation: UIDevice.current.orientation)
     }
 }
 
-/// MARK: Camera Position
+// MARK: - Camera Position
 extension CameraSource {
     func toggleCamera() {
         if facing == .back {
@@ -549,7 +538,7 @@ extension CameraSource {
     }
 }
 
-/// MARK: Torch & Zoom
+// MARK: - Torch & Zoom
 extension CameraSource {
     var isTorchEnabled: Bool {
         get {
@@ -610,7 +599,7 @@ extension CameraSource {
     }
 }
 
-/// MARK: Captures
+// MARK: - Captures
 extension CameraSource {
     func takePicture(_ onCaptured: @escaping OnImageCaptured) {
     }
@@ -651,28 +640,32 @@ extension CameraSource {
     }
 }
 
-/// MARK: Image Data Analysis
+// MARK: - Image Data Analysis
 extension CameraSource : AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        if let connection = output.connection(with: .video) {
-            
-            let desc = CMSampleBufferGetFormatDescription(sampleBuffer)!
-            let bufferRect = CMVideoFormatDescriptionGetCleanAperture(desc, originIsAtTopLeft: false)
-            
-            let info = ImageInfoImpl(
-                timestamp: Int64(Date().timeIntervalSince1970 * 1000),
-                orientation: UIDeviceOrientation(videoOrientation: connection.videoOrientation) ?? UIDevice.current.orientation
-            )
-            let proxy = ImageProxyImpl(
-                buffer: CMSampleBufferGetImageBuffer(sampleBuffer),
-                imageRect: bufferRect,
-                imageInfo: info
-            )
-            analyzer?.analyze(image: proxy)
-        }
+        
+        let buffer = CMSampleBufferGetImageBuffer(sampleBuffer)!
+        let width  = CVPixelBufferGetWidth(buffer)
+        let height = CVPixelBufferGetHeight(buffer)
+        let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+        
+        
+        let info = ImageInfoImpl(
+            timestamp: Int64(timestamp.seconds),
+            orientation: UIDevice.current.orientation
+        )
+        let proxy = ImageProxyImpl(
+            buffer: sampleBuffer,
+            width: width,
+            height: height,
+            imageInfo: info
+        )
+        
+        analyzer?.analyze(image: proxy)
     }
 }
 
+// MARK: - Local Extensions
 fileprivate extension AVCaptureVideoOrientation {
     init?(deviceOrientation: UIDeviceOrientation) {
         switch deviceOrientation {
