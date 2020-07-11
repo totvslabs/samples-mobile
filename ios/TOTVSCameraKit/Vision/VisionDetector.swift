@@ -33,21 +33,14 @@ import Foundation
 *
 * @see [FaceDetector], [FastFaceDetector] and [BarcodeDetector]
 */
-public protocol VisionDetector {
-    associatedtype T : VisionObject
-    
+public protocol VisionDetector : class {
     /**
      * Key of this detector
      */
-    var key: DetectorKey { get }
+    var key: AnyHashable { get }
     
     /**
      * Run detection on [image] and report the result back on [onDetected]
      */
-    func detect(on queue: DispatchQueue, image: ImageProxy, onDetected: (T) -> Void)
+    func detect<T : VisionObject>(on queue: DispatchQueue, image: ImageProxy, onDetected: (T) -> Void)
 }
-
-/**
- * Detector key
- */
-public protocol DetectorKey { }
