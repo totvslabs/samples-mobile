@@ -3,10 +3,10 @@ package com.totvs.camera.vision.barcode
 import android.util.Log
 import android.util.Size
 import androidx.core.graphics.toRectF
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.mlkit.vision.barcode.Barcode
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.common.InputImage
 import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
@@ -15,7 +15,6 @@ import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.core.VisionBarcodeFormat
 import com.totvs.camera.vision.core.VisionModuleOptions.DEBUG_ENABLED
 import com.totvs.camera.vision.utils.exclusiveUse
-import com.totvs.camera.vision.utils.toFirebaseVisionRotation
 import java.util.concurrent.Executor
 
 /**
@@ -29,8 +28,10 @@ import java.util.concurrent.Executor
 class BarcodeDetector(
     @BarcodeFormat private val primaryFormat: Int = VisionBarcodeFormat.QR_CODE,
     @BarcodeFormat private vararg val formats: Int,
-    private val selectBarcode: SelectionStrategy<FirebaseVisionBarcode> = FIRST
+    private val selectBarcode: SelectionStrategy<Barcode> = FIRST
 ) : AbstractVisionDetector<BarcodeObject>(BarcodeDetector) {
+
+    private val detector by lazy { BarcodeScanning.getClient(getDetectorOptions()) }
 
     override fun detect(
         executor: Executor,
@@ -40,16 +41,12 @@ class BarcodeDetector(
         if (image.image == null) {
             return onDetected(NullBarcodeObject)
         }
-        val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(getDetectorOptions())
-
-        val rotation = image.imageInfo.rotationDegrees
-
         // we require to use this image exclusively and nobody else can read the data until
         // we're done with it.
-        val visionImage = image.exclusiveUse {
-            FirebaseVisionImage.fromMediaImage(
+        val inputImage = image.exclusiveUse {
+            InputImage.fromMediaImage(
                 image.image!!,
-                rotation.toFirebaseVisionRotation()
+                image.imageInfo.rotationDegrees
             )
         }
 
@@ -57,13 +54,13 @@ class BarcodeDetector(
         // because if the executor is shut down before this callback is called,
         // Firebase will popup the exception, here instead we log it
 
-        detector.detectInImage(visionImage)
+        detector.process(inputImage)
             .addOnSuccessListener { barcodes ->
                 executor.executeCatching(onDetected) {
                     onDetected(
                         if (barcodes.isEmpty()) NullBarcodeObject else mapToBarcodeObject(
                             selectBarcode(barcodes),
-                            rotation,
+                            image.imageInfo.rotationDegrees,
                             Size(image.width, image.height)
                         )
                     )
@@ -75,10 +72,10 @@ class BarcodeDetector(
     }
 
     /**
-     * Map the firebase vision object to face object
+     * Map the MLKIT vision barcode to barcode object
      */
     private fun mapToBarcodeObject(
-        barcode: FirebaseVisionBarcode,
+        barcode: Barcode,
         rotation: Int,
         sourceSize: Size
     ) = BarcodeObject(
@@ -90,9 +87,9 @@ class BarcodeDetector(
     )
 
     /**
-     * Map the firebase vision object to barcode object
+     * Get the detector options used for this instance of the barcode detector.
      */
-    private fun getDetectorOptions() = FirebaseVisionBarcodeDetectorOptions.Builder()
+    private fun getDetectorOptions() = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(toFirebaseFormat(primaryFormat), *toFirebaseFormats(*formats))
         .build()
 
@@ -120,13 +117,13 @@ class BarcodeDetector(
         private const val TAG = "BarcodeDetector"
 
         /**
-         * Map [VisionBarcodeFormat] to [FirebaseVisionBarcode] constants
+         * Map [VisionBarcodeFormat] to [Barcode] constants
          */
         private fun toFirebaseFormats(@BarcodeFormat vararg formats: Int): IntArray {
             return formats.map { format ->
                 when (format) {
-                    VisionBarcodeFormat.QR_CODE -> FirebaseVisionBarcode.FORMAT_QR_CODE
-                    VisionBarcodeFormat.AZTEC -> FirebaseVisionBarcode.FORMAT_AZTEC
+                    VisionBarcodeFormat.QR_CODE -> Barcode.FORMAT_QR_CODE
+                    VisionBarcodeFormat.AZTEC -> Barcode.FORMAT_AZTEC
                     else -> throw IllegalArgumentException("Invalid barcode type $format")
                 }
             }.toIntArray()
@@ -135,16 +132,16 @@ class BarcodeDetector(
         private fun toFirebaseFormat(@BarcodeFormat format: Int) = toFirebaseFormats(format)[0]
 
         private fun fromFirebaseFormat(format: Int) = when (format) {
-            FirebaseVisionBarcode.FORMAT_QR_CODE -> VisionBarcodeFormat.QR_CODE
-            FirebaseVisionBarcode.FORMAT_AZTEC -> VisionBarcodeFormat.AZTEC
+            Barcode.FORMAT_QR_CODE -> VisionBarcodeFormat.QR_CODE
+            Barcode.FORMAT_AZTEC -> VisionBarcodeFormat.AZTEC
             else -> throw IllegalArgumentException("Invalid barcode type $format")
         }
 
         /**
          * Strategy for selecting the first barcode
          */
-        val FIRST = object : SelectionStrategy<FirebaseVisionBarcode> {
-            override fun invoke(barcodes: List<FirebaseVisionBarcode>): FirebaseVisionBarcode =
+        val FIRST = object : SelectionStrategy<Barcode> {
+            override fun invoke(barcodes: List<Barcode>): Barcode =
                 barcodes.first()
         }
     }

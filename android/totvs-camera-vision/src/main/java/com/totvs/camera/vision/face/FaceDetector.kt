@@ -1,23 +1,21 @@
 package com.totvs.camera.vision.face
 
 import android.graphics.PointF
-import android.graphics.RectF
 import android.util.Log
 import android.util.Size
 import androidx.core.graphics.toRectF
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.face.FirebaseVisionFace
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions.*
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceLandmark
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.Face
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
+import com.google.mlkit.vision.face.FaceDetectorOptions.*
+import com.google.mlkit.vision.face.FaceLandmark
 import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.VisionDetector
 import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.core.VisionModuleOptions.DEBUG_ENABLED
 import com.totvs.camera.vision.utils.exclusiveUse
-import com.totvs.camera.vision.utils.toFirebaseVisionRotation
 import java.util.concurrent.Executor
 
 /**
@@ -25,7 +23,7 @@ import java.util.concurrent.Executor
  *
  * This detector is focused in classifications and landmark detections, following the
  * recommendations on:
- * https://firebase.google.com/docs/ml-kit/android/detect-faces#performance_tips
+ * https://developers.google.com/ml-kit/vision/face-detection/android#performance_tips
  *
  * If a contour or another kind of detector is required, this detector offers an interface
  * for subclasses to customize the detector capabilities.
@@ -37,8 +35,10 @@ import java.util.concurrent.Executor
  * @see [VisionDetector]
  */
 open class FaceDetector(
-    private val selectFace: SelectionStrategy<FirebaseVisionFace> = FIRST
+    private val selectFace: SelectionStrategy<Face> = FIRST
 ) : AbstractVisionDetector<FaceObject>(FaceDetector) {
+
+    private val detector by lazy { FaceDetection.getClient(getDetectorOptions()) }
 
     override fun detect(
         executor: Executor,
@@ -48,32 +48,28 @@ open class FaceDetector(
         if (null == image.image) {
             return onDetected(NullFaceObject)
         }
-
-        val detector = FirebaseVision.getInstance().getVisionFaceDetector(getDetectorOptions())
-
-        val rotation = image.imageInfo.rotationDegrees
-
         // we require to use this image exclusively and nobody else can read the data until
         // we're done with it.
-        val visionImage = image.exclusiveUse {
-            FirebaseVisionImage.fromMediaImage(
+        val inputImage = image.exclusiveUse {
+            InputImage.fromMediaImage(
                 image.image!!,
-                rotation.toFirebaseVisionRotation()
+                image.imageInfo.rotationDegrees
             )
         }
 
         // we perform manual executor execution instead of passing the executor to Firebase
         // because if the executor is shut down before this callback is called,
         // Firebase will popup the exception, here instead we log it
+        detector.process(inputImage)
 
-        detector.detectInImage(visionImage)
+        detector.process(inputImage)
             .addOnSuccessListener { faces ->
                 // to chose the best face.
                 executor.executeCatching(onDetected) {
                     onDetected(
                         if (faces.isEmpty()) NullFaceObject else mapToFaceObject(
                             selectFace(faces),
-                            rotation,
+                            image.imageInfo.rotationDegrees,
                             Size(image.width, image.height)
                         )
                     )
@@ -90,15 +86,15 @@ open class FaceDetector(
     override fun toString() = TAG
 
     /**
-     * Get the detector used for this instance of the face detector.
+     * Get the detector options used for this instance of the face detector.
      */
-    open fun getDetectorOptions(): FirebaseVisionFaceDetectorOptions = fastModeOptions()
+    open fun getDetectorOptions(): FaceDetectorOptions = fastModeOptions()
 
     /**
-     * Map the firebase vision object to face object
+     * Map the MLKIT vision face to face object
      */
     open fun mapToFaceObject(
-        face: FirebaseVisionFace,
+        face: Face,
         rotation: Int,
         sourceSize: Size
     ) = FaceObject(
@@ -108,8 +104,8 @@ open class FaceDetector(
         width = face.boundingBox.width().toFloat(),
         height = face.boundingBox.height().toFloat(),
         eyesOpenProbability = EyesOpenProbability(
-            face.leftEyeOpenProbability,
-            face.rightEyeOpenProbability
+            face.leftEyeOpenProbability   ?: 0.0f,
+            face.rightEyeOpenProbability ?: 0.0f
         ),
         eulerZ = face.headEulerAngleZ,
         eulerY = face.headEulerAngleY,
@@ -121,17 +117,17 @@ open class FaceDetector(
      * if there's a corespondent type [Landmark] for it. If there isn't then the landmark is
      * ignored
      */
-    protected fun extractLandmarks(face: FirebaseVisionFace): List<Landmark> {
+    protected fun extractLandmarks(face: Face): List<Landmark> {
         val landmarks = mutableListOf<Landmark>()
         // left eye
-        face.getLandmark(FirebaseVisionFaceLandmark.LEFT_EYE)?.let {
+        face.getLandmark(FaceLandmark.LEFT_EYE)?.let {
             landmarks.add(LeftEye(PointF(it.position.x, it.position.y)))
         }
         // right eye
-        face.getLandmark(FirebaseVisionFaceLandmark.RIGHT_EYE)?.let {
+        face.getLandmark(FaceLandmark.RIGHT_EYE)?.let {
             landmarks.add(RightEye(PointF(it.position.x, it.position.y)))
         }
-        face.getLandmark(FirebaseVisionFaceLandmark.NOSE_BASE)?.let {
+        face.getLandmark(FaceLandmark.NOSE_BASE)?.let {
             landmarks.add(Nose(PointF(it.position.x, it.position.y)))
         }
         return landmarks
@@ -156,16 +152,18 @@ open class FaceDetector(
 
         private const val TAG = "FaceDetector"
 
-        private fun fastModeOptions(): FirebaseVisionFaceDetectorOptions = Builder()
-            .setClassificationMode(ALL_CLASSIFICATIONS)
-            .setLandmarkMode(ALL_LANDMARKS)
+        private fun fastModeOptions(): FaceDetectorOptions = Builder()
+            .setClassificationMode(CLASSIFICATION_MODE_ALL)
+            .setLandmarkMode(LANDMARK_MODE_ALL)
+            .setContourMode(CONTOUR_MODE_NONE)
+            .setPerformanceMode(PERFORMANCE_MODE_FAST)
             .build()
 
         /**
          * Strategy for selecting the first face
          */
-        val FIRST = object : SelectionStrategy<FirebaseVisionFace> {
-            override fun invoke(faces: List<FirebaseVisionFace>): FirebaseVisionFace =
+        val FIRST = object : SelectionStrategy<Face> {
+            override fun invoke(faces: List<Face>): Face =
                 faces.first()
         }
     }

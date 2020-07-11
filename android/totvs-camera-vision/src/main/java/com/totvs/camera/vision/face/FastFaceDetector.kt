@@ -18,7 +18,7 @@ import com.totvs.camera.vision.core.SelectionStrategy
 import com.totvs.camera.vision.core.VisionModuleOptions.DEBUG_ENABLED
 import com.totvs.camera.vision.utils.Images
 import com.totvs.camera.vision.utils.exclusiveUse
-import com.totvs.camera.vision.utils.toFirebaseVisionRotation
+import com.totvs.camera.vision.utils.toImageFrameRotation
 import java.util.concurrent.Executor
 
 /**
@@ -26,7 +26,7 @@ import java.util.concurrent.Executor
  *
  * This detector is focused in classifications and landmark detections, following the
  * recommendations on:
- * https://firebase.google.com/docs/ml-kit/android/detect-faces#performance_tips
+ * https://developers.google.com/ml-kit/vision/face-detection/android#performance_tips
  *
  * If a contour or another kind of detector is required, this detector offers an interface
  * for subclasses to customize the detector capabilities.
@@ -65,9 +65,7 @@ open class FastFaceDetector(
                     image.width,
                     image.height,
                     ImageFormat.NV21
-                )
-                .setRotation(rotation.toFirebaseVisionRotation())
-                .build()
+                ).setRotation(rotation.toImageFrameRotation()).build()
         }
 
         executor.executeCatching(onDetected) {
@@ -94,7 +92,7 @@ open class FastFaceDetector(
 
 
     /**
-     * Map the firebase vision object to face object
+     * Map the MLKIT vision face to face object
      */
     open fun mapToFaceObject(
         face: Face,

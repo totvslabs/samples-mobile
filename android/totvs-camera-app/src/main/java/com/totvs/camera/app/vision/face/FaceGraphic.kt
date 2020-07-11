@@ -48,7 +48,7 @@ class FaceGraphic(
 
             // third way
             face.forEach { landmark ->
-                if (landmark is LeftEye || landmark is RightEye || landmark is Nose) {
+                if (landmark is LeftEye || landmark is RightEye) {
                     val cx = translateX(landmark.position.x, face.sourceSize)
                     val cy = translateY(landmark.position.y, face.sourceSize)
 

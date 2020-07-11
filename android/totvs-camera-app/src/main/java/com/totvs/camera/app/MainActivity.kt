@@ -31,6 +31,7 @@ import com.totvs.camera.vision.DetectionAnalyzer
 import com.totvs.camera.vision.barcode.BarcodeDetector
 import com.totvs.camera.vision.barcode.BarcodeObject
 import com.totvs.camera.vision.core.VisionModuleOptions
+import com.totvs.camera.vision.face.FaceDetector
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.FastFaceDetector
 import com.totvs.camera.vision.stream.*
