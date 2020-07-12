@@ -42,5 +42,5 @@ public protocol VisionDetector : class {
     /**
      * Run detection on [image] and report the result back on [onDetected]
      */
-    func detect<T : VisionObject>(on queue: DispatchQueue, image: ImageProxy, onDetected: (T) -> Void)
+    func detect(on queue: DispatchQueue, image: ImageProxy, onDetected: (VisionObject) -> Void)
 }

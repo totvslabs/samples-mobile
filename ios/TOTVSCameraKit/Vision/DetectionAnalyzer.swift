@@ -126,6 +126,27 @@ open class DetectionAnalyzer {
 // MARK: - ImageAnalyzer
 extension DetectionAnalyzer : ImageAnalyzer {
     public func analyze(image: ImageProxy) {
-        
+        if !isBusy {
+            isBusy = true
+            
+            image.use { _ in
+                let detectors = registry.values.filter({ d in d.enabled })
+                
+                // let's synchronize the detectors to know when we can analyze another frame
+                let semaphore = DispatchSemaphore(value: detectors.count)
+                
+                detectors.forEach { it in
+                    queue.async {
+                        it.detector?.detect(on: self.queue, image: image) { [weak self] value in
+                            semaphore.signal()
+                            self?.post(value: value) // let's post the detected value to the stream
+                        }
+                    }
+                }
+                semaphore.wait()
+                // all detectors are done, let's set to analyze more images
+                isBusy = false
+            }
+        }
     }
 }
