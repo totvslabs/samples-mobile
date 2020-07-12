@@ -10,6 +10,6 @@ import Foundation
 
 public extension VisionStream {
     func connect(_ block: @escaping (T) -> Void) -> Connection {
-        return connect(receiver: BlockReceiver(block: block))
+        return connect(BlockReceiver(block: block))
     }
 }

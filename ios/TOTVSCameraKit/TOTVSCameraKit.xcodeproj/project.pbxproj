@@ -22,6 +22,7 @@
 		654C297A24BA95EB00AE75D0 /* FaceObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C297924BA95EB00AE75D0 /* FaceObject.swift */; };
 		654C297C24BA970100AE75D0 /* Landmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C297B24BA970100AE75D0 /* Landmark.swift */; };
 		654C297E24BAA38000AE75D0 /* FaceDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C297D24BAA38000AE75D0 /* FaceDetector.swift */; };
+		6576C6C424BB81110031A651 /* CountDownLatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6576C6C324BB81110031A651 /* CountDownLatch.swift */; };
 		658BF32A24B242B2006B5ED8 /* CameraSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF32624B242B1006B5ED8 /* CameraSource.swift */; };
 		658BF32B24B242B2006B5ED8 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF32724B242B1006B5ED8 /* PreviewView.swift */; };
 		658BF32C24B242B2006B5ED8 /* CaptureProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF32824B242B2006B5ED8 /* CaptureProcessor.swift */; };
@@ -56,6 +57,7 @@
 		654C297924BA95EB00AE75D0 /* FaceObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceObject.swift; sourceTree = "<group>"; };
 		654C297B24BA970100AE75D0 /* Landmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Landmark.swift; sourceTree = "<group>"; };
 		654C297D24BAA38000AE75D0 /* FaceDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetector.swift; sourceTree = "<group>"; };
+		6576C6C324BB81110031A651 /* CountDownLatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountDownLatch.swift; sourceTree = "<group>"; };
 		658BF31B24B240CC006B5ED8 /* TOTVSCameraKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TOTVSCameraKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		658BF31E24B240CC006B5ED8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		658BF32624B242B1006B5ED8 /* CameraSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraSource.swift; sourceTree = "<group>"; };
@@ -114,6 +116,14 @@
 			path = Face;
 			sourceTree = "<group>";
 		};
+		6576C6BC24BB7DE80031A651 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				6576C6C324BB81110031A651 /* CountDownLatch.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		658BF30024B23F29006B5ED8 = {
 			isa = PBXGroup;
 			children = (
@@ -163,6 +173,7 @@
 		658BF32524B24167006B5ED8 /* Vision */ = {
 			isa = PBXGroup;
 			children = (
+				6576C6BC24BB7DE80031A651 /* Utils */,
 				654C297824BA95DF00AE75D0 /* Face */,
 				654C296124BA281900AE75D0 /* Stream */,
 				65CD325F24B9518D008CA092 /* Core */,
@@ -297,6 +308,7 @@
 				654C297524BA445000AE75D0 /* BroadcastVisionStream.swift in Sources */,
 				658BF32D24B242B2006B5ED8 /* CameraView.swift in Sources */,
 				658BF33724B242BB006B5ED8 /* OutputFileOptions.swift in Sources */,
+				6576C6C424BB81110031A651 /* CountDownLatch.swift in Sources */,
 				658BF33824B242BB006B5ED8 /* Camera.swift in Sources */,
 				654C297724BA467D00AE75D0 /* DetectionAnalyzer.swift in Sources */,
 				654C297C24BA970100AE75D0 /* Landmark.swift in Sources */,

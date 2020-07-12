@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6576C6C624BB91F40031A651 /* FaceBoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6576C6C524BB91F40031A651 /* FaceBoundingBox.swift */; };
 		65E7857924B37A3700BAA62E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E7857824B37A3700BAA62E /* AppDelegate.swift */; };
 		65E7857B24B37A3700BAA62E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E7857A24B37A3700BAA62E /* SceneDelegate.swift */; };
 		65E7857D24B37A3700BAA62E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E7857C24B37A3700BAA62E /* ViewController.swift */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6576C6C524BB91F40031A651 /* FaceBoundingBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceBoundingBox.swift; sourceTree = "<group>"; };
 		65E7857524B37A3600BAA62E /* TOTVSCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TOTVSCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65E7857824B37A3700BAA62E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		65E7857A24B37A3700BAA62E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				65E7858324B37A3800BAA62E /* LaunchScreen.storyboard */,
 				65E7858624B37A3900BAA62E /* Info.plist */,
 				65E7858C24B38A7300BAA62E /* GoogleService-Info.plist */,
+				6576C6C524BB91F40031A651 /* FaceBoundingBox.swift */,
 			);
 			path = Example;
 			sourceTree = "<group>";
@@ -212,6 +215,7 @@
 			files = (
 				65E7857D24B37A3700BAA62E /* ViewController.swift in Sources */,
 				65E7857924B37A3700BAA62E /* AppDelegate.swift in Sources */,
+				6576C6C624BB91F40031A651 /* FaceBoundingBox.swift in Sources */,
 				65E7857B24B37A3700BAA62E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

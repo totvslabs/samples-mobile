@@ -30,5 +30,5 @@ open class VisionStream<T> {
      * and returns a [Connection] that the caller can use to stop receiving objects from this
      * stream.
      */
-    open func connect(receiver: VisionReceiver<T>) -> Connection { return IgnoreConnection() }
+    open func connect(_ receiver: VisionReceiver<T>) -> Connection { return IgnoreConnection() }
 }

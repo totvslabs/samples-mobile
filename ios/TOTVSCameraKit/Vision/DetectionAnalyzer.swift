@@ -110,7 +110,7 @@ open class DetectionAnalyzer {
     }
         
     private class EnabledDetector {
-        weak var detector: VisionDetector? = nil
+        var detector: VisionDetector? = nil
         var enabled: Bool = true
         
         init(detector: VisionDetector) {
@@ -133,17 +133,17 @@ extension DetectionAnalyzer : ImageAnalyzer {
                 let detectors = registry.values.filter({ d in d.enabled })
                 
                 // let's synchronize the detectors to know when we can analyze another frame
-                let semaphore = DispatchSemaphore(value: detectors.count)
+                let latch = CountDownLatch(count: Int32(detectors.count))
                 
                 detectors.forEach { it in
-                    queue.async {
+                    queue.async {                        
                         it.detector?.detect(on: self.queue, image: image) { [weak self] value in
-                            semaphore.signal()
+                            latch.countDown()
                             self?.post(value: value) // let's post the detected value to the stream
                         }
                     }
                 }
-                semaphore.wait()
+                latch.wait()
                 // all detectors are done, let's set to analyze more images
                 isBusy = false
             }

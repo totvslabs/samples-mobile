@@ -25,7 +25,7 @@ class BroadcastVisionStream : VisionStream<VisionObject> {
         receivers.removeAll(where: { $0 === receiver })
     }
     
-    override func connect(receiver: VisionReceiver<VisionObject>) -> Connection {
+    override func connect(_ receiver: VisionReceiver<VisionObject>) -> Connection {
         add(receiver: receiver)
         return ReceiverConnection(owner: self, receiver: receiver)
     }
@@ -42,6 +42,9 @@ class BroadcastVisionStream : VisionStream<VisionObject> {
         
         func dicsonnect() {
             owner?.remove(receiver: receiver)
+        }
+        deinit {
+            dicsonnect()
         }
     }
 }

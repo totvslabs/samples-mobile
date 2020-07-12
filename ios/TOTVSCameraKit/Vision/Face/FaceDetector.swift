@@ -36,7 +36,7 @@ open class FaceDetector : VisionDetector {
     
     private var detectorOptions: FaceDetectorOptions {
         let options = FaceDetectorOptions()
-        options.performanceMode = .fast
+        options.performanceMode = .accurate
         options.contourMode = .none
         options.landmarkMode = .all
         options.classificationMode = .all
@@ -66,6 +66,7 @@ open class FaceDetector : VisionDetector {
         } catch let error {
             print("FaceDetector for error at detecting faces: \(error)")
         }
+                
         guard !faces.isEmpty, let face = selectFace(faces) else {
             onDetected(NullFaceObject)
             return
@@ -141,4 +142,4 @@ fileprivate let DETECTOR_KEY = 130290
 /**
  * Strategy for selecting the most prominent face
  */
-fileprivate let SelectMostProminent : SelectionStrategy<Face> = { (objects: Array<Face>) in nil }
+fileprivate let SelectMostProminent : SelectionStrategy<Face> = { (objects: Array<Face>) in objects.first }

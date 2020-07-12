@@ -15,5 +15,6 @@
  * types without the need to have intermediaty conforming claasses.
  */
 open class VisionReceiver<T> {
+    public init() { }
     open func send(value: T) { }
 }

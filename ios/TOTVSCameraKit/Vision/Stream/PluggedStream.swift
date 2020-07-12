@@ -23,7 +23,7 @@ class PluggedStream<T> : VisionStream<T> {
         self.downstream = downstream
     }
     
-    override func connect(receiver: VisionReceiver<T>) -> Connection {
+    override func connect(_ receiver: VisionReceiver<T>) -> Connection {
         return downstream(receiver)
     }
 }

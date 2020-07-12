@@ -33,7 +33,7 @@ fileprivate class BlockStream<T> : VisionStream<T> {
         self.block = block
     }
     
-    override func connect(receiver: VisionReceiver<T>) -> Connection {
+    override func connect(_ receiver: VisionReceiver<T>) -> Connection {
         block(receiver)
         return IgnoreConnection()
     }
