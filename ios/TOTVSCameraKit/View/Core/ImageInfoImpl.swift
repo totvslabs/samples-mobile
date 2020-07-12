@@ -14,4 +14,5 @@ import UIKit
 struct ImageInfoImpl : ImageInfo {
     let timestamp: Int64
     let orientation: UIDeviceOrientation
+    var sourceFacing: CameraFacing
 }

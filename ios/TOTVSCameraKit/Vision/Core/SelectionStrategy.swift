@@ -8,8 +8,4 @@
 
 import Foundation
 
-public protocol SelectionStrategy {
-    associatedtype T
-    
-    func select(from: Array<T>) -> T?
-}
+public typealias SelectionStrategy<T> = (Array<T>) -> T?

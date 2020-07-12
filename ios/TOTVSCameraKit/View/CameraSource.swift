@@ -652,7 +652,8 @@ extension CameraSource : AVCaptureVideoDataOutputSampleBufferDelegate {
         
         let info = ImageInfoImpl(
             timestamp: Int64(timestamp.seconds),
-            orientation: UIDevice.current.orientation
+            orientation: UIDevice.current.orientation,
+            sourceFacing: facing
         )
         let proxy = ImageProxyImpl(
             buffer: sampleBuffer,

@@ -14,7 +14,7 @@
 		65E7858224B37A3800BAA62E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 65E7858124B37A3800BAA62E /* Assets.xcassets */; };
 		65E7858524B37A3800BAA62E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 65E7858324B37A3800BAA62E /* LaunchScreen.storyboard */; };
 		65E7858D24B38A7300BAA62E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 65E7858C24B38A7300BAA62E /* GoogleService-Info.plist */; };
-		925E12B2F4918D8C3DD7FFA3 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5CF38FD6CBB3809F587041 /* Pods_Example.framework */; };
+		7AE14723EE76F0DBEE9C6CFE /* libPods-Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB16F416237BF49D6797729 /* libPods-Example.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +29,7 @@
 		65E7858C24B38A7300BAA62E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		80350B97C98BECF07E9FB141 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		8D1375101B67B906825FC382 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
-		EC5CF38FD6CBB3809F587041 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DFB16F416237BF49D6797729 /* libPods-Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				925E12B2F4918D8C3DD7FFA3 /* Pods_Example.framework in Frameworks */,
+				7AE14723EE76F0DBEE9C6CFE /* libPods-Example.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,7 +47,7 @@
 		2355C865F553C2F0A6BB7D0B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EC5CF38FD6CBB3809F587041 /* Pods_Example.framework */,
+				DFB16F416237BF49D6797729 /* libPods-Example.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -105,7 +105,6 @@
 				65E7857124B37A3600BAA62E /* Sources */,
 				65E7857224B37A3600BAA62E /* Frameworks */,
 				65E7857324B37A3600BAA62E /* Resources */,
-				9C55385455CB9A285BC5BF7D /* [CP] Embed Pods Frameworks */,
 				E444083124536B37BB135BCB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -185,23 +184,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9C55385455CB9A285BC5BF7D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E444083124536B37BB135BCB /* [CP] Copy Pods Resources */ = {

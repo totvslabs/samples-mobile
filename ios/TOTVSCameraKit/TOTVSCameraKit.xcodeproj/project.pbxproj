@@ -19,6 +19,9 @@
 		654C297324BA42FE00AE75D0 /* PluggedStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C297224BA42FE00AE75D0 /* PluggedStream.swift */; };
 		654C297524BA445000AE75D0 /* BroadcastVisionStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C297424BA445000AE75D0 /* BroadcastVisionStream.swift */; };
 		654C297724BA467D00AE75D0 /* DetectionAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C297624BA467D00AE75D0 /* DetectionAnalyzer.swift */; };
+		654C297A24BA95EB00AE75D0 /* FaceObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C297924BA95EB00AE75D0 /* FaceObject.swift */; };
+		654C297C24BA970100AE75D0 /* Landmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C297B24BA970100AE75D0 /* Landmark.swift */; };
+		654C297E24BAA38000AE75D0 /* FaceDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C297D24BAA38000AE75D0 /* FaceDetector.swift */; };
 		658BF32A24B242B2006B5ED8 /* CameraSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF32624B242B1006B5ED8 /* CameraSource.swift */; };
 		658BF32B24B242B2006B5ED8 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF32724B242B1006B5ED8 /* PreviewView.swift */; };
 		658BF32C24B242B2006B5ED8 /* CaptureProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658BF32824B242B2006B5ED8 /* CaptureProcessor.swift */; };
@@ -50,6 +53,9 @@
 		654C297224BA42FE00AE75D0 /* PluggedStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluggedStream.swift; sourceTree = "<group>"; };
 		654C297424BA445000AE75D0 /* BroadcastVisionStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BroadcastVisionStream.swift; sourceTree = "<group>"; };
 		654C297624BA467D00AE75D0 /* DetectionAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionAnalyzer.swift; sourceTree = "<group>"; };
+		654C297924BA95EB00AE75D0 /* FaceObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceObject.swift; sourceTree = "<group>"; };
+		654C297B24BA970100AE75D0 /* Landmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Landmark.swift; sourceTree = "<group>"; };
+		654C297D24BAA38000AE75D0 /* FaceDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetector.swift; sourceTree = "<group>"; };
 		658BF31B24B240CC006B5ED8 /* TOTVSCameraKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TOTVSCameraKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		658BF31E24B240CC006B5ED8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		658BF32624B242B1006B5ED8 /* CameraSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraSource.swift; sourceTree = "<group>"; };
@@ -96,6 +102,16 @@
 				654C297424BA445000AE75D0 /* BroadcastVisionStream.swift */,
 			);
 			path = Stream;
+			sourceTree = "<group>";
+		};
+		654C297824BA95DF00AE75D0 /* Face */ = {
+			isa = PBXGroup;
+			children = (
+				654C297924BA95EB00AE75D0 /* FaceObject.swift */,
+				654C297B24BA970100AE75D0 /* Landmark.swift */,
+				654C297D24BAA38000AE75D0 /* FaceDetector.swift */,
+			);
+			path = Face;
 			sourceTree = "<group>";
 		};
 		658BF30024B23F29006B5ED8 = {
@@ -147,6 +163,7 @@
 		658BF32524B24167006B5ED8 /* Vision */ = {
 			isa = PBXGroup;
 			children = (
+				654C297824BA95DF00AE75D0 /* Face */,
 				654C296124BA281900AE75D0 /* Stream */,
 				65CD325F24B9518D008CA092 /* Core */,
 				65CD325D24B95187008CA092 /* VisionObject.swift */,
@@ -261,6 +278,7 @@
 				658BF32A24B242B2006B5ED8 /* CameraSource.swift in Sources */,
 				654C297124BA368C00AE75D0 /* Transform.swift in Sources */,
 				654C296D24BA35EE00AE75D0 /* BlockReceiver.swift in Sources */,
+				654C297E24BAA38000AE75D0 /* FaceDetector.swift in Sources */,
 				658BF32C24B242B2006B5ED8 /* CaptureProcessor.swift in Sources */,
 				654C296324BA325700AE75D0 /* VisionReceiver.swift in Sources */,
 				65CD325E24B95187008CA092 /* VisionObject.swift in Sources */,
@@ -272,6 +290,7 @@
 				654C296524BA32EB00AE75D0 /* Connection.swift in Sources */,
 				65DFAE9624B78346008E8317 /* ImageInfoImpl.swift in Sources */,
 				654C296724BA331900AE75D0 /* VisionStream.swift in Sources */,
+				654C297A24BA95EB00AE75D0 /* FaceObject.swift in Sources */,
 				654C296024BA26EE00AE75D0 /* VisionDetector.swift in Sources */,
 				65CD326124B9519D008CA092 /* SelectionStrategy.swift in Sources */,
 				658BF33524B242BB006B5ED8 /* ImageProxy.swift in Sources */,
@@ -280,6 +299,7 @@
 				658BF33724B242BB006B5ED8 /* OutputFileOptions.swift in Sources */,
 				658BF33824B242BB006B5ED8 /* Camera.swift in Sources */,
 				654C297724BA467D00AE75D0 /* DetectionAnalyzer.swift in Sources */,
+				654C297C24BA970100AE75D0 /* Landmark.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -58,8 +58,12 @@ PODS:
   - TOTVSCameraKit (1.0.0):
     - TOTVSCameraKit/Core (= 1.0.0)
     - TOTVSCameraKit/View (= 1.0.0)
+    - TOTVSCameraKit/Vision (= 1.0.0)
   - TOTVSCameraKit/Core (1.0.0)
   - TOTVSCameraKit/View (1.0.0):
+    - TOTVSCameraKit/Core
+  - TOTVSCameraKit/Vision (1.0.0):
+    - GoogleMLKit/FaceDetection
     - TOTVSCameraKit/Core
 
 DEPENDENCIES:
@@ -100,8 +104,8 @@ SPEC CHECKSUMS:
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
   Protobuf: 2793fcd0622a00b546c60e7cbbcc493e043e9bb9
-  TOTVSCameraKit: 9b1b194752e814f4a16a79723acb6eeacd0918c9
+  TOTVSCameraKit: e7dbfeff78e6b22050a4490a8026168435254aaa
 
-PODFILE CHECKSUM: d5ec264c9733e6fae156dd73e0ad794e04ceaf33
+PODFILE CHECKSUM: 754541f80dc88871bc358735c1ff9662128117ce
 
 COCOAPODS: 1.8.4

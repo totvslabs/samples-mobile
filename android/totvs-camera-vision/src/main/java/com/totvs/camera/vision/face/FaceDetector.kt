@@ -61,8 +61,6 @@ open class FaceDetector(
         // because if the executor is shut down before this callback is called,
         // Firebase will popup the exception, here instead we log it
         detector.process(inputImage)
-
-        detector.process(inputImage)
             .addOnSuccessListener { faces ->
                 // to chose the best face.
                 executor.executeCatching(onDetected) {

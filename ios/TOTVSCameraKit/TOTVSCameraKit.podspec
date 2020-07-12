@@ -28,8 +28,8 @@ Pod::Spec.new do |s|
     ss.source_files = "Vision/**/*.{swift,h,m}"
 
     ss.dependency 'TOTVSCameraKit/Core'
-    # ss.dependency 'GoogleMLKit/FaceDetection
+    ss.dependency 'GoogleMLKit/FaceDetection'
   end   
 
-  s.default_subspecs = "Core", "View"
+  s.default_subspecs = "Core", "View", "Vision"
 end

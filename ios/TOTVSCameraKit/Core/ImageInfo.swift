@@ -28,4 +28,11 @@ public protocol ImageInfo {
         The target orientation is set at the time the image capture was requested.
      */
     var orientation: UIDeviceOrientation { get }
+
+    /**
+     @property sourceFacing
+     @abstract
+        Returns the source camera facing that was used to capture this image
+     */
+    var sourceFacing: CameraFacing { get }
 }

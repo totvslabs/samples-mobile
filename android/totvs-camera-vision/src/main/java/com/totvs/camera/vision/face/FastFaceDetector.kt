@@ -55,7 +55,6 @@ open class FastFaceDetector(
             return onDetected(NullFaceObject)
         }
         val rotation = image.imageInfo.rotationDegrees
-
         // we require to use this image exclusively and nobody else can read the data until
         // we're done with it.
         val frame = image.exclusiveUse {
