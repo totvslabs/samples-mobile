@@ -59,7 +59,7 @@ open class DetectionAnalyzer {
      * This stream represents the flow of objects detected from all the enabled
      * [VisionDetector] in this analyzer.
      */
-    private(set) var detections: VisionStream<VisionObject> = BroadcastVisionStream()
+    public private(set) var detections: VisionStream<VisionObject> = BroadcastVisionStream()
     
     /**
      * We skip frames while we're in the middle of a detection task
@@ -67,10 +67,10 @@ open class DetectionAnalyzer {
     private var isBusy = false
     
     
-    init(queue: DispatchQueue, detectors: VisionDetector...) {
+    public init(queue: DispatchQueue, detectors: VisionDetector...) {
         self.queue = queue
         detectors.forEach { detector in
-            registry[detector.key] = EnabledDetector(detector: detector)
+            registry[detector.instanceKey] = EnabledDetector(detector: detector)
         }
     }
     
@@ -105,7 +105,7 @@ open class DetectionAnalyzer {
     /**
      * After detection let's post this object to the stream
      */
-    open func post(value: VisionObject) {
+    private func post(value: VisionObject) {
         (detections as! BroadcastVisionStream).broadcast(value: value)
     }
         
@@ -125,7 +125,7 @@ open class DetectionAnalyzer {
 
 // MARK: - ImageAnalyzer
 extension DetectionAnalyzer : ImageAnalyzer {
-    public func analyze(image: ImageProxy) {
+    open func analyze(image: ImageProxy) {
         if !isBusy {
             isBusy = true
             

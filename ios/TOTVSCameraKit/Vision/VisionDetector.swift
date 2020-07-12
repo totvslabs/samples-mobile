@@ -37,10 +37,14 @@ public protocol VisionDetector : class {
     /**
      * Key of this detector
      */
-    var key: AnyHashable { get }
+    static var key: AnyHashable { get }
     
     /**
      * Run detection on [image] and report the result back on [onDetected]
      */
     func detect(on queue: DispatchQueue, image: ImageProxy, onDetected: (VisionObject) -> Void)
+}
+
+public extension VisionDetector {
+    var instanceKey: AnyHashable { Self.key }
 }

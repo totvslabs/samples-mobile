@@ -30,7 +30,7 @@ fileprivate typealias MLKitFaceDetector = MLKitFaceDetection.FaceDetector
 */
 open class FaceDetector : VisionDetector {
     
-    public var key: AnyHashable { DETECTOR_KEY }
+    public static var key: AnyHashable { DETECTOR_KEY }
     
     private let selectFace: SelectionStrategy<Face> = SelectMostProminent
     
@@ -44,7 +44,9 @@ open class FaceDetector : VisionDetector {
         return options
     }
     
-    private lazy var detector = MLKitFaceDetector.faceDetector(options: detectorOptions)    
+    private lazy var detector = MLKitFaceDetector.faceDetector(options: detectorOptions)
+    
+    public init() { }
     
     public func detect(on queue: DispatchQueue, image: ImageProxy, onDetected: (VisionObject) -> Void) {
         guard let buffer = image.buffer else {
@@ -134,9 +136,6 @@ fileprivate extension VisionPoint {
     var toPoint: CGPoint { CGPoint(x: x, y: y) }
 }
 
-/**
- This detector key
- */
 fileprivate let DETECTOR_KEY = 130290
 
 /**

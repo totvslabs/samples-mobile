@@ -119,7 +119,7 @@ open class DetectionAnalyzer(
     /**
      * After detection let's post this object to the stream
      */
-    open fun post(value: VisionObject) {
+    private fun post(value: VisionObject) {
         (detections as BroadcastVisionStream).broadcast(value)
     }
 

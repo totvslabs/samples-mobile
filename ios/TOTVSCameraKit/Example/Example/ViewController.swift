@@ -69,7 +69,7 @@ extension ViewController {
 extension ViewController : ImageAnalyzer {
     func analyze(image: ImageProxy) {
         process(image: image)
-    }
+    }    
 }
 
 /// MARK: Firebase Vision
