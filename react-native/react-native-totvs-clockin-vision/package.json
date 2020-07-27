@@ -24,7 +24,10 @@
     "LICENSE",
     "README.md"
   ],  
-  "license": "",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/totvslabs/samples-mobile.git"
+  },
   "peerDependencies": {
     "react-native": "^0.41.2"
   }

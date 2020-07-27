@@ -1,0 +1,37 @@
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '13.0'
+
+target 'ReactNativeTotvsClockinVisionApp' do
+  config = use_native_modules!
+
+  use_react_native!(:path => config["reactNativePath"])
+  
+  # must be imported in order react-native-totvs-clockin-vision dependencies be resolved. 
+  # we can remove this when we publish TOTVSCameraKit
+  pod 'TOTVSCameraKit', :path => '../../../ios/TOTVSCameraKit'
+
+  target 'ReactNativeTotvsClockinVisionAppTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable these next few lines.
+  use_flipper!
+  post_install do |installer|
+    flipper_post_install(installer)
+  end
+end
+
+target 'ReactNativeTotvsClockinVisionApp-tvOS' do
+  # Pods for ReactNativeTotvsClockinVisionApp-tvOS
+
+  target 'ReactNativeTotvsClockinVisionApp-tvOSTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+end

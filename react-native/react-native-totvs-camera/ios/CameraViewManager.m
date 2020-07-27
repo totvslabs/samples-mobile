@@ -1,6 +1,7 @@
 
 #import <React/RCTViewManager.h>
 
+/// refs: /// refs: https://teabreak.e-spres-oh.com/swift-in-react-native-the-ultimate-guide-part-1-modules-9bb8d054db03
 @interface RCT_EXTERN_MODULE(CameraViewManager, RCTViewManager)
 
     RCT_EXPORT_VIEW_PROPERTY(facing, NSNumber)

@@ -3,6 +3,7 @@ import Foundation
 import UIKit
 import TOTVSCameraKit
 
+/// refs: /// refs: https://teabreak.e-spres-oh.com/swift-in-react-native-the-ultimate-guide-part-1-modules-9bb8d054db03
 @objc(CameraViewManager)
 class CameraViewManager : RCTViewManager {
     

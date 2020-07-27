@@ -4,18 +4,14 @@
  */
 
 import {
-  NativeModules,
-  Platform,
+  NativeModules
 } from 'react-native';
 
 /////////////////////////////
 // Import Native Components
 /////////////////////////////
 
-const NativeModule = Platform.select({
-  ios: { },
-  android: NativeModules.VisionModule
-});
+const NativeModule = NativeModules.VisionModule;
 
 /////////////////////////////
 // Constants
