@@ -8,7 +8,9 @@
 
 import Foundation
 
-class NativeFaceModel : RecognitionDetectionModel<String, String> {
+class NativeFaceModel : RecognitionDetectionModel<String, Face> {
+    static let `default` = NativeFaceModel()
+    
     private override init() {
     }
 }

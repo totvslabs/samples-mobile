@@ -18,7 +18,7 @@ public class ModelProvider {
     /**
      * Returns a face recognition model
      */
-    static func getFaceRecognitionDetectionModel(config: ModelConfig) -> RecognitionDetectionModel<String, String> {
-        fatalError("Not Implemented Yet")
+    static func getFaceRecognitionDetectionModel(config: ModelConfig) -> RecognitionDetectionModel<String, Face> {
+        return NativeFaceModel.default
     }
 }
