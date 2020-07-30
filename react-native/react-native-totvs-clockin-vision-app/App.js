@@ -18,8 +18,9 @@ import { VisionModule } from 'react-native-totvs-clockin-vision';
 
 
 const App = () => {
-  const performAction = async () => {
-    const path = await VisionModule.getModelOutputDirectory();
+  const performAction = async () => {    
+    // const path = await VisionModule.getModelOutputDirectory();
+    const path = await VisionModule.setupModelDirectories();
     console.log('getting library result: ', { path });
   };
 

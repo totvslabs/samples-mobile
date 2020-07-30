@@ -21,8 +21,8 @@ internal object Constants {
     const val DEFAULT_MODEL_OUTPUT_DIR_NAME = "carol_offline_face_recognition"
     const val CAPTURES_OUTPUT_DIR_NAME = "images"
     const val PENDING_EMPLOYEES_OUTPUT_DIR_NAME = "pendingEmployeeImages"
-    const val MODEL_SHAPE_DIR_NAME = "shape_predictor_5_face_landmarks.dat"
-    const val MODEL_DESCRIPTOR_DIR_NAME = "dlib_face_recognition_resnet_model_v1.dat"
+    const val MODEL_SHAPE_FILE_NAME = "shape_predictor_5_face_landmarks.dat"
+    const val MODEL_DESCRIPTOR_FILE_NAME = "dlib_face_recognition_resnet_model_v1.dat"
     const val NO_MEDIA = ".nomedia"
 }
 
@@ -152,15 +152,15 @@ internal fun getPendingEmployeesDirectory() =
  * Returns the model shape output directory
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-internal fun getModelShapesDirectory() =
-    "${getModelOutputDir()}${File.separator}${Constants.MODEL_SHAPE_DIR_NAME}"
+internal fun getModelShapesFilePath() =
+    "${getModelOutputDir()}${File.separator}${Constants.MODEL_SHAPE_FILE_NAME}"
 
 /**
  * Returns the model descriptors output directory
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-internal fun getModelDescriptorsDirectory() =
-    "${getModelOutputDir()}${File.separator}${Constants.MODEL_DESCRIPTOR_DIR_NAME}"
+internal fun getModelDescriptorsFilePath() =
+    "${getModelOutputDir()}${File.separator}${Constants.MODEL_DESCRIPTOR_FILE_NAME}"
 
 
 /**
@@ -174,15 +174,15 @@ internal fun getNoMediaDirectory() =
  * Setup the model output directories
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-internal fun prepareModelDirectories(context: Context, onDone: () -> Unit) {
+internal fun prepareModelDirectories(context: Context, onDone: (Boolean) -> Unit) {
     thread {
         try {
             val model = File(getModelOutputDir())
             val media = File(getNoMediaDirectory())
             val images = File(getCapturesDirectory())
             val pending = File(getPendingEmployeesDirectory())
-            val shapes = File(getModelShapesDirectory())
-            val descriptors = File(getModelDescriptorsDirectory())
+            val shapes = File(getModelShapesFilePath())
+            val descriptors = File(getModelDescriptorsFilePath())
 
             model.mkdirs()
             media.mkdirs()
@@ -199,8 +199,9 @@ internal fun prepareModelDirectories(context: Context, onDone: () -> Unit) {
             if (ClockInVisionModuleOptions.DEBUG_ENABLED) {
                 Log.e("prepareModelDirectories", "error configuring model directories")
             }
+            return@thread onDone(false)
         }
-        onDone()
+        onDone(true)
     }
 }
 

@@ -42,8 +42,8 @@ class VisionModule(
      */
     @AnyThread
     @ReactMethod
-    fun setupModelDirectories(promise: Promise) = prepareModelDirectories(context) {
-        promise.resolve(true)
+    fun setupModelDirectories(promise: Promise) = prepareModelDirectories(context) { success ->
+        promise.resolve(success)
     }
 
     /**

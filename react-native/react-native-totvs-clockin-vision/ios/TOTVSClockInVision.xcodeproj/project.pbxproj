@@ -7,8 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		65046A2524D3302E00A0AC6D /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2424D3302E00A0AC6D /* Model.swift */; };
+		65046A2724D330A800A0AC6D /* ModelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2624D330A800A0AC6D /* ModelConfig.swift */; };
+		65046A2924D3313B00A0AC6D /* RecognitionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2824D3313B00A0AC6D /* RecognitionModel.swift */; };
+		65046A2B24D3314100A0AC6D /* DetectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2A24D3314100A0AC6D /* DetectionModel.swift */; };
+		65046A2D24D3322900A0AC6D /* ModelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2C24D3322900A0AC6D /* ModelProvider.swift */; };
+		65CB8AED24D33F790018FB6C /* RecognitionDetectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB8AEC24D33F790018FB6C /* RecognitionDetectionModel.swift */; };
+		65CB8AF024D340560018FB6C /* NativeFaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB8AEF24D340560018FB6C /* NativeFaceModel.swift */; };
 		65D4D01A24CF80260020A0DF /* VisionModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D4D01924CF80260020A0DF /* VisionModule.swift */; };
 		65D4D01C24CF804D0020A0DF /* VisionModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 65D4D01B24CF804D0020A0DF /* VisionModule.m */; };
+		65D4D02124CF9CC10020A0DF /* FileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D4D02024CF9CC10020A0DF /* FileUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,9 +33,18 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libTOTVSClockInVision.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTOTVSClockInVision.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		65046A2424D3302E00A0AC6D /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		65046A2624D330A800A0AC6D /* ModelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfig.swift; sourceTree = "<group>"; };
+		65046A2824D3313B00A0AC6D /* RecognitionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognitionModel.swift; sourceTree = "<group>"; };
+		65046A2A24D3314100A0AC6D /* DetectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionModel.swift; sourceTree = "<group>"; };
+		65046A2C24D3322900A0AC6D /* ModelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelProvider.swift; sourceTree = "<group>"; };
+		65CB8AEC24D33F790018FB6C /* RecognitionDetectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognitionDetectionModel.swift; sourceTree = "<group>"; };
+		65CB8AEF24D340560018FB6C /* NativeFaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeFaceModel.swift; sourceTree = "<group>"; };
+		65CB8AF224D355220018FB6C /* ClockInVision.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ClockInVision.bundle; sourceTree = "<group>"; };
 		65D4D01624CF703F0020A0DF /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		65D4D01924CF80260020A0DF /* VisionModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionModule.swift; sourceTree = "<group>"; };
 		65D4D01B24CF804D0020A0DF /* VisionModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisionModule.m; sourceTree = "<group>"; };
+		65D4D02024CF9CC10020A0DF /* FileUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,11 +69,60 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				65CB8AEE24D3402E0018FB6C /* Impl */,
+				65046A2124D32E8100A0AC6D /* Resources */,
+				65D4D01F24CF9C9E0020A0DF /* Core */,
+				65D4D01E24CF9C8E0020A0DF /* Views */,
+				65D4D01D24CF9C750020A0DF /* Utils */,
 				65D4D01B24CF804D0020A0DF /* VisionModule.m */,
 				65D4D01924CF80260020A0DF /* VisionModule.swift */,
 				65D4D01624CF703F0020A0DF /* Bridging-Header.h */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		65046A2124D32E8100A0AC6D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				65CB8AF224D355220018FB6C /* ClockInVision.bundle */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		65CB8AEE24D3402E0018FB6C /* Impl */ = {
+			isa = PBXGroup;
+			children = (
+				65CB8AEF24D340560018FB6C /* NativeFaceModel.swift */,
+			);
+			path = Impl;
+			sourceTree = "<group>";
+		};
+		65D4D01D24CF9C750020A0DF /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				65D4D02024CF9CC10020A0DF /* FileUtils.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		65D4D01E24CF9C8E0020A0DF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		65D4D01F24CF9C9E0020A0DF /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				65046A2424D3302E00A0AC6D /* Model.swift */,
+				65046A2624D330A800A0AC6D /* ModelConfig.swift */,
+				65046A2824D3313B00A0AC6D /* RecognitionModel.swift */,
+				65046A2A24D3314100A0AC6D /* DetectionModel.swift */,
+				65046A2C24D3322900A0AC6D /* ModelProvider.swift */,
+				65CB8AEC24D33F790018FB6C /* RecognitionDetectionModel.swift */,
+			);
+			path = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -117,8 +183,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65D4D02124CF9CC10020A0DF /* FileUtils.swift in Sources */,
+				65046A2724D330A800A0AC6D /* ModelConfig.swift in Sources */,
+				65046A2D24D3322900A0AC6D /* ModelProvider.swift in Sources */,
 				65D4D01A24CF80260020A0DF /* VisionModule.swift in Sources */,
+				65CB8AED24D33F790018FB6C /* RecognitionDetectionModel.swift in Sources */,
+				65046A2924D3313B00A0AC6D /* RecognitionModel.swift in Sources */,
+				65046A2B24D3314100A0AC6D /* DetectionModel.swift in Sources */,
+				65CB8AF024D340560018FB6C /* NativeFaceModel.swift in Sources */,
 				65D4D01C24CF804D0020A0DF /* VisionModule.m in Sources */,
+				65046A2524D3302E00A0AC6D /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,6 +17,10 @@ Pod::Spec.new do |s|
   s.platform       = :ios, "13.0"
   
   s.source_files = "ios/**/*.{swift,h,m}"
+  s.resource_bundles = {
+    'ClockInVision' => ["ios/Resources/*/**"]
+  }
+  s.static_framework = false
 
   s.dependency 'React'
   s.dependency 'TOTVSCameraKit'
