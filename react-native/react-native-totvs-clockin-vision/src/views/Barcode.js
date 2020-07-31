@@ -40,27 +40,22 @@ import PermissionsAskingView from './PermissionsAskingView';
 // Import Native Components
 /////////////////////////////
 
-const VisionBarcodeCamera = Platform.select({
-  ios: View, 
-  android: requireNativeComponent('VisionBarcodeCameraView')
-});
+const VisionBarcodeCamera = requireNativeComponent('VisionBarcodeCameraView');
 
 /////////////////////////////
 // Import Native Modules
 /////////////////////////////
 
-const VisionBarcodeModule = Platform.select({
-  ios: { },
-  android: NativeModules.VisionBarcodeModule
-});
+// android: VisionFaceModule, ios: VisionBarcodeCameraViewManager
+const VisionBarcodeModule = NativeModules.VisionBarcodeModule || NativeModules.VisionBarcodeCameraViewManager;
 
 /////////////////////////////
 // Type System
 ////////////////////////////
 
 const Rationale = PropTypes.shape({
-  title: PropTypes.string.isRequired, 
-  message: PropTypes.string.isRequired, 
+  title: PropTypes.string, 
+  message: PropTypes.string, 
   buttonPositive: PropTypes.string, 
   buttonNegative: PropTypes.string,
   buttonNeutral: PropTypes.string
@@ -110,7 +105,7 @@ export const BarcodeCameraConstants = {
  * Unlike android, iOS call the property setters on the manager/view even
  * when they are underfined. we default to an appropriate facing.
  */
-const DEFAULT_FACING = Constants.LENS_FACING.BACK;
+const DEFAULT_FACING = BarcodeCameraConstants.LENS_FACING.BACK;
 /////////////////////////////
 // Components
 /////////////////////////////

@@ -6,7 +6,7 @@ import com.totvs.camera.view.CameraView
 import com.totvs.clockin.vision.barcode.VisionBarcodeCamera
 
 /**
- * * @TODO (jansel) implement barcode camera capabilities
+ * @TODO (jansel) implement barcode camera capabilities
  */
 class VisionBarcodeCameraView @JvmOverloads internal constructor(
     context: Context,

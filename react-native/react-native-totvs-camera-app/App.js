@@ -64,7 +64,7 @@ const App = () => {
     <SafeAreaView style={styles.safeArea}>
 
       <CameraView
-        ref={ref => setCameraView(ref)}
+        onRef={ref => setCameraView(ref)}
         style={styles.camera}
         zoom={MIN}
         permissionsCameraOptions={rationale}> 

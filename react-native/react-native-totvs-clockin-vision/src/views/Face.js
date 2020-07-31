@@ -47,8 +47,8 @@ const VisionFaceModule = NativeModules.VisionFaceModule || NativeModules.VisionF
 ////////////////////////////
 
 const Rationale = PropTypes.shape({
-  title: PropTypes.string.isRequired, 
-  message: PropTypes.string.isRequired, 
+  title: PropTypes.string, 
+  message: PropTypes.string, 
   buttonPositive: PropTypes.string, 
   buttonNegative: PropTypes.string,
   buttonNeutral: PropTypes.string
@@ -106,7 +106,7 @@ export const FaceCameraConstants = {
  * Unlike android, iOS call the property setters on the manager/view even
  * when they are underfined. we default to an appropriate facing.
  */
-const DEFAULT_FACING = Constants.LENS_FACING.BACK;
+const DEFAULT_FACING = FaceCameraConstants.LENS_FACING.BACK;
 
 /////////////////////////////
 // Components

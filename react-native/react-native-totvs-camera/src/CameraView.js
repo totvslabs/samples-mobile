@@ -46,8 +46,8 @@ const CameraModule = NativeModules.CameraModule || NativeModules.CameraViewManag
 ////////////////////////////
 
 const Rationale = PropTypes.shape({
-  title: PropTypes.string.isRequired, 
-  message: PropTypes.string.isRequired, 
+  title: PropTypes.string, 
+  message: PropTypes.string, 
   buttonPositive: PropTypes.string, 
   buttonNegative: PropTypes.string,
   buttonNeutral: PropTypes.string

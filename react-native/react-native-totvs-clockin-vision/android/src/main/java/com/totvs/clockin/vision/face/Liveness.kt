@@ -1,11 +1,9 @@
 package com.totvs.clockin.vision.face
 
-import com.facebook.react.bridge.ReactContext
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.Nose
 import com.totvs.camera.vision.face.NullFaceObject
 import com.totvs.camera.vision.stream.VisionReceiver
-import com.totvs.clockin.vision.events.OnLiveness
 import java.util.*
 import javax.annotation.concurrent.GuardedBy
 

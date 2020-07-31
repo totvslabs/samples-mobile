@@ -22,7 +22,7 @@ public protocol Face {
      * Confidence of this face object. this might mean confidence of detection
      * or confidence of recognition.
      */
-    let confidence: Float { get }
+    var confidence: Float { get }
 
     /**
      * Bounding box determining this face on the provided source where this face object
