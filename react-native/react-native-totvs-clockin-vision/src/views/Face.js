@@ -33,19 +33,14 @@ import PermissionsDeniedView from './PermissionsDeniedView';
 // Import Native Components
 /////////////////////////////
 
-const VisionFaceCamera = Platform.select({
-  ios: View, 
-  android: requireNativeComponent('VisionFaceCameraView')
-});
+const VisionFaceCamera = requireNativeComponent('VisionFaceCameraView');
 
 /////////////////////////////
 // Import Native Modules
 /////////////////////////////
 
-const VisionFaceModule = Platform.select({
-  ios: { },
-  android: NativeModules.VisionFaceModule
-});
+// android: VisionFaceModule, ios: VisionFaceCameraViewManager
+const VisionFaceModule = NativeModules.VisionFaceModule || NativeModules.VisionFaceCameraViewManager;
 
 /////////////////////////////
 // Type System
@@ -107,6 +102,12 @@ export const FaceCameraConstants = {
   LIVENESS_MODE: VisionFaceModule.LIVENESS_MODE
 };
 
+/**
+ * Unlike android, iOS call the property setters on the manager/view even
+ * when they are underfined. we default to an appropriate facing.
+ */
+const DEFAULT_FACING = Constants.LENS_FACING.BACK;
+
 /////////////////////////////
 // Components
 /////////////////////////////
@@ -120,6 +121,8 @@ export const FaceCameraConstants = {
  * by itself. If these properties are not set and is disallowed to the camera to
  * ask for permissions, then the caller would be responsible to requests permission
  * required by this underlying component.
+ * 
+  * This camera component doesn't support permissions settings on iOS platform.
  */
 export default class FaceCameraView extends Component<PropsType, StateType> {
   /**
@@ -164,8 +167,8 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
     this._isMounted = true;
     // set state initial values
     this.state = { 
-      isAuthorized: false,
-      isAuthorizationRequested: false,      
+      isAuthorized: (Platform.OS == 'ios'), // false otherwise
+      isAuthorizationRequested: (Platform.OS == 'ios'), // false otherwise
     };
   }
 
@@ -198,6 +201,10 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
       props.proximityThreshold
     ) && isAbsent(props.isProximityEnabled) ? true : props.isProximityEnabled;
     
+    if (Platform.OS == 'ios') {
+      expanded.facing = isAbsent(props.facing) ? DEFAULT_FACING : props.facing;      
+    }
+
     return expanded;
   }
 
@@ -303,6 +310,10 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
    * Check if the app has camera permissions
    */
   hasCameraPermission = async () => {
+    if (Platform.OS == 'ios') {
+      throw 'Operation not supported on iOS';
+    }
+
     const defaults = { 
       title: '', message: '',
       buttonPositive: '',
@@ -317,6 +328,10 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
   }
 
   refreshCameraState = async () => {
+    if (Platform.OS == 'ios') {
+      throw 'Operation not supported on iOS';
+    }
+
     const { 
       requestPermissions 
     } = this._expandProps(this.props);
@@ -329,7 +344,7 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
   };
 
   componentDidMount = async () => {
-    await this.refreshCameraState();
+    Platform.OS != 'ios' && await this.refreshCameraState();
 
     // if this view as a delegated `ref` let's rebind the ref to 
     // reflect the fact that now we received the native camera reference
@@ -460,7 +475,6 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
     if (this.state.isAuthorized || this.hasFaCC()) {
       return (
         <View style={style}>
-
           <VisionFaceCamera
             {...properties}
             style={styles.camera}
@@ -472,8 +486,8 @@ export default class FaceCameraView extends Component<PropsType, StateType> {
 
           {this.hasFaCC()
             ? children({ camera: this, ...this.props, ...properties })
-            : children}
-
+            : children
+          }
         </View>
       );
     }
