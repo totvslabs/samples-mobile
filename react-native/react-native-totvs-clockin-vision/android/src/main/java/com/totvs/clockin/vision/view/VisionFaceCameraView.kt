@@ -177,7 +177,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
     override var liveness: Liveness? = null
         set(value) {
             field = value
-            // if we got a proximity installed then we enable the detector, otherwise we
+            // if we got a liveness installed then we enable the detector, otherwise we
             // check if we need to uninstall it.
             value?.let {
                 enableLiveness(it)

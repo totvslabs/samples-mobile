@@ -58,3 +58,4 @@ class FaceBoundingBox : VisionReceiver<FaceObject> {
         }
     }
 }
+

@@ -18,7 +18,7 @@ public protocol Connection {
     /**
      * Trigger to the upstream a disconnect token
      */
-    func dicsonnect()
+    func disconnect()
 }
 
 
@@ -26,5 +26,5 @@ public protocol Connection {
  * [Connection] that ignore [disconnect] tokens
  */
 class IgnoreConnection : Connection {
-    func dicsonnect() { }
+    func disconnect() { }
 }

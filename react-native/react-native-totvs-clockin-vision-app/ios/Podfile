@@ -12,6 +12,7 @@ target 'ReactNativeTotvsClockinVisionApp' do
   # we can remove this when we publish TOTVSCameraKit
   pod 'TOTVSCameraKit', :path => '../../../ios/TOTVSCameraKit'
 
+  
   target 'ReactNativeTotvsClockinVisionAppTests' do
     inherit! :complete
     # Pods for testing

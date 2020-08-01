@@ -40,11 +40,11 @@ class BroadcastVisionStream : VisionStream<VisionObject> {
             self.receiver = receiver
         }
         
-        func dicsonnect() {
+        func disconnect() {
             owner?.remove(receiver: receiver)
         }
         deinit {
-            dicsonnect()
+            disconnect()
         }
     }
 }

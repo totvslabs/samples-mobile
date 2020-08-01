@@ -64,7 +64,7 @@ open class CameraView : UIView {
     
     open override func didMoveToSuperview() {
         cameraSource.startRunning()
-    }
+    }    
 }
 
 // MARK: - Initialization

@@ -9,4 +9,13 @@
 import UIKit
 
 public class GraphicOverlay : UIView {
+    public func clear() {
+        for child in subviews {
+            child.removeFromSuperview()
+        }
+    }
+    
+    public func add(_ view: UIView) {
+        addSubview(view)
+    }
 }
