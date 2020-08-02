@@ -343,7 +343,7 @@ extension VisionFaceCameraView {
         }
     }
     
-    private func recognizeImage(image: UIImage, onRecognize: ([Face], Error?) -> Void) {
+    private func recognizeImage(image: UIImage, onRecognize: @escaping ([Face], Error?) -> Void) {
         do {
             try model?.recognize(input: image, onRecognized: { faces in
                 onRecognize(faces, nil)
@@ -368,7 +368,7 @@ extension VisionFaceCameraView {
      * is set to true we'll save the picture at [options.outputDir] otherwise we'll skip that
      * task.
      */
-    func recognizeStillPicture(options: RecognitionOptions, onResult: (RecognitionResult) -> Void) {
+    func recognizeStillPicture(options: RecognitionOptions, onResult: @escaping (RecognitionResult) -> Void) {
         ensureSetup { }
         
         if isRecognizing {

@@ -48,5 +48,5 @@ public protocol VisionFaceCamera : VisionCamera {
      * @param options control certain aspects of the recognition process.
      * @param onResult callback called once the recognition task is completed.
      */
-    func recognizeStillPicture(options: RecognitionOptions, onResult: (RecognitionResult) -> Void)
+    func recognizeStillPicture(options: RecognitionOptions, onResult: @escaping (RecognitionResult) -> Void)
 }
