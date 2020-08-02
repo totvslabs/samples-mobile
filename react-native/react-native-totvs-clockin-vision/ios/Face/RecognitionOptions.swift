@@ -15,7 +15,7 @@ public struct RecognitionOptions {
     /**
      Whether we need to save the captured image or not.
      */
-    let saveImage: Boolean = false
+    let saveImage: Bool = false
     /**
      Output directory location where to save the image.
      */

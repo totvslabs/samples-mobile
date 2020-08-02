@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import UIKit
 
-class NativeFaceModel : RecognitionDetectionModel<String, Face> {
+class NativeFaceModel : RecognitionDetectionModel<UIImage, Face> {
     static let `default` = NativeFaceModel()
     
     private override init() {

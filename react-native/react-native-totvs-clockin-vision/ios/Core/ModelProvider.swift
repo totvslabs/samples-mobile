@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /**
 * Model provider for all the models that this library uses.
@@ -18,7 +19,7 @@ public class ModelProvider {
     /**
      * Returns a face recognition model
      */
-    static func getFaceRecognitionDetectionModel(config: ModelConfig) -> RecognitionDetectionModel<String, Face> {
+    static func getFaceRecognitionDetectionModel(config: ModelConfig) -> RecognitionDetectionModel<UIImage, Face> {
         return NativeFaceModel.default
     }
 }

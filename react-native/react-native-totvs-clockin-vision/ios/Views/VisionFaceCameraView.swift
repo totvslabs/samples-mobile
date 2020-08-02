@@ -30,7 +30,7 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     /**
      * Model to be used for recognition
      */
-    private var model: RecognitionDetectionModel<String, Face>? = nil
+    private var model: RecognitionDetectionModel<UIImage, Face>? = nil
     
     /**
      * [Connection] of liveness feature
@@ -108,6 +108,7 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
         proximity != nil
     }
     
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         enableDebug()
@@ -162,6 +163,9 @@ private extension VisionFaceCameraView {
      * Setup every requirement of this face vision camera
      */
     func startUp() {
+        // let's optimize for capture/saving
+        desiredOutputImageSize = CGSize(width: 594, height: 1056)
+        
         guard !isReady else {
             return
         }
@@ -324,13 +328,36 @@ extension VisionFaceCameraView {
         return block()
     }
     
-    private func saveImage(with options: RecognitionOptions, onSave: (URL?, Error?) -> Void) {
+    private func saveImage(image: UIImage, options: RecognitionOptions, onSave: (URL?, Error?) -> Void) {
+        guard let dir = options.outputDir else {
+            fatalError("No possible to save the image, please check options.outputDir")
+        }
+        let file = createFile(outputDirectory: dir)
+        do {
+            try image.jpegData(compressionQuality: 1.0)!.write(to: file, options: .atomicWrite)
+            
+            onSave(file, nil)
+        } catch let error {
+            print("\(TAG): Error saving image at \(file): \(error)")
+            onSave(nil, error)
+        }
+    }
+    
+    private func recognizeImage(image: UIImage, onRecognize: ([Face], Error?) -> Void) {
+        do {
+            try model?.recognize(input: image, onRecognized: { faces in
+                onRecognize(faces, nil)
+            })
+        } catch let error {
+            print("\(TAG): Error recognizing: \(error)")
+            onRecognize([], error)
+        }
     }
         
     /**
      * Let's setup the view with an appropriate model and options
      */
-    func setup(model: RecognitionDetectionModel<String, Face>) {
+    func setup(model: RecognitionDetectionModel<UIImage, Face>) {
         self.model = model
     }
     
@@ -344,5 +371,68 @@ extension VisionFaceCameraView {
     func recognizeStillPicture(options: RecognitionOptions, onResult: (RecognitionResult) -> Void) {
         ensureSetup { }
         
+        if isRecognizing {
+            if isDebug {
+                print("\(TAG): Recognizer is busy, ignoring this request.")
+            }
+            return
+        }
+        isRecognizing = true
+        
+        takePicture { (image, error) in
+            if let error = error {
+                self.isRecognizing = false
+                print("\(TAG): Error taking picture: \(error)")
+                return
+            }
+            if let uiImage = image?.image {
+                // we add an extra task if we're required to save the image.
+                let latch = CountDownLatch(count: 1 + (options.saveImage ? 1 : 0))
+                var result = RecognitionResult()
+
+                // image saver
+                if (options.saveImage) {
+                    self.recognitionQueue.async {
+                        self.saveImage(image: uiImage, options: options) { url, error in
+                            if let error = error {
+                                print("\(TAG): Error saving image: \(error)")
+                            }
+                            result.imagePath = url
+                            // notify we're done
+                            latch.countDown()
+                        }
+                    }
+                }
+                // image recognizer
+                self.recognitionQueue.async {
+                    self.recognizeImage(image: uiImage) { faces, error in
+                        if let error = error {
+                            print("\(TAG): Error recognizing image: \(error)")
+                        }
+                        result.faces = faces
+                        // notify we're done
+                        latch.countDown()
+                    }
+                }
+                // wait till the tasks are done
+                latch.wait()
+                self.isRecognizing = false
+                
+                onResult(result)
+            }
+            // close properly the proxy
+            image?.close()
+        }
     }
+}
+
+// Utility to create a file under [outputDirectory]
+fileprivate func createFile(outputDirectory: URL, extension: String = "jpg") -> URL {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyyMMddHHmmss"
+    formatter.locale = Locale.init(identifier: "en_US_POSIX")
+    
+    return outputDirectory
+        .appendingPathComponent(formatter.string(from: Date()))
+        .appendingPathExtension(`extension`)
 }

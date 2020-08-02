@@ -40,7 +40,7 @@ public protocol VisionFaceCamera : VisionCamera {
     /**
      * Setup this [VisionFaceCamera] with a proper model and options
      */
-    func setup(model: RecognitionDetectionModel<String, Face>)
+    func setup(model: RecognitionDetectionModel<UIImage, Face>)
     
     /**
      * Capture and perform recognition task on this face vision camera view.

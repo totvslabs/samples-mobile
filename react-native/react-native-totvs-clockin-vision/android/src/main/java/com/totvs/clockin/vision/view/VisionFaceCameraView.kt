@@ -257,7 +257,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
                 }
                 val recognizer = ImageRecognizer(bitmap) { faces, exception ->
                     exception?.let {
-                        Log.e(TAG, "Error saving image", it)
+                        Log.e(TAG, "Error recognizing image", it)
                     }
                     result.faces = faces
                     // notify we're done
