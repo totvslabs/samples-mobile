@@ -38,7 +38,7 @@ public protocol ImageProxy {
         we wrap here another representation of image, hence this might return null
         under those conditions.            
      */
-    var image: CIImage? { get }
+    var image: UIImage? { get }
 
     /**
      @property buffer

@@ -324,6 +324,9 @@ extension VisionFaceCameraView {
         return block()
     }
     
+    private func saveImage(with options: RecognitionOptions, onSave: (URL?, Error?) -> Void) {
+    }
+        
     /**
      * Let's setup the view with an appropriate model and options
      */
@@ -340,6 +343,6 @@ extension VisionFaceCameraView {
      */
     func recognizeStillPicture(options: RecognitionOptions, onResult: (RecognitionResult) -> Void) {
         ensureSetup { }
-                
+        
     }
 }

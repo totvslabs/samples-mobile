@@ -56,7 +56,7 @@ public protocol Camera {
         This method automatically save the captured in the location specified on
         options and then call the callback.
      
-        Images are saved in HEVC format.
+        If options.outputDirectory is nil then the image is saved to the photo library.
      */
     func takePicture(with options: OutputFileOptions, onSaved: @escaping OnImageSaved)
     

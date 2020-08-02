@@ -38,6 +38,20 @@ open class CameraView : UIView {
         get { cameraSource.analyzer }
         set { cameraSource.analyzer = newValue }
     }
+     
+    /**
+     * Specify the desired captured image size for this camera. This allows subclasses
+     * to customize for optimization.
+     *
+     * Retuning null means that the implementation would be free to consider the best
+     * size possible.
+     *
+     * Also notice that this size is not considered when the image is saved to photo
+     * library. i.e when outputDirectory is provided on [OutputFileOptions] on takePicture.
+     *
+     * This works equivalently to [CameraView.desiredPreviewSize] android implementation.     
+     */
+    open var desiredOutputImageSize: CGSize?
         
     /// Current device orienation
     internal var windowOrientation: UIInterfaceOrientation {

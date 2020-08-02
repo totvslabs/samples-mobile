@@ -242,7 +242,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
             if (null != bitmap) {
                 // we add an extra task if we're required to save the image.
                 val latch = CountDownLatch(1 + if (options.saveImage) 1 else 0)
-                var result = RecognitionResult()
+                val result = RecognitionResult()
 
                 if (options.saveImage) {
                     val saver = ImageSaver(bitmap, options) { file, exception ->

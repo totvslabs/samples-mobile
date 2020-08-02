@@ -12,6 +12,7 @@
 		65046A2924D3313B00A0AC6D /* RecognitionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2824D3313B00A0AC6D /* RecognitionModel.swift */; };
 		65046A2B24D3314100A0AC6D /* DetectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2A24D3314100A0AC6D /* DetectionModel.swift */; };
 		65046A2D24D3322900A0AC6D /* ModelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2C24D3322900A0AC6D /* ModelProvider.swift */; };
+		65A396FC24D71B1800B5B371 /* CountDownLatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A396FB24D71B1800B5B371 /* CountDownLatch.swift */; };
 		65B0BE4224D4AB3800E86FDD /* VisionBarcodeCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B0BE4124D4AB3800E86FDD /* VisionBarcodeCamera.swift */; };
 		65B0BE4424D4AB5500E86FDD /* VisionBarcodeCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B0BE4324D4AB5500E86FDD /* VisionBarcodeCameraView.swift */; };
 		65B0BE4624D4AB8A00E86FDD /* VisionBarcodeCameraViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B0BE4524D4AB8A00E86FDD /* VisionBarcodeCameraViewManager.swift */; };
@@ -54,6 +55,7 @@
 		65046A2824D3313B00A0AC6D /* RecognitionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognitionModel.swift; sourceTree = "<group>"; };
 		65046A2A24D3314100A0AC6D /* DetectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionModel.swift; sourceTree = "<group>"; };
 		65046A2C24D3322900A0AC6D /* ModelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelProvider.swift; sourceTree = "<group>"; };
+		65A396FB24D71B1800B5B371 /* CountDownLatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountDownLatch.swift; sourceTree = "<group>"; };
 		65B0BE4124D4AB3800E86FDD /* VisionBarcodeCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionBarcodeCamera.swift; sourceTree = "<group>"; };
 		65B0BE4324D4AB5500E86FDD /* VisionBarcodeCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionBarcodeCameraView.swift; sourceTree = "<group>"; };
 		65B0BE4524D4AB8A00E86FDD /* VisionBarcodeCameraViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionBarcodeCameraViewManager.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				65D4D02024CF9CC10020A0DF /* FileUtils.swift */,
+				65A396FB24D71B1800B5B371 /* CountDownLatch.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -250,6 +253,7 @@
 				65B0BE4C24D5DCA500E86FDD /* RecognitionOptions.swift in Sources */,
 				65D4D02124CF9CC10020A0DF /* FileUtils.swift in Sources */,
 				65CB8AFD24D36D1E0018FB6C /* VisionFaceCameraView.swift in Sources */,
+				65A396FC24D71B1800B5B371 /* CountDownLatch.swift in Sources */,
 				65B0BE4824D4AB9800E86FDD /* VisionBarcodeCameraViewManager.m in Sources */,
 				65046A2724D330A800A0AC6D /* ModelConfig.swift in Sources */,
 				65B0BE4624D4AB8A00E86FDD /* VisionBarcodeCameraViewManager.swift in Sources */,

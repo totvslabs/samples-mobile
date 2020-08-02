@@ -88,6 +88,10 @@ class CameraSource : NSObject {
     }
     
     private var inProgressCaptures = [Int64: CaptureProcessor]()
+    
+    private var desiredOutputImageSize: CGSize? {
+        cameraView.desiredOutputImageSize
+    }
             
     init(cameraView: CameraView) {
         self.cameraView = cameraView
@@ -602,19 +606,25 @@ extension CameraSource {
 // MARK: - Captures
 extension CameraSource {
     func takePicture(_ onCaptured: @escaping OnImageCaptured) {
+        takePicture(forSaving: false, options: .NULL, onSaved: nil, onCaptured: onCaptured)
     }
     
     func takePicture(with options: OutputFileOptions, onSaved: @escaping OnImageSaved) {
+        takePicture(forSaving: true, options: options, onSaved: onSaved, onCaptured: nil)
+    }
+    
+    private func takePicture(forSaving save: Bool, options: OutputFileOptions, onSaved: OnImageSaved?, onCaptured: OnImageCaptured?) {
         let previewOrientation = previewView.videoPreviewLayer.connection?.videoOrientation
+        let facing = self.facing
         sessionQueue.async {
             if let photoConnection = self.photoOutput.connection(with: .video) {
                 photoConnection.videoOrientation = previewOrientation!
             }
             var photoSettings = AVCapturePhotoSettings()
             
-            // Capture HEIF photos when supported. Enable auto-flash and high-resolution photos.
-            if self.photoOutput.availablePhotoCodecTypes.contains(.hevc) {
-                photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+            // Capture JPEG images. Enable auto-flash and high-resolution photos.
+            if self.photoOutput.availablePhotoCodecTypes.contains(.jpeg) {
+                photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
             }
             if self.cameraDeviceInput.device.isFlashAvailable {
                 photoSettings.flashMode = .auto
@@ -625,10 +635,32 @@ extension CameraSource {
             }
             let processor = CaptureProcessor(
                 with: photoSettings,
-                savePhoto: true,
-                onSave: { _ in
-                    onSaved(nil, nil)
-                }, onComplete: { processor in
+                options: options,
+                savePhoto: save,
+                desiredImageSize: self.desiredOutputImageSize,
+                onImage: { image, error in
+                    
+                    guard let image = image else {
+                        onCaptured?(nil, error)
+                        return
+                    }
+                    let info = ImageInfoImpl(
+                        timestamp: Int64(Date().timeIntervalSince1970 * 1000),
+                        orientation: UIDevice.current.orientation,
+                        sourceFacing: facing
+                    )
+                    let imageProxy = ImageProxyImpl(
+                        image: image,
+                        width: Int(image.size.width),
+                        height: Int(image.size.height),
+                        imageInfo: info
+                    )
+                    onCaptured?(imageProxy, nil)
+                },
+                onSave: { url, error in
+                    onSaved?(url, error)
+                },
+                onComplete: { processor in
                     self.sessionQueue.async {
                         self.inProgressCaptures[processor.photoSettings.uniqueID] = nil
                     }

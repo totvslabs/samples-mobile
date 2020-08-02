@@ -16,7 +16,7 @@ class ImageProxyImpl : ImageProxy {
     
     let imageInfo: ImageInfo
     
-    var image: CIImage?
+    var image: UIImage?
     
     var buffer: CMSampleBuffer?
     
@@ -24,7 +24,7 @@ class ImageProxyImpl : ImageProxy {
     
     var height: Int
     
-    init(image: CIImage, width: Int, height: Int, imageInfo: ImageInfo) {
+    init(image: UIImage, width: Int, height: Int, imageInfo: ImageInfo) {
         self.image = image
         self.buffer = nil
         self.width = width

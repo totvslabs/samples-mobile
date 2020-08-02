@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         queue: DispatchQueue(label: "DetectionThread", attributes: [.concurrent]),
         detectors: FaceDetector()
     )
-    
+
     private var connection: Connection? = nil
     
     private lazy var faceBoundingBox = FaceBoundingBox(cameraView: cameraView)
@@ -31,15 +31,22 @@ class ViewController: UIViewController {
     }
     
     @IBAction func capture(_ button: UIButton) {
-//        cameraView.takePicture(with: OutputFileOptions()) { (url, error) in
-//            print("saved")
+        let dir = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        
+        cameraView.takePicture(with: OutputFileOptions(outputDirectory: dir)) { (url, error) in
+            print("saved in file \(String(describing: url))")
+        }
+//        cameraView.takePicture { (image, error) in
+//            image?.use({ _ in
+//                print("got image \(image!.image!.size)")
+//            })
 //        }
-        installAnalyzer()
+//        installAnalyzer()
     }
     
     @IBAction func flipCamera(_ button: UIButton) {
-//        cameraView.toggleCamera()
-        uninstallAnalyzer()
+        cameraView.toggleCamera()
+//        uninstallAnalyzer()
     }
 }
 
@@ -47,6 +54,7 @@ class ViewController: UIViewController {
 extension ViewController {
     private func initCameraView() {
         cameraView = CameraView()
+        cameraView.desiredOutputImageSize = CGSize(width: 594, height: 1056)
         
         view.insertSubview(cameraView, at: 0)
         
@@ -68,13 +76,13 @@ extension ViewController {
             .filterIsInstance(ofType: FaceObject.self)
             .sendAsync(on: .main)
             .connect(faceBoundingBox)
-            
-        
+
+
         cameraView.analyzer = analzyzer
     }
     
     func uninstallAnalyzer() {
-        connection?.dicsonnect()
+        connection?.disconnect()
         cameraView.analyzer = nil
     }
 }
