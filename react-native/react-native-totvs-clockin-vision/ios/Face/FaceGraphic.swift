@@ -86,8 +86,8 @@ private extension FaceGraphic {
         for l in face.landmarks {
             let center = normalize(point: l.position, sourceSize: face.sourceSize)
             var view: UIView? = nil
-            
-            if drawEyes && l.name == .leftEye || l.name == .rightEye {
+                    
+            if drawEyes && (l.name == .leftEye || l.name == .rightEye) {
                 view = l.name == .leftEye ? addLeftEye(at: center) : addRightEye(at: center)
             }
             if drawNose && l.name == .nose {
