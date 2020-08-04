@@ -82,31 +82,20 @@ private extension FaceGraphic {
     }
     
     private func adjustLandmarks(for face: FaceObject) {
-        if drawEyes {
-            if let position = face[.leftEye]?.position {
-                let normalized = normalize(point: position, sourceSize: face.sourceSize)
-                addLeftEye(at: normalized)
-                
-                UIView.animate(withDuration: 0.185) {
-                    self.leftEye?.center = normalized
-                }
+        // face[.leftEye] works.
+        for l in face.landmarks {
+            let center = normalize(point: l.position, sourceSize: face.sourceSize)
+            var view: UIView? = nil
+            
+            if drawEyes && l.name == .leftEye || l.name == .rightEye {
+                view = l.name == .leftEye ? addLeftEye(at: center) : addRightEye(at: center)
             }
-            if let position = face[.rightEye]?.position {
-                let normalized = normalize(point: position, sourceSize: face.sourceSize)
-                addRightEye(at: normalized)
-                
-                UIView.animate(withDuration: 0.185) {
-                    self.rightEye?.center = normalized
-                }
+            if drawNose && l.name == .nose {
+                view = addNose(at: center)
             }
-        }
-        if drawNose {
-            if let position = face[.nose]?.position {
-                let normalized = normalize(point: position, sourceSize: face.sourceSize)
-                addNose(at: normalized)
-                
+            if nil != view {
                 UIView.animate(withDuration: 0.185) {
-                    self.nose?.center = normalized
+                    view!.center = center
                 }
             }
         }
@@ -114,7 +103,7 @@ private extension FaceGraphic {
 }
 // MARK: - Face Eyes Views
 private extension FaceGraphic {
-    func addLeftEye(at point: CGPoint) {
+    func addLeftEye(at point: CGPoint) -> UIView {
         // if is first request, create the eye and add it
         if nil == leftEye {
             leftEye = addCircle(to: view, at: point, color: color, radius: smallRadius)
@@ -123,8 +112,9 @@ private extension FaceGraphic {
         if nil == leftEye?.superview {
             view.addSubview(leftEye!)
         }
+        return leftEye!
     }
-    func addRightEye(at point: CGPoint) {
+    func addRightEye(at point: CGPoint) -> UIView {
         // if is first request, create the eye and add it
         if nil == rightEye {
             rightEye = addCircle(to: view, at: point, color: color, radius: smallRadius)
@@ -133,12 +123,13 @@ private extension FaceGraphic {
         if nil == rightEye?.superview {
             view.addSubview(rightEye!)
         }
+        return rightEye!
     }
 }
 
 // MARK: - Face Nose Views
 private extension FaceGraphic {
-    func addNose(at point: CGPoint) {
+    func addNose(at point: CGPoint) -> UIView {
         // if is first request, create the nose and add it
         if nil == nose {
             nose = addCircle(to: view, at: point, color: color, radius: smallRadius)
@@ -147,6 +138,7 @@ private extension FaceGraphic {
         if nil == nose?.superview {
             view.addSubview(nose!)
         }
+        return nose!
     }
 }
 
