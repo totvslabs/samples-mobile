@@ -365,6 +365,7 @@ private extension VisionFaceCameraView {
             livenessConnection = detectorAnalyzer
                 .detections
                 .filterIsInstance(ofType: FaceObject.self)
+                .sendAsync(on: .main) // translator uses cameraView
                 .transform(with: faceNoseTranslator)
                 .connect(liveness)
         } else {
@@ -375,6 +376,16 @@ private extension VisionFaceCameraView {
         }
         
         installFaceGraphics(forLiveness: liveness)
+    }
+    
+    // Turn down liveness connections and graphics
+    func disableLiveness() {
+        if isDebug {
+            print("\(TAG): Disabling liveness")
+        }
+        livenessConnection?.disconnect()
+        // uninstall all face graphics
+        clearFaceGraphics()
     }
 }
 
@@ -399,6 +410,14 @@ private extension VisionFaceCameraView {
             .filterIsInstance(ofType: FaceObject.self)
             .connect(proximity)
     }
+    
+    // Turn down proximity connections
+    func disableProximity() {
+        if isDebug {
+            print("\(TAG): Disabling proximity")
+        }
+        proximityConnection?.disconnect()
+    }
 }
 
 // MARK: - FaceGraphic
@@ -422,7 +441,7 @@ private extension VisionFaceCameraView {
         graphicsConnection = detectorAnalyzer
             .detections
             .filterIsInstance(ofType: FaceObject.self)
-            .sendAsync(on: DispatchQueue.main)
+            .sendAsync(on: .main)
             .connect(faceGraphic)
     }
     
@@ -459,9 +478,14 @@ private extension VisionFaceCameraView {
      */
     func checkAnalyzerState() {
         if nil == liveness {
-            // uninstall all face graphics
-            clearFaceGraphics()
+            // disconnect liveness connections
+            disableLiveness()
         }
+        if nil == proximity {
+            // disconnnect proximity connections
+            disableProximity()
+        }
+        
         if nil == liveness && nil == proximity {
             detectorAnalyzer.disableDetector(withKey: FaceDetector.key)
             analyzer = nil

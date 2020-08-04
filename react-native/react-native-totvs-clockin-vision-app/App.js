@@ -64,14 +64,15 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      
+
       <FaceCameraView
         onRef={ref => setCameraView(ref)}
         style={styles.camera}
         overlayGraphicsColor={"#E91E63"}
-        livenessMode={EYES}
+        livenessMode={FACE}
         livenessBlinkCount={3}
         onLiveness={onLiveness}
+        isProximityEnabled={false}
         onFaceProximity={onProximity}
         zoom={MIN}> 
         

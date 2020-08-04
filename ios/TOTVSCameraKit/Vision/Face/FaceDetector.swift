@@ -83,7 +83,7 @@ open class FaceDetector : VisionDetector {
     /**
      * Map the MLKIT vision face to face object
      */
-    private func mapToFaceObject(face: Face, imageWidth: Int, imageHeight: Int) -> FaceObject {
+    private func mapToFaceObject(face: Face, imageWidth: Int, imageHeight: Int) -> FaceObject {    
         return FaceObject(
             width: face.frame.width,
             height: face.frame.height,
@@ -93,6 +93,8 @@ open class FaceDetector : VisionDetector {
             ),
             sourceSize: CGSize(width: imageWidth, height: imageHeight),
             boundingBox: face.frame,
+            eulerZ: face.headEulerAngleZ,
+            eulerY: face.headEulerAngleY,
             landmarks: extractLandmarks(from: face)
         )
     }

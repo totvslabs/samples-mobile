@@ -28,8 +28,8 @@ public struct FaceObject : VisionObject, Equatable {
     public let eyesOpenProbability: EyesOpenProbability
     public var sourceSize: CGSize = .zero
     public var boundingBox: CGRect = .zero
-    public let eulerZ: CGFloat = 0.0
-    public let eulerY: CGFloat = 0.0
+    public var eulerZ: CGFloat = 0.0
+    public var eulerY: CGFloat = 0.0
     public var landmarks = [Landmark]()
     
     public subscript(name: LandmarkName) -> Landmark? {
