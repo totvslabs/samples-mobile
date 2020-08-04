@@ -396,11 +396,7 @@ private extension VisionFaceCameraView {
         if isDebug {
             print("\(TAG): Enabling face graphics. Analyzer is ready: \(nil != analyzer)")
         }
-        
-        // clear the face graphics.
-        faceGraphic.clear()
-        // clear every object on the graphic overlay
-        graphicOverlay.clear()
+        clearFaceGraphics()
         // re-add the face graphic overlay
         graphicOverlay.add(faceGraphic.view)
         // closing current connection
@@ -414,6 +410,16 @@ private extension VisionFaceCameraView {
             .filterIsInstance(ofType: FaceObject.self)
             .sendAsync(on: DispatchQueue.main)
             .connect(faceGraphic)
+    }
+    
+    /**
+     * Clear face graphics and remove the graphic from overlay
+     */
+    func clearFaceGraphics() {
+        // clear the face graphics.
+        faceGraphic.clear()
+        // clear every object on the graphic overlay
+        graphicOverlay.clear()
     }
 }
 
@@ -438,6 +444,10 @@ private extension VisionFaceCameraView {
      * Check if we need to uninstall the analyzer
      */
     func checkAnalyzerState() {
+        if nil == liveness {
+            // uninstall all face graphics
+            clearFaceGraphics()
+        }
         if nil == liveness && nil == proximity {
             detectorAnalyzer.disableDetector(withKey: FaceDetector.key)
             analyzer = nil

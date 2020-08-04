@@ -347,6 +347,10 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
      * Check if we need to uninstall the analyzer
      */
     private fun checkAnalyzerState() {
+        if (null == liveness) {
+            // uninstall all face graphics
+            clearFaceGraphics()
+        }
         if (null == proximity && null == liveness) {
             detectorAnalyzer?.disable(FastFaceDetector)
             analyzer = null
@@ -483,6 +487,16 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
                 ?.transform(AnimateNose())
                 ?.connect(faceGraphic)
         }
+    }
+
+    /**
+     * Clear face graphics and remove the graphic from overlay
+     */
+    private fun clearFaceGraphics() {
+        // clear the face graphics.
+        faceGraphic.clear()
+        // clear every object on the graphic overlay
+        graphicOverlay.clear()
     }
 
 
