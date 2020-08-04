@@ -9,17 +9,30 @@
 import UIKit
 import TOTVSCameraKit
 
+fileprivate let smallRadius: CGFloat = 6.0
+
 public class FaceGraphic : VisionReceiver<FaceObject> {
     
     private weak var cameraView: CameraView? = nil
     
+    // holder view
     public lazy var view: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 10.0
-        view.alpha = 0.3
-        view.backgroundColor = .green
+        view.backgroundColor = .clear
         return view
     }()
+    
+    private var color: UIColor = .green {
+        didSet {
+            leftEye?.backgroundColor = color
+            rightEye?.backgroundColor = color
+            nose?.backgroundColor = color
+        }
+    }
+    
+    private var leftEye: UIView? = nil
+    private var rightEye: UIView? = nil
+    private var nose: UIView? = nil
     
     public var drawEyes: Bool = false
     public var drawNose: Bool = false
@@ -30,46 +43,119 @@ public class FaceGraphic : VisionReceiver<FaceObject> {
     
     public override func send(value: FaceObject) {
         guard value != NullFaceObject else {
-            removeView()
+            clear()
             return
         }
-        if view.superview == nil {
-            addView()
-        }
-        
-        // this step is needed because we need a unit rectangle for the next step.
-        let normalizedFrame = CGRect(
-            x: value.boundingBox.origin.x / value.sourceSize.width,
-            y: value.boundingBox.origin.y / value.sourceSize.height,
-            width: value.boundingBox.width / value.sourceSize.width,
-            height: value.boundingBox.height / value.sourceSize.height
-        )
-        let standardizedRect = cameraView?.previewRect(
-            fromCaptureDeviceRect: normalizedFrame
-        ).standardized
-        
-        UIView.animate(withDuration: 0.2) {
-            self.view.frame = standardizedRect!
-        }
+        adjustFaceBounds(for: value)
+        adjustLandmarks(for: value)
     }
 }
 
+// MARK:  Camera Device Normalization
 private extension FaceGraphic {
-    private func addView() {
-        cameraView?.addOverlayGraphic(view)
+    // normalize points comming from camera device coordinate system.
+    private func normalize(point: CGPoint, sourceSize: CGSize) -> CGPoint {
+        // this step is required to create a unit point
+        let normalized = CGPoint(x: point.x / sourceSize.width, y: point.y / sourceSize.height)
+        return cameraView!.previewPoint(fromCaptureDevicePoint: normalized)
     }
     
-    private func removeView() {
-        view.removeFromSuperview()
+    private func normalize(rect: CGRect, sourceSize: CGSize) -> CGRect {
+        // this step is needed because we need a unit rectangle for the next step.
+        let normalizedFrame = CGRect(
+            x: rect.origin.x / sourceSize.width,
+            y: rect.origin.y / sourceSize.height,
+            width: rect.width / sourceSize.width,
+            height: rect.height / sourceSize.height
+        )
+        return cameraView!
+            .previewRect(fromCaptureDeviceRect: normalizedFrame)
+            .standardized
     }
 }
 
+// MARK: - Face Bounding & Landmarks
+private extension FaceGraphic {
+    
+    private func adjustFaceBounds(for face: FaceObject) {
+        view.frame = cameraView!.graphicOverlay.frame
+    }
+    
+    private func adjustLandmarks(for face: FaceObject) {
+        if drawEyes {
+            if let position = face[.leftEye]?.position {
+                let normalized = normalize(point: position, sourceSize: face.sourceSize)
+                addLeftEye(at: normalized)
+                
+                UIView.animate(withDuration: 0.185) {
+                    self.leftEye?.center = normalized
+                }
+            }
+            if let position = face[.rightEye]?.position {
+                let normalized = normalize(point: position, sourceSize: face.sourceSize)
+                addRightEye(at: normalized)
+                
+                UIView.animate(withDuration: 0.185) {
+                    self.rightEye?.center = normalized
+                }
+            }
+        }
+        if drawNose {
+            if let position = face[.nose]?.position {
+                let normalized = normalize(point: position, sourceSize: face.sourceSize)
+                addNose(at: normalized)
+                
+                UIView.animate(withDuration: 0.185) {
+                    self.nose?.center = normalized
+                }
+            }
+        }
+    }
+}
+// MARK: - Face Eyes Views
+private extension FaceGraphic {
+    func addLeftEye(at point: CGPoint) {
+        // if is first request, create the eye and add it
+        if nil == leftEye {
+            leftEye = addCircle(to: view, at: point, color: color, radius: smallRadius)
+        }
+        // otherwise re-attach it to the parent
+        if nil == leftEye?.superview {
+            view.addSubview(leftEye!)
+        }
+    }
+    func addRightEye(at point: CGPoint) {
+        // if is first request, create the eye and add it
+        if nil == rightEye {
+            rightEye = addCircle(to: view, at: point, color: color, radius: smallRadius)
+        }
+        // otherwise re-attach it to the parent
+        if nil == rightEye?.superview {
+            view.addSubview(rightEye!)
+        }
+    }
+}
+
+// MARK: - Face Nose Views
+private extension FaceGraphic {
+    func addNose(at point: CGPoint) {
+        // if is first request, create the nose and add it
+        if nil == nose {
+            nose = addCircle(to: view, at: point, color: color, radius: smallRadius)
+        }
+        // otherwise re-attach it to the parent
+        if nil == nose?.superview {
+            view.addSubview(nose!)
+        }
+    }
+}
+
+// MARK: - Face Views Clean
 public extension FaceGraphic {
     func clear() {
         for child in view.subviews {
             child.removeFromSuperview()
         }
-        removeView()
     }
 }
 
@@ -79,7 +165,22 @@ public extension FaceGraphic {
         guard let color = UIColor(rgba: rgb) else {
             return
         }
-        view.backgroundColor = color
+        self.color = color
+    }
+}
+
+// MARK: - UI Utility
+private extension FaceGraphic {
+    func addCircle(to view: UIView, at point: CGPoint, color: UIColor, radius: CGFloat) -> UIView {
+        let divisor: CGFloat = 2.0
+        let xCoord = point.x - radius / divisor
+        let yCoord = point.y - radius / divisor
+        let circleView = UIView(frame: CGRect(x: xCoord, y: yCoord, width: radius, height: radius))
+        circleView.layer.cornerRadius = radius / divisor
+        circleView.alpha = 0.7
+        circleView.backgroundColor = color
+        view.addSubview(circleView)
+        return circleView
     }
 }
 

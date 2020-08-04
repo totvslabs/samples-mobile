@@ -22,12 +22,12 @@ public struct Landmark : Equatable {
     /**
      * The name of this landmark
      */
-    var name: LandmarkName
+    public var name: LandmarkName
     
     /**
      * Position of this landmark
      */
-    var position: CGPoint
+    public var position: CGPoint
 }
 
 /**

@@ -79,7 +79,7 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     private lazy var detectorAnalyzerRef = DetectionAnalyzer(queue: detectionQueue, detectors: FaceDetector.default)
             
     /// - [FaceVisionCamera] contract
-    var overlayGraphicsColor: String = "#FFFFFF" {
+    var overlayGraphicsColor: String = "#FFFFFFFF" {
         didSet {
             faceGraphic.setLandmarksColor(rgb: overlayGraphicsColor)
         }
