@@ -65,18 +65,11 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
      * Flag to determine when the camera is busy processing one image for recognition.
      */
     private var isRecognizing = false
-    
-    /**
-     * Handy getter to get the real installed analyzer.
-     */
-    private var detectorAnalyzer: DetectionAnalyzer? {
-        analyzer as? DetectionAnalyzer
-    }
-    
+        
     /**
      * Strong reference to detection analyzer since [CameraView] holds a weak one.
      */
-    private lazy var detectorAnalyzerRef = DetectionAnalyzer(queue: detectionQueue, detectors: FaceDetector.default)
+    private lazy var detectorAnalyzer = DetectionAnalyzer(queue: detectionQueue, detectors: FaceDetector.default)
             
     /// - [FaceVisionCamera] contract
     var overlayGraphicsColor: String = "#FFFFFFFF" {
@@ -362,7 +355,7 @@ private extension VisionFaceCameraView {
         livenessConnection?.disconnect()
         
         // setup the vision stream for face detected objects.
-        livenessConnection = detectorAnalyzer?
+        livenessConnection = detectorAnalyzer
             .detections
             .filterIsInstance(ofType: FaceObject.self)
             .connect(liveness)
@@ -387,7 +380,7 @@ private extension VisionFaceCameraView {
         proximityConnection?.disconnect()
         
         // setup the vision stream for face detected objects.
-        proximityConnection = detectorAnalyzer?
+        proximityConnection = detectorAnalyzer
             .detections
             .filterIsInstance(ofType: FaceObject.self)
             .connect(proximity)
@@ -416,7 +409,7 @@ private extension VisionFaceCameraView {
         faceGraphic.drawEyes = liveness is LivenessEyes
         faceGraphic.drawNose = liveness is LivenessFace
         
-        graphicsConnection = detectorAnalyzer?
+        graphicsConnection = detectorAnalyzer
             .detections
             .filterIsInstance(ofType: FaceObject.self)
             .sendAsync(on: DispatchQueue.main)
@@ -436,9 +429,9 @@ private extension VisionFaceCameraView {
         if isDebug {
             print("\(TAG): Installing DetectionAnalyzer...")
         }
-        detectorAnalyzerRef.enableDetector(withKey: FaceDetector.key)
+        detectorAnalyzer.enableDetector(withKey: FaceDetector.key)
         
-        analyzer = detectorAnalyzerRef
+        analyzer = detectorAnalyzer
     }
     
     /**
@@ -446,7 +439,7 @@ private extension VisionFaceCameraView {
      */
     func checkAnalyzerState() {
         if nil == liveness && nil == proximity {
-            detectorAnalyzer?.disableDetector(withKey: FaceDetector.key)
+            detectorAnalyzer.disableDetector(withKey: FaceDetector.key)
             analyzer = nil
         }
     }
