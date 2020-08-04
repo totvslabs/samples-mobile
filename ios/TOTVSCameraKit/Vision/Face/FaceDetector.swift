@@ -30,6 +30,8 @@ fileprivate typealias MLKitFaceDetector = MLKitFaceDetection.FaceDetector
 */
 open class FaceDetector : VisionDetector {
     
+    public static let `default` = FaceDetector()
+    
     public static var key: AnyHashable { DETECTOR_KEY }
     
     private let selectFace: SelectionStrategy<Face> = SelectMostProminent
@@ -46,7 +48,7 @@ open class FaceDetector : VisionDetector {
     
     private lazy var detector = MLKitFaceDetector.faceDetector(options: detectorOptions)
     
-    public init() { }
+    private init() { }
     
     public func detect(on queue: DispatchQueue, image: ImageProxy, onDetected: (VisionObject) -> Void) {
         guard let buffer = image.buffer else {

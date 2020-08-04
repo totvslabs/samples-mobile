@@ -76,7 +76,7 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     /**
      * Strong reference to detection analyzer since [CameraView] holds a weak one.
      */
-    private lazy var detectorAnalyzerRef = DetectionAnalyzer(queue: detectionQueue, detectors: FaceDetector())
+    private lazy var detectorAnalyzerRef = DetectionAnalyzer(queue: detectionQueue, detectors: FaceDetector.default)
             
     /// - [FaceVisionCamera] contract
     var overlayGraphicsColor: String = "#FFFFFF" {
@@ -436,6 +436,8 @@ private extension VisionFaceCameraView {
         if isDebug {
             print("\(TAG): Installing DetectionAnalyzer...")
         }
+        detectorAnalyzerRef.enableDetector(withKey: FaceDetector.key)
+        
         analyzer = detectorAnalyzerRef
     }
     

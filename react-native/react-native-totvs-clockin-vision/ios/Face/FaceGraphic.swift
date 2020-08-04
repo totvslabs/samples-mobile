@@ -86,13 +86,18 @@ public extension FaceGraphic {
 
 /// MARK: UIColor + RGBA
 fileprivate extension UIColor {
-    convenience init?(rgba: String) {
+    convenience init?(rgba color: String) {
         let r, g, b, a: CGFloat
-
+        var rgba = color
+        
+        if color.count == 7 { // of #FFFFFF
+            rgba = "\(rgba)FF"
+        }
+        
         if rgba.hasPrefix("#") {
             let start = rgba.index(rgba.startIndex, offsetBy: 1)
             let hexColor = String(rgba[start...])
-
+            
             if hexColor.count == 8 {
                 let scanner = Scanner(string: hexColor)
                 var hexNumber: UInt64 = 0

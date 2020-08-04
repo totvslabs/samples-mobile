@@ -23,6 +23,10 @@ const onProximity = async proximity => {
   console.log('proximity event:', { ...proximity });
 }
 
+const onLiveness = async liveness => {
+  console.log('liveness event:', { ...liveness });
+}
+
 const App = () => {
   console.log('Constants', { ...Constants });
 
@@ -36,6 +40,11 @@ const App = () => {
   const {
     MIN, MAX
   } = Constants.ZOOM_LIMITS;
+
+  // liveness modes
+  const {
+    FACE, EYES, NONE
+  } = Constants.LIVENESS_MODE;
 
   const performAction = async () => {  
     // VisionModule actions
@@ -59,9 +68,10 @@ const App = () => {
       <FaceCameraView
         onRef={ref => setCameraView(ref)}
         style={styles.camera}
-        overlayGraphicsColor={"#000"}
-        isProximityEnabled={true}
-        proximityThreshold={102.5}
+        overlayGraphicsColor={"#E91E63"}
+        livenessMode={FACE}
+        livenessBlinkCount={3}
+        onLiveness={onLiveness}
         onFaceProximity={onProximity}
         zoom={MIN}> 
         
