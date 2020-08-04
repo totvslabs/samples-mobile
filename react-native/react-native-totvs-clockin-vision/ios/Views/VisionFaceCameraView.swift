@@ -52,6 +52,12 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     private lazy var faceGraphic = FaceGraphic(cameraView: self)
     
     /**
+     * [Transformer] that scale nose landmark from the source coordinate into [GraphicOverlay]
+     * coordinate system.
+     */
+    private lazy var faceNoseTranslator = FaceNoseTranslator(cameraView: self)
+    
+    /**
      * Whether or not we're on a ready state.
      */
     private var isReady = false
@@ -355,10 +361,18 @@ private extension VisionFaceCameraView {
         livenessConnection?.disconnect()
         
         // setup the vision stream for face detected objects.
-        livenessConnection = detectorAnalyzer
-            .detections
-            .filterIsInstance(ofType: FaceObject.self)
-            .connect(liveness)
+        if liveness is LivenessFace {
+            livenessConnection = detectorAnalyzer
+                .detections
+                .filterIsInstance(ofType: FaceObject.self)
+                .transform(with: faceNoseTranslator)
+                .connect(liveness)
+        } else {
+            livenessConnection = detectorAnalyzer
+                .detections
+                .filterIsInstance(ofType: FaceObject.self)
+                .connect(liveness)
+        }
         
         installFaceGraphics(forLiveness: liveness)
     }

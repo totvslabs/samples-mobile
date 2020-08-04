@@ -28,6 +28,11 @@ public struct Landmark : Equatable {
      * Position of this landmark
      */
     public var position: CGPoint
+    
+    public init(name: LandmarkName, position: CGPoint) {
+        self.name = name
+        self.position = position
+    }
 }
 
 /**

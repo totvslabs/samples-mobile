@@ -12,6 +12,7 @@
 		65046A2924D3313B00A0AC6D /* RecognitionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2824D3313B00A0AC6D /* RecognitionModel.swift */; };
 		65046A2B24D3314100A0AC6D /* DetectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2A24D3314100A0AC6D /* DetectionModel.swift */; };
 		65046A2D24D3322900A0AC6D /* ModelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65046A2C24D3322900A0AC6D /* ModelProvider.swift */; };
+		651F2D5524D9B76700E32D87 /* FaceTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651F2D5424D9B76700E32D87 /* FaceTransformer.swift */; };
 		65A396FC24D71B1800B5B371 /* CountDownLatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A396FB24D71B1800B5B371 /* CountDownLatch.swift */; };
 		65A396FF24D8AFC200B5B371 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A396FE24D8AFC200B5B371 /* Event.swift */; };
 		65A3970124D8AFD500B5B371 /* OnFaceProximity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A3970024D8AFD500B5B371 /* OnFaceProximity.swift */; };
@@ -59,6 +60,7 @@
 		65046A2824D3313B00A0AC6D /* RecognitionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognitionModel.swift; sourceTree = "<group>"; };
 		65046A2A24D3314100A0AC6D /* DetectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionModel.swift; sourceTree = "<group>"; };
 		65046A2C24D3322900A0AC6D /* ModelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelProvider.swift; sourceTree = "<group>"; };
+		651F2D5424D9B76700E32D87 /* FaceTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceTransformer.swift; sourceTree = "<group>"; };
 		65A396FB24D71B1800B5B371 /* CountDownLatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountDownLatch.swift; sourceTree = "<group>"; };
 		65A396FE24D8AFC200B5B371 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		65A3970024D8AFD500B5B371 /* OnFaceProximity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFaceProximity.swift; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 				65B0BE4B24D5DCA500E86FDD /* RecognitionOptions.swift */,
 				65B0BE4D24D5DD0D00E86FDD /* RecognitionResult.swift */,
 				65B0BE4F24D5E39000E86FDD /* FaceGraphic.swift */,
+				651F2D5424D9B76700E32D87 /* FaceTransformer.swift */,
 			);
 			path = Face;
 			sourceTree = "<group>";
@@ -288,6 +291,7 @@
 				65CB8AED24D33F790018FB6C /* RecognitionDetectionModel.swift in Sources */,
 				65046A2924D3313B00A0AC6D /* RecognitionModel.swift in Sources */,
 				65CB8B0324D4A7980018FB6C /* Liveness.swift in Sources */,
+				651F2D5524D9B76700E32D87 /* FaceTransformer.swift in Sources */,
 				65CB8B0124D36DE90018FB6C /* VisionCamera.swift in Sources */,
 				65046A2B24D3314100A0AC6D /* DetectionModel.swift in Sources */,
 				65B0BE5024D5E39000E86FDD /* FaceGraphic.swift in Sources */,

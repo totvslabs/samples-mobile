@@ -33,6 +33,9 @@ class LivenessFace(
     private val state = YawState()
 
     override fun send(value: FaceObject) {
+        if (value == NullFaceObject) {
+            return
+        }
         // we only consider faces with noses landmark here
         val nose = value[Nose] ?: return
         val cx = nose.position.x // already translated by [FaceNoseTranslator]
@@ -42,7 +45,7 @@ class LivenessFace(
         val boundary = value.sourceSize.width * infeasibleAreaPercent
         // If the nose landmark x coordinate is within bounds proceed.
         if (boundary < cx && cx < (value.sourceSize.width - boundary)) {
-            state.push(value.eulerY.toInt()) { // if activated
+            state.push(eulerY.toInt()) { // if activated
 
                 if (-EULER_ANGLE_CENTER_BOUND < eulerY && eulerY < EULER_ANGLE_CENTER_BOUND) {
                     // is live. clear
