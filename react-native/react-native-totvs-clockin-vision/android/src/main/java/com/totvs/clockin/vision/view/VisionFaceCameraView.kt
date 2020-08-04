@@ -330,6 +330,11 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         if (null != analyzer) {
             return
         }
+        
+        if (isDebug) {
+            Log.i(TAG, "Installing DetectionAnalyzer...")
+        }
+
         analyzer = DetectionAnalyzer(
             detectionExecutor,
             FastFaceDetector(context)

@@ -15,9 +15,14 @@ public struct RecognitionOptions {
     /**
      Whether we need to save the captured image or not.
      */
-    let saveImage: Bool = false
+    let saveImage: Bool
     /**
      Output directory location where to save the image.
      */
-    let outputDir: URL? = nil
+    let outputDir: URL?
+    
+    public init(saveImage: Bool = false, outputDir: URL? = nil) {
+        self.saveImage = saveImage
+        self.outputDir = outputDir
+    }
 }

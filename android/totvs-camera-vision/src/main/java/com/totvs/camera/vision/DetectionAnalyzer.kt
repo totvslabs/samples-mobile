@@ -133,6 +133,9 @@ open class DetectionAnalyzer(
         if (isBusy.compareAndSet(false, true)) {
             image.use {
                 val detectors = registry.values.filter { it.enabled }
+                if (detectors.isEmpty()) {
+                    return@use
+                }
                 // let's synchronize the detectors to know when we can analyze another frame
                 val latch = CountDownLatch(detectors.size)
 

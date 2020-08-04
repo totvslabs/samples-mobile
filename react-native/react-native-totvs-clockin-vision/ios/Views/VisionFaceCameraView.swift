@@ -16,7 +16,6 @@ fileprivate var TAG  = "FaceVisionCameraView"
 */
 @objc(VisionFaceCameraView)
 class VisionFaceCameraView : CameraView, VisionFaceCamera {
-    
     /**
      * DispatchQueue for detection tasks.
      */
@@ -58,6 +57,11 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     private var isReady = false
     
     /**
+     Whether the dispatch queues are ready to process tasks. i.e not resumed
+     */
+    private var areQueueProcessing = true
+    
+    /**
      * Flag to determine when the camera is busy processing one image for recognition.
      */
     private var isRecognizing = false
@@ -68,6 +72,11 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     private var detectorAnalyzer: DetectionAnalyzer? {
         analyzer as? DetectionAnalyzer
     }
+    
+    /**
+     * Strong reference to detection analyzer since [CameraView] holds a weak one.
+     */
+    private lazy var detectorAnalyzerRef = DetectionAnalyzer(queue: detectionQueue, detectors: FaceDetector())
             
     /// - [FaceVisionCamera] contract
     var overlayGraphicsColor: String = "#FFFFFF" {
@@ -108,7 +117,18 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
         proximity != nil
     }
     
+    /// - Events
+    private var onLiveness: OnLiveness? = nil
+    private var onFaceProximity: OnFaceProximity? = nil
+    private var onFaceRecognized: OnFaceRecognized? = nil
     
+    /// - Transient State variables
+    
+    // required blinks for the liveness eye mode.
+    private var requiredBlinks = 0
+    // threshold for the proximity feature.
+    private var proximityThreshold = Float(0.0)
+        
     override init(frame: CGRect) {
         super.init(frame: frame)
         enableDebug()
@@ -122,16 +142,19 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     }
 
     open override func removeFromSuperview() {
+        super.removeFromSuperview()
         tearDown()
     }
     
     open override func didMoveToSuperview() {
+        super.didMoveToSuperview()
         startUp()
     }
 }
 
-/// MARK: Pseudo Camera contract.
-/// View JS Properties. This is a pseudo contract because it forward to real Camera contract
+// MARK: - Pseudo Camera contract.
+
+/// View JS Properties & Events. This is a pseudo contract because it forward to real Camera contract
 /// properties.
 extension VisionFaceCameraView {
     /**
@@ -139,25 +162,128 @@ extension VisionFaceCameraView {
      They serve the same purpose of setter in the ViewManager on android.
      */
     
+    
+    /// - JS View Properties
+    ///
+    /**
+     * Set initial camera facing
+     */
     @objc func setFacing(_ value: NSNumber) {
         if let facing = CameraFacing(rawValue: Int(truncating: value)) {
             self.facing = facing
         }
     }
     
+    /**
+     * Set initial camera zoom
+     */
     @objc func setZoom(_ value: NSNumber) {
         zoom = Float(truncating: value)
     }
+    
+    /**
+     * Sets the appropriate liveness mode
+     */
+    @objc func setLivenessMode(_ livenessMode: NSNumber) {
+        switch livenessMode.intValue {
+        case LivenessEyes.id:
+            liveness = LivenessEyes(requiredBlinks: requiredBlinks) { [weak self] result in
+                // on detection send the event
+                self?.sendLivenessEvent(with: result)
+            }
+            break
+        case LivenessFace.id:
+            liveness = LivenessFace { [weak self] result in
+                // on detection send the event
+                self?.sendLivenessEvent(with: result)
+            }
+            break
+        default: liveness = nil // disable the liveness
+        }
+    }
+    
+    /**
+     * This property is only related to liveness eyes and control the number of blinks
+     * to track until regarding a face as live.
+     */
+    @objc func setLivenessBlinkCount(_ blinksCount: NSNumber) {
+        requiredBlinks = blinksCount.intValue
+        
+        (liveness as? LivenessEyes)?.requiredBlinks = requiredBlinks
+    }
+    
+    /**
+     * Set a default color for overlay graphics. This is used to control the
+     * color with which landmarks are colored under liveness feature.
+     */
+    @objc func setOverlayGraphicsColor(_ rgb: NSString) {
+        overlayGraphicsColor = String(rgb)
+    }
+    
+    /**
+     * Set the proximity detector
+     */
+    @objc func setIsProximityEnabled(_ enabled: NSNumber) {
+        guard enabled.boolValue else {
+            proximity = nil
+            return
+        }
+        if let proximity = self.proximity as? ProximityByFaceWidth {
+            proximity.threshold = proximityThreshold
+        } else {
+            proximity = ProximityByFaceWidth(threshold: proximityThreshold) { [weak self] result in
+                // on detection send the event
+                self?.sendProximityEvent(with: result)
+            }
+        }
+    }
+    
+    /**
+     * Sets the appropriate proximity threshold value
+     */
+    @objc func setProximityThreshold(_ threshold: NSNumber) {
+        proximityThreshold = threshold.floatValue
+        
+        (proximity as? ProximityByFaceWidth)?.threshold = proximityThreshold
+    }
+    
+    /// - JS View Events
+    @objc func setOnLiveness(_ event: RCTDirectEventBlock?) {
+        onLiveness = OnLiveness(emit: event)
+    }
+        
+    @objc func setOnFaceProximity(_ event: RCTDirectEventBlock?) {
+        onFaceProximity = OnFaceProximity(emit: event)
+    }
+    
+    @objc func setOnFaceRecognized(_ event: RCTDirectEventBlock?) {
+        onFaceRecognized = OnFaceRecognized(emit: event)
+    }
 }
 
-/// MARK: Debugging
+// MARK: - Events
+internal extension VisionFaceCameraView {
+    func sendLivenessEvent(with result: LivenessResult) {
+        onLiveness?.send(data: result)
+    }
+    
+    func sendProximityEvent(with result: ProximityResult) {
+        onFaceProximity?.send(data: result)
+    }
+    
+    func sendFaceRecognitionEvent(with result: RecognitionResult) {
+        onFaceRecognized?.send(data: result)
+    }
+}
+
+// MARK: - Debugging
 private extension VisionFaceCameraView {
     func enableDebug() {
         isDebug = true
     }
 }
 
-/// MARK: Lifecycle
+// MARK: - Lifecycle
 private extension VisionFaceCameraView {
     /**
      * Setup every requirement of this face vision camera
@@ -193,6 +319,9 @@ private extension VisionFaceCameraView {
      * Setup the dispatch queues for background jobs
      */
     func setupDispatchQueues() {
+        guard !areQueueProcessing else {
+            return
+        }
         detectionQueue.resume()
         recognitionQueue.resume()
     }
@@ -201,6 +330,8 @@ private extension VisionFaceCameraView {
      * Suspend task processing on all queues.
      */
     func tearDownDispatchQueues() {
+        areQueueProcessing = false
+        
         detectionQueue.suspend()
         recognitionQueue.suspend()
     }
@@ -215,7 +346,7 @@ private extension VisionFaceCameraView {
     }
 }
 
-/// MARK: Liveness
+// MARK: - Liveness
 private extension VisionFaceCameraView {
     /**
      * Enable the liveness feature in this vision camera view
@@ -240,7 +371,7 @@ private extension VisionFaceCameraView {
     }
 }
 
-/// MARK: Proximity
+// MARK: - Proximity
 private extension VisionFaceCameraView {
     /**
      * Enable the proximity feature on this vision camera view.
@@ -263,7 +394,7 @@ private extension VisionFaceCameraView {
     }
 }
 
-/// MARK: FaceGraphic
+// MARK: - FaceGraphic
 private extension VisionFaceCameraView {
     /**
      * Enable graphic overlay on the camera
@@ -293,19 +424,19 @@ private extension VisionFaceCameraView {
     }
 }
 
-/// MARK: DetectionAnalyzer
+// MARK: - DetectionAnalyzer
 private extension VisionFaceCameraView {
     /**
      * Install detection analyzer on [CameraView]
      */
     func installAnalyzer() {
-        guard nil != analyzer else {
+        guard nil == analyzer else {
             return
         }
-        analyzer = DetectionAnalyzer(
-            queue: detectionQueue,
-            detectors: FaceDetector()
-        )
+        if isDebug {
+            print("\(TAG): Installing DetectionAnalyzer...")
+        }
+        analyzer = detectorAnalyzerRef
     }
     
     /**
@@ -319,7 +450,7 @@ private extension VisionFaceCameraView {
     }
 }
 
-/// MARK: VisionFaceCamera contract
+// MARK: - VisionFaceCamera contract
 extension VisionFaceCameraView {
     private func ensureSetup(block: () -> Void) {
         guard let _ = model else {

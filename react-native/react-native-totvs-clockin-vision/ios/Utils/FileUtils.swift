@@ -91,7 +91,7 @@ fileprivate func getNoMediaDirectoryURL() -> URL {
 /**
 * Returns the captures output directory path
 */
-fileprivate func getCapturesDirectoryURL() -> URL {
+func getCapturesDirectoryURL() -> URL {
     return getModelOutputDirectoryURL()
         .appendingPathComponent(CAPTURES_OUTPUT_DIR_NAME)
 }

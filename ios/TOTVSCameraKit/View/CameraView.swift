@@ -73,10 +73,12 @@ open class CameraView : UIView {
     }
     
     open override func removeFromSuperview() {
+        super.removeFromSuperview()
         cameraSource.stopRunning()
     }
     
     open override func didMoveToSuperview() {
+        super.didMoveToSuperview()
         cameraSource.startRunning()
     }    
 }

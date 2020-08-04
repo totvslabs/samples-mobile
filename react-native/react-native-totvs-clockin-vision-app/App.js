@@ -19,6 +19,10 @@ import { VisionModule, FaceCameraConstants, FaceCameraView } from 'react-native-
 
 const Constants = FaceCameraConstants;
 
+const onProximity = async proximity => {
+  console.log('proximity event:', { ...proximity });
+}
+
 const App = () => {
   console.log('Constants', { ...Constants });
 
@@ -55,6 +59,10 @@ const App = () => {
       <FaceCameraView
         onRef={ref => setCameraView(ref)}
         style={styles.camera}
+        overlayGraphicsColor={"#000"}
+        isProximityEnabled={true}
+        proximityThreshold={102.5}
+        onFaceProximity={onProximity}
         zoom={MIN}> 
         
         {childFunction} 

@@ -130,8 +130,10 @@ extension DetectionAnalyzer : ImageAnalyzer {
             isBusy = true
             
             image.use { _ in
-                let detectors = registry.values.filter({ d in d.enabled })
-                
+                let detectors = registry.values.filter({ d in d.enabled })                
+                if detectors.isEmpty {
+                    return
+                }
                 // let's synchronize the detectors to know when we can analyze another frame
                 let latch = CountDownLatch(count: Int32(detectors.count))
                 

@@ -33,17 +33,20 @@ open class LivenessFace : Liveness {
     internal static let id = 1
     
     let infeasibleAreaPercent: Float
-    let onLiveness: (LivenessResult) -> Void
+    open var onLiveness: ((LivenessResult) -> Void)? = nil
     
-    init(onLiveness: @escaping (LivenessResult) -> Void) {
-        self.infeasibleAreaPercent = 0.2
-        self.onLiveness = onLiveness
+    public init(infeasibleAreaPercent: Float = 0.2) {
+        self.infeasibleAreaPercent = infeasibleAreaPercent
     }
     
-    init(infeasibleAreaPercent: Float, onLiveness: @escaping (LivenessResult) -> Void) {
+    public init(infeasibleAreaPercent: Float = 0.2, onLiveness: @escaping (LivenessResult) -> Void) {
         self.infeasibleAreaPercent = infeasibleAreaPercent
         self.onLiveness = onLiveness
     }
+}
+
+extension LivenessFace : CustomStringConvertible {
+    public var description: String { "LivenessFace" }
 }
 
 /**
@@ -52,10 +55,25 @@ open class LivenessFace : Liveness {
 open class LivenessEyes : Liveness {
     internal static let id = 2
     
-    let onLiveness: (LivenessResult) -> Void
+    /**
+     * Value that defined no required blinks
+     */
+    static let NO_BLINKS = -1
     
-    init(onLiveness: @escaping (LivenessResult) -> Void) {
+    open var requiredBlinks: Int = LivenessEyes.NO_BLINKS
+    
+    open var onLiveness: ((LivenessResult) -> Void)? = nil
+    
+    public override init() {
+    }
+    
+    public init(requiredBlinks: Int, onLiveness: @escaping (LivenessResult) -> Void) {
+        self.requiredBlinks = requiredBlinks
         self.onLiveness = onLiveness
     }
 }
 
+
+extension LivenessEyes : CustomStringConvertible {
+    public var description: String { "LivenessEyes" }
+}

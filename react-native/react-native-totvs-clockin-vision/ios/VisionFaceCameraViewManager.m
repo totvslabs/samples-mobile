@@ -13,6 +13,15 @@
 
     RCT_EXPORT_VIEW_PROPERTY(facing, NSNumber)
     RCT_EXPORT_VIEW_PROPERTY(zoom, NSNumber)
+    RCT_EXPORT_VIEW_PROPERTY(livenessMode, NSNumber)
+    RCT_EXPORT_VIEW_PROPERTY(livenessBlinkCount, NSNumber)
+    RCT_EXPORT_VIEW_PROPERTY(overlayGraphicsColor, NSString)
+    RCT_EXPORT_VIEW_PROPERTY(isProximityEnabled, NSNumber)
+    RCT_EXPORT_VIEW_PROPERTY(proximityThreshold, NSNumber)
+
+    RCT_EXPORT_VIEW_PROPERTY(onLiveness, RCTDirectEventBlock)
+    RCT_EXPORT_VIEW_PROPERTY(onFaceProximity, RCTDirectEventBlock)
+    RCT_EXPORT_VIEW_PROPERTY(onFaceRecognized, RCTDirectEventBlock)
 
     RCT_EXTERN_METHOD(
         setZoom:(nonnull NSNumber*)zoom
@@ -52,6 +61,13 @@
     )
     RCT_EXTERN_METHOD(
         getLensFacing:(nonnull NSNumber*)node
+        resolve: (RCTPromiseResolveBlock)resolve
+        reject: (RCTPromiseRejectBlock)reject
+    )
+
+    RCT_EXTERN_METHOD(
+        recognizeStillPicture:(nonnull NSNumber*)saveImage
+        node:(nonnull NSNumber*)node
         resolve: (RCTPromiseResolveBlock)resolve
         reject: (RCTPromiseRejectBlock)reject
     )

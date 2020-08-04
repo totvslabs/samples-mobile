@@ -148,6 +148,28 @@ extension VisionFaceCameraViewManager {
             resolve(view.facing.rawValue)
         }
     }
+    
+    /**
+     * Trigger the recognition on an still picture. If [saveImage] is true, then the result will
+     * contain a path for the saved image.
+     * Results of this method are obtained through the dispatch of the [OnFaceRecognized] event
+     */
+    @objc func recognizeStillPicture(_ saveImage: NSNumber,
+        node: NSNumber,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock)
+    {
+        withView(node) { view in
+            let options = RecognitionOptions(
+                saveImage: saveImage.boolValue,
+                outputDir: getCapturesDirectoryURL()
+            )
+            view.recognizeStillPicture(options: options) { result in
+                view.sendFaceRecognitionEvent(with: result)
+            }
+            resolve(true)
+        }
+    }
 }
 
 
@@ -163,5 +185,7 @@ fileprivate let ZOOM_LIMITS = [
 ]
 
 fileprivate let LIVENESS_MODE = [
+    "FACE": LivenessFace.id,
+    "EYES": LivenessEyes.id,
     "NONE": 0
 ]
