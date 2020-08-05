@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  This file is added only for the purpose of bridging the c++ code to objc and objc to swift since
- Swift can't access directly c++ code.
+ swift can't access directly c++ code.
  */
 @interface ObjcFaceRecognizer : NSObject
 
