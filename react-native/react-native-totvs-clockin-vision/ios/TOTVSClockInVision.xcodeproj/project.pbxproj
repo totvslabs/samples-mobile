@@ -27,9 +27,7 @@
 		65B0BE4E24D5DD0D00E86FDD /* RecognitionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B0BE4D24D5DD0D00E86FDD /* RecognitionResult.swift */; };
 		65B0BE5024D5E39000E86FDD /* FaceGraphic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B0BE4F24D5E39000E86FDD /* FaceGraphic.swift */; };
 		65CB8AED24D33F790018FB6C /* RecognitionDetectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB8AEC24D33F790018FB6C /* RecognitionDetectionModel.swift */; };
-		65CB8AF024D340560018FB6C /* NativeFaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB8AEF24D340560018FB6C /* NativeFaceModel.swift */; };
 		65CB8AF524D36B330018FB6C /* Face.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB8AF424D36B330018FB6C /* Face.swift */; };
-		65CB8AF724D36BD00018FB6C /* NativeFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB8AF624D36BD00018FB6C /* NativeFace.swift */; };
 		65CB8AF924D36C9D0018FB6C /* VisionFaceCameraViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB8AF824D36C9D0018FB6C /* VisionFaceCameraViewManager.swift */; };
 		65CB8AFB24D36CBD0018FB6C /* VisionFaceCameraViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 65CB8AFA24D36CBD0018FB6C /* VisionFaceCameraViewManager.m */; };
 		65CB8AFD24D36D1E0018FB6C /* VisionFaceCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB8AFC24D36D1E0018FB6C /* VisionFaceCameraView.swift */; };
@@ -75,10 +73,8 @@
 		65B0BE4D24D5DD0D00E86FDD /* RecognitionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognitionResult.swift; sourceTree = "<group>"; };
 		65B0BE4F24D5E39000E86FDD /* FaceGraphic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceGraphic.swift; sourceTree = "<group>"; };
 		65CB8AEC24D33F790018FB6C /* RecognitionDetectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognitionDetectionModel.swift; sourceTree = "<group>"; };
-		65CB8AEF24D340560018FB6C /* NativeFaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeFaceModel.swift; sourceTree = "<group>"; };
 		65CB8AF224D355220018FB6C /* ClockInVision.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ClockInVision.bundle; sourceTree = "<group>"; };
 		65CB8AF424D36B330018FB6C /* Face.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Face.swift; sourceTree = "<group>"; };
-		65CB8AF624D36BD00018FB6C /* NativeFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeFace.swift; sourceTree = "<group>"; };
 		65CB8AF824D36C9D0018FB6C /* VisionFaceCameraViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionFaceCameraViewManager.swift; sourceTree = "<group>"; };
 		65CB8AFA24D36CBD0018FB6C /* VisionFaceCameraViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisionFaceCameraViewManager.m; sourceTree = "<group>"; };
 		65CB8AFC24D36D1E0018FB6C /* VisionFaceCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionFaceCameraView.swift; sourceTree = "<group>"; };
@@ -116,7 +112,6 @@
 				65A396FD24D8AFA800B5B371 /* Events */,
 				65B0BE4024D4AB2400E86FDD /* Barcode */,
 				65CB8AF324D36B210018FB6C /* Face */,
-				65CB8AEE24D3402E0018FB6C /* Impl */,
 				65046A2124D32E8100A0AC6D /* Resources */,
 				65D4D01F24CF9C9E0020A0DF /* Core */,
 				65D4D01E24CF9C8E0020A0DF /* Views */,
@@ -157,15 +152,6 @@
 				65B0BE4124D4AB3800E86FDD /* VisionBarcodeCamera.swift */,
 			);
 			path = Barcode;
-			sourceTree = "<group>";
-		};
-		65CB8AEE24D3402E0018FB6C /* Impl */ = {
-			isa = PBXGroup;
-			children = (
-				65CB8AEF24D340560018FB6C /* NativeFaceModel.swift */,
-				65CB8AF624D36BD00018FB6C /* NativeFace.swift */,
-			);
-			path = Impl;
 			sourceTree = "<group>";
 		};
 		65CB8AF324D36B210018FB6C /* Face */ = {
@@ -295,9 +281,7 @@
 				65CB8B0124D36DE90018FB6C /* VisionCamera.swift in Sources */,
 				65046A2B24D3314100A0AC6D /* DetectionModel.swift in Sources */,
 				65B0BE5024D5E39000E86FDD /* FaceGraphic.swift in Sources */,
-				65CB8AF024D340560018FB6C /* NativeFaceModel.swift in Sources */,
 				65D4D01C24CF804D0020A0DF /* VisionModule.m in Sources */,
-				65CB8AF724D36BD00018FB6C /* NativeFace.swift in Sources */,
 				65B0BE4A24D5DBD800E86FDD /* Proximity.swift in Sources */,
 				65B0BE4424D4AB5500E86FDD /* VisionBarcodeCameraView.swift in Sources */,
 				65B0BE4224D4AB3800E86FDD /* VisionBarcodeCamera.swift in Sources */,

@@ -68,12 +68,6 @@ const App = () => {
       <FaceCameraView
         onRef={ref => setCameraView(ref)}
         style={styles.camera}
-        overlayGraphicsColor={"#E91E63"}
-        livenessMode={FACE}
-        livenessBlinkCount={3}
-        onLiveness={onLiveness}
-        isProximityEnabled={false}
-        onFaceProximity={onProximity}
         zoom={MIN}> 
         
         {childFunction} 

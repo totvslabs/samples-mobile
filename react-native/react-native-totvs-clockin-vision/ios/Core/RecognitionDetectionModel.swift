@@ -11,26 +11,30 @@ import Foundation
 /**
  Abstract class for a generic Recognition & Detection model
  */
-public class RecognitionDetectionModel<Input, Output> : RecognitionModel, DetectionModel {
+open class RecognitionDetectionModel<Input, Output> : RecognitionModel, DetectionModel {
     public var isTrained: Bool = false
     
-    public func initialize() {
+    open func configure(with: ModelConfig) {
         fatalError("Abstract Method")
     }
     
-    public func train() {
+    open func initialize() {
         fatalError("Abstract Method")
     }
     
-    public func release() {
+    open func train() {
         fatalError("Abstract Method")
     }
     
-    public func detect(input: Input, onDetected: @escaping ([Output]) -> Void) throws {
+    open func release() {
         fatalError("Abstract Method")
     }
     
-    public func recognize(input: Input, onRecognized: @escaping ([Output]) -> Void) throws {
+    open func detect(input: Input, onDetected: @escaping ([Output]) -> Void) throws {
+        fatalError("Abstract Method")
+    }
+    
+    open func recognize(input: Input, onRecognized: @escaping ([Output]) -> Void) throws {
         fatalError("Abstract Method")
     }
 }
