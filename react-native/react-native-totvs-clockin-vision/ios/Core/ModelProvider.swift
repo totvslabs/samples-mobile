@@ -23,14 +23,14 @@ public class ModelProvider {
      * The is assumed to provide an implementation for of the model to use by the
      * vision library.
      */
-    static func setFaceRecognitionDetectionModel(model: RecognitionDetectionModel<UIImage, Face>) {
+    public static func setFaceRecognitionDetectionModel(model: RecognitionDetectionModel<UIImage, Face>) {
         ModelProvider.model = model
     }
     
     /**
      * Returns a face recognition model
      */
-    static func getFaceRecognitionDetectionModel(config: ModelConfig) -> RecognitionDetectionModel<UIImage, Face> {
+    public static func getFaceRecognitionDetectionModel(config: ModelConfig) -> RecognitionDetectionModel<UIImage, Face> {
         precondition(nil != model, """
                 RecognitionDetectionModel haven't being provided,
                 you need to call getFaceRecognitionDetectionModel with a valid implementation

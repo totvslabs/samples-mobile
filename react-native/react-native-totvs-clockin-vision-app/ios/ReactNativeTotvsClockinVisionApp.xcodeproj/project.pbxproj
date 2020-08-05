@@ -18,6 +18,7 @@
 		4A5DD221F857165215FBF3EC /* libPods-ReactNativeTotvsClockinVisionApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B033944E6423592A6735FC /* libPods-ReactNativeTotvsClockinVisionApp-tvOSTests.a */; };
 		6500864824DA5F8700578328 /* ObjcFaceRecognizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6500864724DA5F8700578328 /* ObjcFaceRecognizer.mm */; };
 		6500864E24DAF14600578328 /* libdlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6500864D24DAF14600578328 /* libdlib.a */; };
+		6500865024DB464A00578328 /* ClockInVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6500864F24DB464A00578328 /* ClockInVision.swift */; };
 		651F2D6024DA517D00E32D87 /* dlib in Resources */ = {isa = PBXBuildFile; fileRef = 651F2D5F24DA517D00E32D87 /* dlib */; };
 		651F2D6924DA530A00E32D87 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 651F2D6824DA530A00E32D87 /* opencv2.framework */; };
 		651F2D7624DA534D00E32D87 /* EmbeddingsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651F2D6B24DA534B00E32D87 /* EmbeddingsManager.cpp */; };
@@ -69,6 +70,7 @@
 		6500864624DA5F8700578328 /* ObjcFaceRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjcFaceRecognizer.h; sourceTree = "<group>"; };
 		6500864724DA5F8700578328 /* ObjcFaceRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjcFaceRecognizer.mm; sourceTree = "<group>"; };
 		6500864D24DAF14600578328 /* libdlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libdlib.a; sourceTree = "<group>"; };
+		6500864F24DB464A00578328 /* ClockInVision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockInVision.swift; sourceTree = "<group>"; };
 		651F2D5F24DA517D00E32D87 /* dlib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = dlib; sourceTree = "<group>"; };
 		651F2D6824DA530A00E32D87 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		651F2D6B24DA534B00E32D87 /* EmbeddingsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddingsManager.cpp; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 			children = (
 				651F2D8224DA53EA00E32D87 /* NativeRecognitionModel.swift */,
 				651F2D8524DA546A00E32D87 /* NativeFace.swift */,
+				6500864F24DB464A00578328 /* ClockInVision.swift */,
 			);
 			path = vision;
 			sourceTree = "<group>";
@@ -672,6 +675,7 @@
 				651F2D8324DA53EA00E32D87 /* NativeRecognitionModel.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				6500864824DA5F8700578328 /* ObjcFaceRecognizer.mm in Sources */,
+				6500865024DB464A00578328 /* ClockInVision.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
