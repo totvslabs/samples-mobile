@@ -11,7 +11,7 @@ import Foundation
 /**
  Abstract class for a generic Recognition & Detection model
  */
-open class RecognitionDetectionModel<Input, Output> : RecognitionModel, DetectionModel {
+open class RecognitionDetectionModel<Input, Output> : NSObject, RecognitionModel, DetectionModel {
     public var isTrained: Bool = false
     
     open func configure(with: ModelConfig) {
@@ -26,7 +26,7 @@ open class RecognitionDetectionModel<Input, Output> : RecognitionModel, Detectio
         fatalError("Abstract Method")
     }
     
-    open func release() {
+    open func releaseResources() {
         fatalError("Abstract Method")
     }
     

@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import UIKit
+import react_native_totvs_clockin_vision
 
-class SomeTest {
+@objc(NativeRecognitionModel)
+class NativeRecognitionModel : RecognitionDetectionModel<UIImage, Face> {
   func test() {
   }
 }

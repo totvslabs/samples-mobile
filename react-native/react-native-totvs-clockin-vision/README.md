@@ -77,3 +77,23 @@ You need to replace `../../../ios/TOTVSCameraKit` by the appropriate location of
 
 
 Also note that this is the approach recomended when a need to modify this or any submodule of `TOTVSCameraKit` libraries. You'll find the project `TOTVSCameraKit` and `react-native-totvs-clockin-vision` in the `Pods.xcodeproj` of `camera-app/ios`. Modify source code from these projects.
+
+
+### Miscellaneous
+
+#### iOS
+
+The native c++ library used for recognitions tasks doesn't offer by itself an interface for swift code to interact with it
+in order to use this library even in production code, some other steps are required:
+
+1. An `objc` bridge is needed to expose c++ code to swift by exposing the `objc` code itself. This will allow us to expose 
+`FaceRecognizer.h` interface to swift code. We achieve that by creating `ObjcFaceRecognizer.h` and `ObjcFaceRecognizer.mm`.
+These files are already developed and ready for reuse. You can find then under the sample project 
+`react-native-totvs-clockin-vision-app/ios` under `recognition` folder. Just copy then onto the new swift project that uses
+the c++ recognition library.
+2. In order to interact with the `react-native-totvs-clockin-vision` library, a model is required to be injected to the
+library. Under the project `react-native-totvs-clockin-vision-app/ios` there's already a ready to use model class that you 
+reuse on new projects that uses both, the c++ recognition library and the `react-native-totvs-clockin-vision` library.
+The required files are `NativeRecognitionModel.swift` and `NativeFace.swift`.
+3. You'll need to inject `NativeRecognitionModel` to the `react-native-totvs-clockin-vision`, you'll see how to do that
+under `AppDelegate.m` file.

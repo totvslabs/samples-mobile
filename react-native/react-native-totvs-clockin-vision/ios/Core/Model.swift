@@ -47,6 +47,6 @@ public protocol Model {
      *
      * @discussion requires to run on a working thread.
      */
-    func release()
+    func releaseResources()
 }
 
