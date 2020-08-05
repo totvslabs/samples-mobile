@@ -61,13 +61,14 @@ react-native application we can do manual linking following the next steps:
   file. We require this in order to work with the loaded pods, also, because once our libraries are load to the `Pods.xcodeproj` we'll be able to modify our libraries source code.
 3. open `camera-app/ios/Podfile` and add:
 ```javascript
-  // after development, it needs to point to '../node_modules/react-native-totvs-camera'
-  pod 'react-native-totvs-camera', :path => '../../react-native-totvs-camera'
-  // must be imported in order react-native-totvs-camera dependencies be resolved
+  // must be imported in order react-native-totvs-camera dependencies be resolved. we can remove this when we 
+  // publish TOTVSCameraKit
   pod 'TOTVSCameraKit', :path => '../../../ios/TOTVSCameraKit'
+  // or
+  pod 'TOTVSCameraKit/View', :path => '../../../ios/TOTVSCameraKit'
 ```
-You need to replace `../../react-native-totvs-camera` and `../../../ios/TOTVSCameraKit` by the appropriate
-location of these libraries in your PC.
+You need to replace `../../../ios/TOTVSCameraKit` by the appropriate location of these libraries in your PC.
+
 4. Inside `camera-app/ios` run `pod install`
 5. Done
 
