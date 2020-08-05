@@ -18,7 +18,12 @@ public class ModelProvider {
     private init() {
     }
     
-    static func getFaceRecognitionDetectionModel(model: RecognitionDetectionModel<UIImage, Face>) {
+    /**
+     * Interface to inject a recognition model into the vision library.
+     * The is assumed to provide an implementation for of the model to use by the
+     * vision library.
+     */
+    static func setFaceRecognitionDetectionModel(model: RecognitionDetectionModel<UIImage, Face>) {
         ModelProvider.model = model
     }
     
