@@ -33,13 +33,7 @@
 {
   if (nullptr == _recognizer) {
     char const* path = [modelPath UTF8String];
-    
-    NSLog(@"path %@", [NSString stringWithUTF8String:path]);
-    
-//    /var/containers/Bundle/Application/428F4188-B60A-4182-B0DC-1DDF70B25620/ReactNativeTotvsClockinVisionApp.app/ClockInVision.bundle
-    
-    //char const* path = "/var/mobile/Containers/Data/Application/E1DFC716-A798-4CD3-9198-3CAD49F02416/Documents/carol_offline_face_recognition";
-    
+        
     _recognizer = new FaceRecognizer(path);
     _recognizer->loadEmbeddings(path);
     _recognizer->updateThreshold(50);

@@ -135,7 +135,9 @@ extension CameraSource {
             self?.sessionQueue.resume()
             
             if granted {
-                self?.startRunning()
+                DispatchQueue.main.async { // on react-native it seems to be called on non-main thread
+                    self?.startRunning()
+                }
             }
         })
     }

@@ -31,6 +31,8 @@ class NativeRecognitionModel : RecognitionDetectionModel<UIImage, Face> {
     print("\(TAG): Training native face recognizer...")
     
     model.setup(config.modelDirectory)
+    
+    print("\(TAG): Native face recognizer trained!")
   }
   
   override func detect(input: UIImage, onDetected: @escaping ([Face]) -> Void) throws {
