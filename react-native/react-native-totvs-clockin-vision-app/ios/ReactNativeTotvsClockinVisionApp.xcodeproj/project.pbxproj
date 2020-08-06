@@ -20,7 +20,6 @@
 		6500864E24DAF14600578328 /* libdlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6500864D24DAF14600578328 /* libdlib.a */; };
 		6500865024DB464A00578328 /* ClockInVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6500864F24DB464A00578328 /* ClockInVision.swift */; };
 		651F2D6024DA517D00E32D87 /* dlib in Resources */ = {isa = PBXBuildFile; fileRef = 651F2D5F24DA517D00E32D87 /* dlib */; };
-		651F2D6924DA530A00E32D87 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 651F2D6824DA530A00E32D87 /* opencv2.framework */; };
 		651F2D7624DA534D00E32D87 /* EmbeddingsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651F2D6B24DA534B00E32D87 /* EmbeddingsManager.cpp */; };
 		651F2D7824DA534D00E32D87 /* FaceRecognizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651F2D7124DA534C00E32D87 /* FaceRecognizer.cpp */; };
 		651F2D7A24DA534D00E32D87 /* RecognitionInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651F2D7324DA534D00E32D87 /* RecognitionInfo.cpp */; };
@@ -71,7 +70,6 @@
 		6500864D24DAF14600578328 /* libdlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libdlib.a; sourceTree = "<group>"; };
 		6500864F24DB464A00578328 /* ClockInVision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockInVision.swift; sourceTree = "<group>"; };
 		651F2D5F24DA517D00E32D87 /* dlib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = dlib; sourceTree = "<group>"; };
-		651F2D6824DA530A00E32D87 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		651F2D6B24DA534B00E32D87 /* EmbeddingsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddingsManager.cpp; sourceTree = "<group>"; };
 		651F2D6D24DA534C00E32D87 /* EmbeddingsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmbeddingsManager.h; sourceTree = "<group>"; };
 		651F2D6E24DA534C00E32D87 /* FaceRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceRecognizer.h; sourceTree = "<group>"; };
@@ -109,7 +107,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				651F2D6924DA530A00E32D87 /* opencv2.framework in Frameworks */,
 				A5FE766CB4807904E8EEC1C6 /* libPods-ReactNativeTotvsClockinVisionApp.a in Frameworks */,
 				6500864E24DAF14600578328 /* libdlib.a in Frameworks */,
 			);
@@ -190,7 +187,6 @@
 		651F2D6124DA51A200E32D87 /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				651F2D6824DA530A00E32D87 /* opencv2.framework */,
 			);
 			path = frameworks;
 			sourceTree = "<group>";
