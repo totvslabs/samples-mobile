@@ -13,7 +13,14 @@ import TOTVSCameraKit
 class VisionFaceCameraViewManager : RCTViewManager {
         
     override func view() -> UIView! {
-        return VisionFaceCameraView()
+        let view = VisionFaceCameraView()
+        let config = ModelConfig(
+            modelDirectory: getModelOutputDir()
+        )
+        let model = ModelProvider
+            .getFaceRecognitionDetectionModel(config: config)
+        view.setup(model: model)
+        return view
     }
     
     override func constantsToExport() -> [AnyHashable : Any]! {

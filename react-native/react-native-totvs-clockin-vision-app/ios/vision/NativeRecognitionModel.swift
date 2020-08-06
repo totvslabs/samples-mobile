@@ -41,8 +41,8 @@ class NativeRecognitionModel : RecognitionDetectionModel<UIImage, Face> {
   
   override func recognize(input image: UIImage, onRecognized: @escaping ([Face]) -> Void) throws {
     let base64 = image.toBase64()
-    
     let json = model.recognizeFaces(base64).data(using: .utf8)!
+    
     let result = try JSONDecoder().decode(RecognitionResult.self, from: json)
       
     onRecognized(result.results)

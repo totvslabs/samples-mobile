@@ -27,6 +27,12 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     private let recognitionQueue = DispatchQueue(label: "RecognitionQueue")
 
     /**
+     * Special DispatchQueue only to be meant to process recognition results.
+     * It was found out that the CountDownLatch bloc the whole queue keeping
+     * the tasks submited to it to not execute.
+     */
+    private let recognitionProcessingQueue = DispatchQueue(label: "RecognitionProcessingQueue")
+    /**
      * Model to be used for recognition
      */
     private var model: RecognitionDetectionModel<UIImage, Face>? = nil
@@ -527,6 +533,51 @@ extension VisionFaceCameraView {
             onRecognize([], error)
         }
     }
+    
+    private func processPhoto(on image: ImageProxy?, error: Error?, options: RecognitionOptions, onResult: @escaping (RecognitionResult) -> Void) {
+        if let error = error {
+            isRecognizing = false
+            print("\(TAG): Error taking picture: \(error)")
+            return
+        }
+        if let uiImage = image?.image {
+            // we add an extra task if we're required to save the image.
+            let latch = CountDownLatch(count: 1 + (options.saveImage ? 1 : 0))
+            var result = RecognitionResult()
+
+            // image saver
+            if (options.saveImage) {
+                recognitionQueue.async {
+                    self.saveImage(image: uiImage, options: options) { url, error in
+                        if let error = error {
+                            print("\(TAG): Error saving image: \(error)")
+                        }
+                        result.imagePath = url
+                        // notify we're done
+                        latch.countDown()
+                    }
+                }
+            }
+            // image recognizer
+            recognitionQueue.async {
+                self.recognizeImage(image: uiImage) { faces, error in
+                    if let error = error {
+                        print("\(TAG): Error recognizing image: \(error)")
+                    }
+                    result.faces = faces
+                    // notify we're done
+                    latch.countDown()
+                }
+            }
+            // wait till the tasks are done
+            latch.wait()
+            isRecognizing = false
+            
+            onResult(result)
+        }
+        // close properly the proxy
+        image?.close()
+    }
         
     /**
      * Let's setup the view with an appropriate model and options
@@ -554,48 +605,9 @@ extension VisionFaceCameraView {
         isRecognizing = true
         
         takePicture { (image, error) in
-            if let error = error {
-                self.isRecognizing = false
-                print("\(TAG): Error taking picture: \(error)")
-                return
+            self.recognitionProcessingQueue.async {
+                self.processPhoto(on: image, error: error, options: options, onResult: onResult)
             }
-            if let uiImage = image?.image {
-                // we add an extra task if we're required to save the image.
-                let latch = CountDownLatch(count: 1 + (options.saveImage ? 1 : 0))
-                var result = RecognitionResult()
-
-                // image saver
-                if (options.saveImage) {
-                    self.recognitionQueue.async {
-                        self.saveImage(image: uiImage, options: options) { url, error in
-                            if let error = error {
-                                print("\(TAG): Error saving image: \(error)")
-                            }
-                            result.imagePath = url
-                            // notify we're done
-                            latch.countDown()
-                        }
-                    }
-                }
-                // image recognizer
-                self.recognitionQueue.async {
-                    self.recognizeImage(image: uiImage) { faces, error in
-                        if let error = error {
-                            print("\(TAG): Error recognizing image: \(error)")
-                        }
-                        result.faces = faces
-                        // notify we're done
-                        latch.countDown()
-                    }
-                }
-                // wait till the tasks are done
-                latch.wait()
-                self.isRecognizing = false
-                
-                onResult(result)
-            }
-            // close properly the proxy
-            image?.close()
         }
     }
 }

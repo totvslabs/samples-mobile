@@ -46,7 +46,17 @@ import Foundation
 * this analyzer will lock until the [executor] then is shut down.
 */
 open class DetectionAnalyzer {
+    /**
+     * DispatchQueue to be used to execute detectors
+     */
     private let queue: DispatchQueue
+    
+    /**
+     * Special DispatchQueue only to be meant to process analysis.
+     * It was found out that the CountDownLatch bloc the whole queue keeping
+     * the tasks submited to it to not execute.
+     */
+    private let blockableQueue = DispatchQueue(label: "DetectionAnalyzerBlockableQueue")
     
     /**
      * Registry of all detectors
@@ -129,25 +139,27 @@ extension DetectionAnalyzer : ImageAnalyzer {
         if !isBusy {
             isBusy = true
             
-            image.use { _ in
-                let detectors = registry.values.filter({ d in d.enabled })                
-                if detectors.isEmpty {
-                    return
-                }
-                // let's synchronize the detectors to know when we can analyze another frame
-                let latch = CountDownLatch(count: Int32(detectors.count))
-                
-                detectors.forEach { it in
-                    queue.async {                        
-                        it.detector?.detect(on: self.queue, image: image) { [weak self] value in
-                            latch.countDown()
-                            self?.post(value: value) // let's post the detected value to the stream
+            blockableQueue.async {
+                image.use { _ in
+                    let detectors = self.registry.values.filter({ d in d.enabled })
+                    if detectors.isEmpty {
+                        return
+                    }
+                    // let's synchronize the detectors to know when we can analyze another frame
+                    let latch = CountDownLatch(count: Int32(detectors.count))
+                    
+                    detectors.forEach { it in
+                        self.queue.async {
+                            it.detector?.detect(on: self.queue, image: image) { [weak self] value in
+                                latch.countDown()
+                                self?.post(value: value) // let's post the detected value to the stream
+                            }
                         }
                     }
+                    latch.wait()
+                    // all detectors are done, let's set to analyze more images
+                    self.isBusy = false
                 }
-                latch.wait()
-                // all detectors are done, let's set to analyze more images
-                isBusy = false
             }
         }
     }

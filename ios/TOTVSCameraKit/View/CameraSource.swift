@@ -640,8 +640,7 @@ extension CameraSource {
                 options: options,
                 savePhoto: save,
                 desiredImageSize: self.desiredOutputImageSize,
-                onImage: { image, error in
-                    
+                onImage: { image, error in                                        
                     guard let image = image else {
                         onCaptured?(nil, error)
                         return

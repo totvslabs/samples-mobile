@@ -27,6 +27,10 @@ const onLiveness = async liveness => {
   console.log('liveness event:', { ...liveness });
 }
 
+const onFaceRecognized = async results => {
+  console.log('face recognition:', { ...results });
+}
+
 const App = () => {
   console.log('Constants', { ...Constants });
 
@@ -58,12 +62,8 @@ const App = () => {
   } = Constants.LIVENESS_MODE;
 
   const performAction = async () => {  
-    // VisionModule actions
-    const path = await VisionModule.getModelOutputDirectory();
-    console.log('vision module model directory: ', { path });
-
     // Vision face actions
-    cameraView && cameraView.toggleCamera();
+    cameraView && cameraView.recognizeStillPicture();
   };
 
   /**
@@ -79,6 +79,7 @@ const App = () => {
       <FaceCameraView
         onRef={ref => setCameraView(ref)}
         style={styles.camera}
+        onFaceRecognized={onFaceRecognized}
         zoom={MIN}> 
         
         {childFunction} 
