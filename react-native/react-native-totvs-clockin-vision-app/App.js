@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -30,7 +30,18 @@ const onLiveness = async liveness => {
 const App = () => {
   console.log('Constants', { ...Constants });
 
-  const [cameraView, setCameraView] = useState();
+  const [cameraView, setCameraView] = useState();  
+
+  // uncomment this if you've copied the model files to the clockin-vision library and want to test 
+  // the recognition feature.
+  useEffect(() => { 
+    const setupModel = async () => {
+      await VisionModule.setupModelDirectories()      
+      await VisionModule.trainRecognitionModel();
+    };
+    setupModel();
+  }, []);
+  
   // types of facing
   const {
     FRONT, BACK

@@ -16,7 +16,7 @@ open class RecognitionDetectionModel<Input, Output> : RecognitionModel, Detectio
     
     open var isTrained: Bool = false
     
-    open func configure(with: ModelConfig) {
+    open func configure(with config: ModelConfig) {
     }
     
     open func initialize() {

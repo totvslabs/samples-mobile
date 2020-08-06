@@ -15,6 +15,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface ObjcFaceRecognizer : NSObject
 
+-(instancetype)init;
+
+// setup the model with the provided model path where model files are kept
+-(void)setup:(NSString *)modelPath;
+
+// trigger the face recognition on the image encoded in base64
+-(NSString*) recognizeFaces:(NSString *)imageBase64;
+
+-(void)dealloc;
+
 @end
 
 NS_ASSUME_NONNULL_END

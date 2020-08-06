@@ -12,5 +12,9 @@ import Foundation
  * Configuration of the model
  */
 public struct ModelConfig {
-    let modelDirectory: String
+    public let modelDirectory: String
+    
+    public init(modelDirectory: String) {
+        self.modelDirectory = modelDirectory
+    }
 }

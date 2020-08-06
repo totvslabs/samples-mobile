@@ -11,27 +11,29 @@ import UIKit
 /**
 * Clock-In specific purpose face object. This model class conforms specific
 * IPC format used for faces.
+*
+* Do notice that unlike android counterpart interface this one mirror the new c++ recognition
+* return type protocol
 */
 public protocol Face {
     /**
-     * Label of the face object. meta-info
+     * Name of the person recognized
      */
-    var label: String? { get }
+    var name: String { get }
+    
+    /**
+     * Name of the person recognized
+     */
+    var personId: String { get }
 
     /**
      * Confidence of this face object. this might mean confidence of detection
      * or confidence of recognition.
      */
-    var confidence: Float { get }
-
-    /**
-     * Bounding box determining this face on the provided source where this face object
-     * was detected/recognized
-     */
-    var boundingBox: CGRect { get }
+    var distance: Float { get }
 
     /**
      * Encoding of the face. meta-info
      */
-    var encoding: String? { get }
+    var encoding: String { get }
 }
