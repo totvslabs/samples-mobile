@@ -46,7 +46,7 @@
   if (nullptr == _recognizer) {
     @throw([NSException exceptionWithName:@"IllegalStateException" reason:@"You need to call setup before calling this method" userInfo:nil]);
   }
-  std::string* base64 = new std::string([imageBase64 UTF8String]);
+  std::string* base64 = new std::string([imageBase64 UTF8String]);    
   std::string  result = _recognizer->faceRecognition(*base64);
   return [NSString stringWithUTF8String:result.c_str()];
 }

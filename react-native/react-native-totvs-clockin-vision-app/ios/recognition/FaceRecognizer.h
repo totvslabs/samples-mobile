@@ -27,7 +27,8 @@ public:
     /**
      * Returns JSON string with the schema:
      * {
-     *    "status": "FaceDetected"|"FaceNotDetected"|"MultipleFacesDetected"
+     *    "status": "FaceDetected"|"FaceNotDetected"|"MultipleFacesDetected"|"PersonNotRecognized",
+     *    "embedding": string,
      *    "results": [
      *        {
      *            "name": string,
@@ -38,6 +39,7 @@ public:
      * }
      */
     string faceRecognition(string image_str);
+    // string faceRecognition2(Object image_bitmap);
     void loadEmbeddings(string embeddings_path);
     void updateThreshold(float threshold);
 
@@ -46,6 +48,7 @@ private:
     dlib::frontal_face_detector detector;
     dlib::shape_predictor shape_predictor;
     anet_type feature_extractor;
+    float threshold = 0.6;
 
     void loadModels(string resources_path);
     dlib::rectangle detectFace(cv_image_t image);
@@ -58,7 +61,10 @@ private:
         dlib::full_object_detection shape
     );
 
-    string jsonify(std::vector<RecognitionInfo> infos);
+    string jsonify(
+        std::vector<RecognitionInfo> infos,
+        dlib::matrix<float, 0, 1> embedding
+    );
 };
 
 #endif

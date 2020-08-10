@@ -44,8 +44,13 @@ class NativeRecognitionModel : RecognitionDetectionModel<UIImage, Face> {
     let json = model.recognizeFaces(base64).data(using: .utf8)!
     
     let result = try JSONDecoder().decode(RecognitionResult.self, from: json)
+    let results = result.results.map { f -> Face in
+      var face = f as NativeFace
+      face.encoding = result.encoding
+      return face
+    }
       
-    onRecognized(result.results)
+    onRecognized(results)
   }
 }
 
@@ -65,8 +70,15 @@ fileprivate enum RecognitionStatus : String {
 }
 
 fileprivate struct RecognitionResult : Decodable {
+  
+  enum CodingKeys: String, CodingKey {
+    case status, results
+    case encoding = "embedding"
+  }
+  
   let status: String
   let results: [NativeFace]
+  let encoding: String
 }
 
 fileprivate struct NativeFace : Decodable, Face {
@@ -79,5 +91,5 @@ fileprivate struct NativeFace : Decodable, Face {
   let name: String
   let personId: String
   let distance: Float
-  let encoding: String = ""
+  var encoding: String = ""
 }

@@ -19,9 +19,7 @@
 string DAT_EMBEDDINGS_FN = "face_descriptors_jittered.dat";
 string DAT_EMPLOYEES_INFO_FN = "face_names_jittered.dat";
 
-EmbeddingsManager::EmbeddingsManager()
-{
-}
+EmbeddingsManager::EmbeddingsManager() {}
 
 EmbeddingsManager::EmbeddingsManager(string embeddings_path)
 {
@@ -32,7 +30,8 @@ EmbeddingsManager::EmbeddingsManager(string embeddings_path)
 }
 
 vector<RecognitionInfo> EmbeddingsManager::search(
-    dlib::matrix<float, 0, 1> embedding)
+    dlib::matrix<float, 0, 1> embedding, 
+    float threshold)
 {
     vector<RecognitionInfo> recognized_employees;
     vector<string> tokens;
@@ -40,21 +39,18 @@ vector<RecognitionInfo> EmbeddingsManager::search(
     char delim = '_';
     for (size_t j = 0; j < embeddings.size(); ++j)
     {
-        if (length(embedding - embeddings[j]) < 0.6)
+        if (length(embedding - embeddings[j]) < threshold)
         {
             stringstream ss(employees_info[j]);
-            while (std::getline(ss, token, delim)) tokens.push_back(token);
-            if (tokens.size() != 2) 
+            while (std::getline(ss, token, delim))
+                tokens.push_back(token);
+            if (tokens.size() != 2)
                 continue;
             RecognitionInfo rec(tokens[1], tokens[0], 0);
             recognized_employees.push_back(rec);
         }
     }
-    if (recognized_employees.size() == 0) throw PersonNotRecognizedException();
+    if (recognized_employees.size() == 0)
+        throw PersonNotRecognizedException();
     return recognized_employees;
-}
-
-void EmbeddingsManager::setThreshold(float threshold)
-{
-    this->threshold = threshold;
 }

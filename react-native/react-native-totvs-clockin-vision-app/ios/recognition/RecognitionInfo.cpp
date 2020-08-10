@@ -13,9 +13,9 @@ string RecognitionInfo::jsonify()
 {
     stringstream document;
     document << "{";
-    document << "\"name\": " << name << "," << endl;
-    document << "\"person_id\": " << person_id << "," << endl;
-    document << "\"distance\": " << distance << endl;
+    document << "\"name\": \"" << name << "\",";
+    document << "\"person_id\": \"" << person_id << "\",";
+    document << "\"distance\": " << distance;
     document << "}";
     return document.str();
 }
