@@ -77,8 +77,8 @@ fileprivate struct RecognitionResult : Decodable {
   }
   
   let status: String
-  let results: [NativeFace]
-  let encoding: String
+  let results: [NativeFace] = []
+  let encoding: String = ""
 }
 
 fileprivate struct NativeFace : Decodable, Face {

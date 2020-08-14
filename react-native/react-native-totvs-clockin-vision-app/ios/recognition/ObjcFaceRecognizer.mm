@@ -36,7 +36,7 @@
         
     _recognizer = new FaceRecognizer(path);
     _recognizer->loadEmbeddings(path);
-    _recognizer->updateThreshold(50);
+    _recognizer->updateThreshold(0.5);
   }
 }
 
