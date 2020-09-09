@@ -54,6 +54,11 @@ to expose a react-native interface for functionalities related to clock-in apps.
 
 This project showcase capabilities like: Liveness, Proximity, Recognition.
 
+### react-native-totvs-clockin-vision-app
+
+React Native app that uses `react-native-totvs-clockin-vision` library and the provided c++ recognition library to build a full
+fledged detection/recognition app.
+
 ## iOS Projects
 
 ### TOTVSCameraKit 
