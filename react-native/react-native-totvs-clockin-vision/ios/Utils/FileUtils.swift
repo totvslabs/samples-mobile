@@ -146,54 +146,11 @@ func prepareModelDirectories(onDone: @escaping (Bool) -> Void) {
             if !FileManager.default.fileExists(atPath: descriptor.path) {
                 try! FileManager.default.copyItem(at: descriptorResource, to: descriptor)
             }
-
-            DELETE_ME_AND_ALL_FILE_NAMED_HERE_AFTER_USING_ME___THIS_IS_FOR_TEST_ONLY()
         } catch let error {
             print("prepareModelDirectories: error configuring model directories: \(error)")
             return onDone(false)
         }
         onDone(true)
-    }
-}
-
-fileprivate func DELETE_ME_AND_ALL_FILE_NAMED_HERE_AFTER_USING_ME___THIS_IS_FOR_TEST_ONLY() {
-    // this function is used only for test purpose of copying the model descriptors file
-    // to test the recognition model. it must be deleted after test.
-    
-    func getResourcesURLs() -> (deploy: URL, descJittered: URL, namesJiterred: URL, caffeModel: URL) {
-        let frameworkBundle = Bundle(for: VisionModule.self)
-        let moduleBundleURL = frameworkBundle.resourceURL?.appendingPathComponent("ClockInVision.bundle")
-        
-        guard let bundle = Bundle(url: moduleBundleURL!) else {
-            fatalError(
-                "ClockInVision.bundle not found, please check the file exists on react-native-totvs-clockin-vision package"
-            )
-        }
-        let deploy = bundle.url(forResource: "deploy_prototxt", withExtension: "txt")!
-        let descJittered = bundle.url(forResource: "face_descriptors_jittered", withExtension: "dat")!
-        let namesJiterred = bundle.url(forResource: "face_names_jittered", withExtension: "dat")!
-        let caffeModel = bundle.url(forResource: "res10_300x300_ssd_iter_140000", withExtension: "caffemodel")!
-        return (deploy, descJittered, namesJiterred, caffeModel)
-    }
-    
-    let (deploy, descJittered, namesJiterred, caffeModel) = getResourcesURLs()
-    
-    let deployDest = getModelOutputDirectoryURL().appendingPathComponent("deploy_prototxt.txt")
-    let descJitteredDest = getModelOutputDirectoryURL().appendingPathComponent("face_descriptors_jittered.dat")
-    let namesJiterredDest = getModelOutputDirectoryURL().appendingPathComponent("face_names_jittered.dat")
-    let caffeModelDest = getModelOutputDirectoryURL().appendingPathComponent("res10_300x300_ssd_iter_140000.caffemodel")
-        
-    if !FileManager.default.fileExists(atPath: deployDest.path) {
-        try! FileManager.default.copyItem(at: deploy, to: deployDest)
-    }
-    if !FileManager.default.fileExists(atPath: descJitteredDest.path) {
-        try! FileManager.default.copyItem(at: descJittered, to: descJitteredDest)
-    }
-    if !FileManager.default.fileExists(atPath: namesJiterredDest.path) {
-        try! FileManager.default.copyItem(at: namesJiterred, to: namesJiterredDest)
-    }
-    if !FileManager.default.fileExists(atPath: caffeModelDest.path) {
-        try! FileManager.default.copyItem(at: caffeModel, to: caffeModelDest)
     }
 }
 
