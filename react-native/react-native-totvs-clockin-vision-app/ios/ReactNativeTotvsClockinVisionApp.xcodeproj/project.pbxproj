@@ -25,7 +25,7 @@
 		651F2D7A24DA534D00E32D87 /* RecognitionInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651F2D7324DA534D00E32D87 /* RecognitionInfo.cpp */; };
 		651F2D7B24DA534D00E32D87 /* FaceUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651F2D7524DA534D00E32D87 /* FaceUtils.cpp */; };
 		651F2D8324DA53EA00E32D87 /* NativeRecognitionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651F2D8224DA53EA00E32D87 /* NativeRecognitionModel.swift */; };
-		65EFBE3224DC365E0027BEB9 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EFBE3124DC365D0027BEB9 /* opencv2.framework */; };
+		65CBA3FC25091BFD0027CC15 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CBA3FB25091BFD0027CC15 /* opencv2.framework */; };
 		6B25183FD6DA752C517F33AE /* libPods-ReactNativeTotvsClockinVisionApp-ReactNativeTotvsClockinVisionAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FBF8E416C6C3667E6CCCF53 /* libPods-ReactNativeTotvsClockinVisionApp-ReactNativeTotvsClockinVisionAppTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A5FE766CB4807904E8EEC1C6 /* libPods-ReactNativeTotvsClockinVisionApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BDCF6CB14A8838EEE4A9CC49 /* libPods-ReactNativeTotvsClockinVisionApp.a */; };
@@ -82,7 +82,7 @@
 		651F2D7524DA534D00E32D87 /* FaceUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FaceUtils.cpp; sourceTree = "<group>"; };
 		651F2D8124DA53EA00E32D87 /* ReactNativeTotvsClockinVisionApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ReactNativeTotvsClockinVisionApp-Bridging-Header.h"; sourceTree = "<group>"; };
 		651F2D8224DA53EA00E32D87 /* NativeRecognitionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeRecognitionModel.swift; sourceTree = "<group>"; };
-		65EFBE3124DC365D0027BEB9 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		65CBA3FB25091BFD0027CC15 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		69F19136994943443B23A68B /* Pods-ReactNativeTotvsClockinVisionApp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeTotvsClockinVisionApp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeTotvsClockinVisionApp-tvOSTests/Pods-ReactNativeTotvsClockinVisionApp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		7FBF8E416C6C3667E6CCCF53 /* libPods-ReactNativeTotvsClockinVisionApp-ReactNativeTotvsClockinVisionAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ReactNativeTotvsClockinVisionApp-ReactNativeTotvsClockinVisionAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ReactNativeTotvsClockinVisionApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -109,7 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65EFBE3224DC365E0027BEB9 /* opencv2.framework in Frameworks */,
+				65CBA3FC25091BFD0027CC15 /* opencv2.framework in Frameworks */,
 				A5FE766CB4807904E8EEC1C6 /* libPods-ReactNativeTotvsClockinVisionApp.a in Frameworks */,
 				6500864E24DAF14600578328 /* libdlib.a in Frameworks */,
 			);
@@ -190,7 +190,7 @@
 		651F2D6124DA51A200E32D87 /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				65EFBE3124DC365D0027BEB9 /* opencv2.framework */,
+				65CBA3FB25091BFD0027CC15 /* opencv2.framework */,
 			);
 			path = frameworks;
 			sourceTree = "<group>";
