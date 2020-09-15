@@ -147,8 +147,8 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     }
 
     open override func removeFromSuperview() {
-        super.removeFromSuperview()
         tearDown()
+        super.removeFromSuperview()        
     }
     
     open override func didMoveToSuperview() {
