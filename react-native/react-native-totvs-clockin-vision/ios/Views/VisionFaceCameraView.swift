@@ -327,6 +327,8 @@ private extension VisionFaceCameraView {
         guard !areQueueProcessing else {
             return
         }
+        areQueueProcessing = true
+        
         detectionQueue.resume()
         recognitionQueue.resume()
     }

@@ -319,7 +319,7 @@ private extension CameraSource {
      * accordingly
      */
     func observeSystemPressure() {
-        let observation = observe(\.cameraDeviceInput.device.systemPressureState, options: .new) { [weak self] _, change in
+        let observation = cameraDeviceInput.device.observe(\.systemPressureState, options: .new) { [weak self] _, change in
             guard let systemPressureState = change.newValue else {
                 return
             }
@@ -488,7 +488,9 @@ private extension CameraSource {
 // MARK: - Video Orientation
 private extension CameraSource {
     @objc func adjustVideoOrientation(notification: NSNotification) {
-        setCameraOrientation(orientation: UIDevice.current.orientation)
+        DispatchQueue.main.async {
+            self.setCameraOrientation(orientation: UIDevice.current.orientation)
+        }
     }
 }
 
@@ -522,13 +524,13 @@ extension CameraSource {
                     // simultaneous use of the rear and front cameras.
                     self.session.removeInput(self.cameraDeviceInput)
                     if self.session.canAddInput(cameraDeviceInput) {
-                        // re-attach subject area chnages observations
-                        let center = NotificationCenter.default
-                        center.removeObserver(self, name: .AVCaptureDeviceSubjectAreaDidChange, object: currentCameraDevice)
-                        center.addObserver(self, selector: #selector(self.subjectAreaDidChange), name: .AVCaptureDeviceSubjectAreaDidChange, object: cameraDeviceInput.device)
+                        // since we changed the camera device input, let's re-attach observers
+                        self.removeObservers()
                         
                         self.session.addInput(cameraDeviceInput)
                         self.cameraDeviceInput = cameraDeviceInput
+                        
+                        self.addObservers()
                     } else {
                         self.session.addInput(self.cameraDeviceInput)
                     }
