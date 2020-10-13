@@ -194,7 +194,9 @@ private extension CameraSource {
             session.addOutput(photoOutput)
             
             photoOutput.isHighResolutionCaptureEnabled = true
-            photoOutput.maxPhotoQualityPrioritization = .balanced
+            if #available(iOS 13.0, *) {
+                photoOutput.maxPhotoQualityPrioritization = .balanced
+            }
         } else {
             print("\(TAG): Couldn't add photo output to session")
             session.commitConfiguration()
@@ -535,7 +537,11 @@ extension CameraSource {
                         self.session.addInput(self.cameraDeviceInput)
                     }
                     // reconfigure the outputs
-                    self.photoOutput.maxPhotoQualityPrioritization = .balanced
+                    if #available(iOS 13.0, *) {
+                        self.photoOutput.maxPhotoQualityPrioritization = .balanced
+                    } else {
+                        // Fallback on earlier versions
+                    }
                     
                     self.session.commitConfiguration()
                 } catch {

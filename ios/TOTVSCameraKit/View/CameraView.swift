@@ -55,7 +55,11 @@ open class CameraView : UIView {
         
     /// Current device orienation
     internal var windowOrientation: UIInterfaceOrientation {
-        return window?.windowScene?.interfaceOrientation ?? .unknown
+        if #available(iOS 13.0, *) {
+            return window?.windowScene?.interfaceOrientation ?? .unknown
+        } else {
+            return UIApplication.shared.statusBarOrientation
+        }
     }
     
     /// Keep track of focus points
