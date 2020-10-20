@@ -28,7 +28,7 @@ abstract class AbstractVisionModule(
     ) = reactApplicationContext.uiManager {
         addUIBlock { manager ->
             try {
-                val result = manager.cameraOrThrow(viewTag).block(this@withCameraDevice)
+                val result = manager.cameraOrThrow<C>(viewTag).block(this@withCameraDevice)
                 if (autoResolve) {
                     resolve(result)
                 }
