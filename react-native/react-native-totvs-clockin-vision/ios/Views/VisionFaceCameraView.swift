@@ -55,13 +55,13 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     /**
      * Graphic to record graphics.
      */
-    private lazy var faceGraphic = FaceGraphic(cameraView: self)
+    private var faceGraphic: FaceGraphic?
     
     /**
      * [Transformer] that scale nose landmark from the source coordinate into [GraphicOverlay]
      * coordinate system.
      */
-    private lazy var faceNoseTranslator = FaceNoseTranslator(cameraView: self)
+    private var faceNoseTranslator: FaceNoseTranslator?
     
     /**
      * Whether or not we're on a ready state.
@@ -86,7 +86,7 @@ class VisionFaceCameraView : CameraView, VisionFaceCamera {
     /// - [FaceVisionCamera] contract
     var overlayGraphicsColor: String = "#FFFFFFFF" {
         didSet {
-            faceGraphic.setLandmarksColor(rgb: overlayGraphicsColor)
+            faceGraphic?.setLandmarksColor(rgb: overlayGraphicsColor)
         }
     }
     
@@ -360,7 +360,7 @@ private extension VisionFaceCameraView {
      */
     func enable(liveness: Liveness) {
         if isDebug {
-            print("\(TAG): Enabling liveness \(liveness). Analyzer is ready: \(nil != analyzer)")
+            print("\(TAG): Enabling liveness \(liveness). Had valid analyzer before?: \(nil != analyzer)")
         }
         // we install the analyzer as a pre-requisite
         installAnalyzer()
@@ -368,13 +368,15 @@ private extension VisionFaceCameraView {
         // closing current connection
         livenessConnection?.disconnect()
         
+        faceNoseTranslator = liveness is LivenessFace ? FaceNoseTranslator(cameraView: self) : nil
+        
         // setup the vision stream for face detected objects.
         if liveness is LivenessFace {
             livenessConnection = detectorAnalyzer
                 .detections
                 .filterIsInstance(ofType: FaceObject.self)
                 .sendAsync(on: .main) // translator uses cameraView
-                .transform(with: faceNoseTranslator)
+                .transform(with: faceNoseTranslator!)
                 .connect(liveness)
         } else {
             livenessConnection = detectorAnalyzer
@@ -404,7 +406,7 @@ private extension VisionFaceCameraView {
      */
     func enable(proximity: Proximity) {
         if isDebug {
-            print("\(TAG): Enabling proximity \(proximity). Analyzer is ready: \(nil != analyzer)")
+            print("\(TAG): Enabling proximity \(proximity). Had valid analyzer before?: \(nil != analyzer)")
         }
         // we install the analyzer as a pre-requisite
         installAnalyzer()
@@ -435,9 +437,11 @@ private extension VisionFaceCameraView {
      */
     func installFaceGraphics(forLiveness liveness: Liveness) {
         if isDebug {
-            print("\(TAG): Enabling face graphics. Analyzer is ready: \(nil != analyzer)")
+            print("\(TAG): Enabling face graphics. Had valid analyzer before?: \(nil != analyzer)")
         }
         clearFaceGraphics()
+        
+        let faceGraphic = FaceGraphic(cameraView: self)
         // re-add the face graphic overlay
         graphicOverlay.add(faceGraphic.view)
         // closing current connection
@@ -451,6 +455,8 @@ private extension VisionFaceCameraView {
             .filterIsInstance(ofType: FaceObject.self)
             .sendAsync(on: .main)
             .connect(faceGraphic)
+        
+        self.faceGraphic = faceGraphic
     }
     
     /**
@@ -458,7 +464,7 @@ private extension VisionFaceCameraView {
      */
     func clearFaceGraphics() {
         // clear the face graphics.
-        faceGraphic.clear()
+        faceGraphic?.clear()
         // clear every object on the graphic overlay
         graphicOverlay.clear()
     }
