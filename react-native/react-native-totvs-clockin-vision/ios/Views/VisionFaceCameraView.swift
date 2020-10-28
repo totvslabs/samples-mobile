@@ -437,26 +437,25 @@ private extension VisionFaceCameraView {
      */
     func installFaceGraphics(forLiveness liveness: Liveness) {
         if isDebug {
-            print("\(TAG): Enabling face graphics. Had valid analyzer before?: \(nil != analyzer)")
+            print("\(TAG): Enabling face graphics.")
         }
-        clearFaceGraphics()
-        
-        let faceGraphic = FaceGraphic(cameraView: self)
-        // re-add the face graphic overlay
-        graphicOverlay.add(faceGraphic.view)
         // closing current connection
         graphicsConnection?.disconnect()
         
-        faceGraphic.drawEyes = liveness is LivenessEyes
-        faceGraphic.drawNose = liveness is LivenessFace
+        clearFaceGraphics()
+        
+        faceGraphic = FaceGraphic(cameraView: self)
+        // re-add the face graphic overlay
+        graphicOverlay.add(faceGraphic!.view)
+        
+        faceGraphic!.drawEyes = liveness is LivenessEyes
+        faceGraphic!.drawNose = liveness is LivenessFace
         
         graphicsConnection = detectorAnalyzer
             .detections
             .filterIsInstance(ofType: FaceObject.self)
             .sendAsync(on: .main)
-            .connect(faceGraphic)
-        
-        self.faceGraphic = faceGraphic
+            .connect(faceGraphic!)
     }
     
     /**

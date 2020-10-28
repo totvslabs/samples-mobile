@@ -25,7 +25,7 @@ public class FaceNoseTranslator : Transformer {
     
     public func transform(value: FaceObject, receiver: VisionReceiver<FaceObject>) {
         // we do nothing when we receives a null face
-        guard NullFaceObject != value else {
+        guard NullFaceObject != value, nil != cameraView else {
             return receiver.send(value: value)
         }
         var face = value

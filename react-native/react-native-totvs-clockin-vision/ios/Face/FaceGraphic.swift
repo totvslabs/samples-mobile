@@ -42,7 +42,7 @@ public class FaceGraphic : VisionReceiver<FaceObject> {
     }
     
     public override func send(value: FaceObject) {
-        guard value != NullFaceObject else {
+        guard value != NullFaceObject, nil != cameraView else {
             clear()
             return
         }
@@ -78,10 +78,16 @@ private extension FaceGraphic {
 private extension FaceGraphic {
     
     private func adjustFaceBounds(for face: FaceObject) {
-        view.frame = cameraView!.graphicOverlay.frame
+        guard let cameraView = cameraView else {
+            return
+        }
+        view.frame = cameraView.graphicOverlay.frame
     }
     
     private func adjustLandmarks(for face: FaceObject) {
+        guard cameraView != nil else {
+            return
+        }
         // face[.leftEye] works.
         for l in face.landmarks {
             let center = normalize(point: l.position, sourceSize: face.sourceSize)
