@@ -32,9 +32,8 @@ fileprivate let transientState = TransientState()
 
 
 func getFileBase64(atPath path: String) -> String? {
-    if FileManager.default.fileExists(atPath: path) {
-        let url = URL(fileURLWithPath: path)
-        return url.dataRepresentation.base64EncodedString()
+    if FileManager.default.fileExists(atPath: path), let image = UIImage(contentsOfFile: path) {
+        return image.jpegData(compressionQuality: 0.5)?.base64EncodedString()
     }
     return nil
 }
