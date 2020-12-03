@@ -579,11 +579,14 @@ extension CameraSource {
     private func setCameraTorch(enabled: Bool) {
         sessionQueue.async {
             do {
-                guard self.sessionSetupState == .configured else { return }
+                guard self.sessionSetupState == .configured else {
+                    return
+                }
                 let device = self.cameraDeviceInput.device
                 
-                if enabled && device.torchMode == .on ||
-                  !enabled && device.torchMode == .off
+                if !device.hasTorch ||
+                    enabled && device.torchMode == .on ||
+                   !enabled && device.torchMode == .off
                 {
                     return
                 }
