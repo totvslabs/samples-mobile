@@ -29,8 +29,12 @@ class CameraSource : NSObject {
     private weak var cameraView: CameraView!
     
     /// `PreviewView` owner of the camera device layer
-    private var previewView: PreviewView {
-        cameraView.previewView
+    private var previewView: PreviewView? {
+        // cameraView get's deallocated while trying to access preview.
+        guard nil != cameraView else {
+            return nil
+        }
+        return cameraView.previewView
     }
     
     weak var analyzer: ImageAnalyzer? = nil {
@@ -102,7 +106,7 @@ class CameraSource : NSObject {
 // MARK: - Lifecycle
 extension CameraSource {
     func startRunning() {
-        previewView.session = session
+        previewView?.session = session
         
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
@@ -216,7 +220,10 @@ private extension CameraSource {
         
         // initial orientation to all interested
         DispatchQueue.main.async {
-            self.setCameraOrientation(orientation: self.cameraView.windowOrientation)
+            // if cameraView get deallocated while configuring, do nothing.
+            if nil != self.cameraView {
+                self.setCameraOrientation(orientation: self.cameraView.windowOrientation)
+            }
         }
         
         session.commitConfiguration()
@@ -247,11 +254,11 @@ private extension CameraSource {
             }
         }
         // change preview orientation
-        previewView.videoPreviewLayer.connection?.videoOrientation = videoOrientation
+        previewView?.videoPreviewLayer.connection?.videoOrientation = videoOrientation
     }
     
     func setCameraOrientation(orientation: UIDeviceOrientation) {
-        if let connection = previewView.videoPreviewLayer.connection {
+        if let connection = previewView?.videoPreviewLayer.connection {
             guard let deviceOrientation = AVCaptureVideoOrientation(deviceOrientation: orientation),
                 orientation.isPortrait || orientation.isLandscape, deviceOrientation != connection.videoOrientation
             else {
@@ -379,6 +386,9 @@ extension CameraSource {
     }
     
     func focusAndExpose(at point: CGPoint) {
+        guard let previewView = previewView else {
+            return
+        }
         let devicePoint = previewView.videoPreviewLayer.captureDevicePointConverted(fromLayerPoint: point)
         focus(with: .autoFocus, exposureMode: .autoExpose, at: devicePoint, monitorSubjectAreaChange: true)
     }
@@ -627,7 +637,7 @@ extension CameraSource {
     }
     
     private func takePicture(forSaving save: Bool, options: OutputFileOptions, onSaved: OnImageSaved?, onCaptured: OnImageCaptured?) {
-        let previewOrientation = previewView.videoPreviewLayer.connection?.videoOrientation
+        let previewOrientation = previewView?.videoPreviewLayer.connection?.videoOrientation
         let facing = self.facing
         sessionQueue.async {
             if let photoConnection = self.photoOutput.connection(with: .video) {
