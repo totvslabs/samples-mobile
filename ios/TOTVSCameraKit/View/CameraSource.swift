@@ -164,6 +164,8 @@ private extension CameraSource {
             return
         }
         session.beginConfiguration()
+        
+        session.automaticallyConfiguresCaptureDeviceForWideColor = false        
         /**
          Set this property to control the quality of the images captured from the camera device.
          This will help with performance, quality of frames, speed of response, FPS, etc.
