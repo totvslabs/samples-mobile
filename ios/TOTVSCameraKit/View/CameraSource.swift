@@ -15,6 +15,16 @@ fileprivate enum SessionSetupState {
     case configured
     case undetermined
 }
+
+/**
+ README carefully:  This property is a workaround to an issue related to  react native environment in which multiple
+ camera views were created and the camera source related to the deatached view tried to acquire the camera session
+ leaving the new one without a video output.
+ As consequence this camera source can not be used in a normal iOS environment in which for the same camera source
+ we can call stopRunning followed by startRunning. To enable this behavior, just remove this property.
+*/
+fileprivate var lastCameraAcquireId = -1
+
 /**
  * This controller is backed fully by `AVFoudnation` implementation, in order to change the
  * source of the camera device, this is the class that needs to be checked for.
@@ -96,9 +106,16 @@ class CameraSource : NSObject {
     private var desiredOutputImageSize: CGSize? {
         cameraView.desiredOutputImageSize
     }
+    
+    private var isCameraSourceAlive: Bool {
+        lastCameraAcquireId == -1 || lastCameraAcquireId == hashValue
+    }
             
     init(cameraView: CameraView) {
+        super.init()
         self.cameraView = cameraView
+        
+        lastCameraAcquireId = self.hashValue
     }
 }
 
@@ -116,6 +133,9 @@ extension CameraSource {
                 }
             }
             sessionQueue.async {
+                guard self.isCameraSourceAlive else {
+                    return
+                }
                 self.addObservers()
                 self.session.startRunning()
                 self.isSessionRunning = self.session.isRunning
