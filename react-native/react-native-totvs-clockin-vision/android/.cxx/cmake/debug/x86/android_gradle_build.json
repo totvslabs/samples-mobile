@@ -1,0 +1,63 @@
+{
+  "stringTable": {
+    "0": "/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/.cxx/cmake/debug/x86",
+    "1": "--target=i686-none-linux-android22 --gcc-toolchain=/Users/jansv/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/jansv/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dai_core_EXPORTS -I../../../../include -I../../../../src/main/cppLibs/dlib/include -I../../../../src/main/cppLibs/opencv/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -frtti -fexceptions -std=c++11 -frtti -fexceptions -fexceptions -std=c++17 -funwind-tables -O0 -fno-limit-debug-info -fPIC"
+  },
+  "buildFiles": [
+    "/Users/jansv/Library/Android/sdk/ndk/21.0.6113669/build/cmake/platforms.cmake",
+    "/Users/jansv/Library/Android/sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake",
+    "/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/CMakeLists.txt"
+  ],
+  "cleanCommands": [
+    "/Users/jansv/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/.cxx/cmake/debug/x86\" clean"
+  ],
+  "buildTargetsCommand": "/Users/jansv/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja  -C \"/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/.cxx/cmake/debug/x86\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "ai_core-Debug-x86": {
+      "buildCommand": "/Users/jansv/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/.cxx/cmake/debug/x86\" ai_core",
+      "buildType": "debug",
+      "toolchain": "3661969992",
+      "abi": "x86",
+      "artifactName": "ai_core",
+      "files": [
+        {
+          "src": "/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/src/main/cpp/RecognitionInfo.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/src/main/cpp/FaceUtils.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/src/main/cpp/EmbeddingsManager.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/src/main/cpp/FaceRecognizer.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/src/main/cpp/FaceRecognizer_wrap.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [],
+      "output": "/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/build/intermediates/cmake/debug/obj/x86/libai_core.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {
+    "3661969992": {
+      "cppCompilerExecutable": "/Users/jansv/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}
