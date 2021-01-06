@@ -1,4 +1,4 @@
-package com.totvs.clockin.vision.impl
+package com.totvs.clockin.vision.internal
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -8,7 +8,6 @@ import com.totvs.clockin.vision.core.DetectionModel
 import com.totvs.clockin.vision.core.Model.Config
 import com.totvs.clockin.vision.core.RecognitionModel
 import com.totvs.clockin.vision.face.Face
-import com.tzutalin.dlib.FaceRec
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -20,7 +19,10 @@ internal class NativeFaceModel private constructor(
     DetectionModel<Bitmap, Face> {
 
     private val model by lazy {
-        FaceRec(config.modelDirectory)
+        FaceRecognizer(config.modelDirectory).apply {
+            loadEmbeddings(config.modelDirectory)
+            updateThreshold(0.4f)
+        }
     }
 
     private val trained = AtomicBoolean(false)
@@ -40,7 +42,8 @@ internal class NativeFaceModel private constructor(
         if (isDebug) {
             Log.i(TAG, "Training model")
         }
-        model.train()
+        // since model is lazy let's trigger the side effect of the initialization
+        model
         trained.set(true)
     }
 
@@ -49,7 +52,6 @@ internal class NativeFaceModel private constructor(
         if (isDebug) {
             Log.i(TAG, "Releasing model")
         }
-        model.release()
         trained.set(false)
     }
 
@@ -63,9 +65,9 @@ internal class NativeFaceModel private constructor(
         if (!trained.get()) {
             throw IllegalStateException("FaceModel not trained yet.")
         }
-        val results = model.recognize(input)?.filterNotNull()?.toList() ?: emptyList()
-        // sending up the results.
-        onRecognized(results.map { NativeFace(it) })
+//        val results = model.recognize(input)?.filterNotNull()?.toList() ?: emptyList()
+//        // sending up the results.
+//        onRecognized(results.map { NativeFace(it) })
     }
 
     @WorkerThread
@@ -76,9 +78,7 @@ internal class NativeFaceModel private constructor(
         if (!trained.get()) {
             throw IllegalStateException("FaceModel not trained yet.")
         }
-        val results = model.detect(input)?.filterNotNull()?.toList() ?: emptyList()
-        // sending up the results.
-        onDetected(results.map { NativeFace(it) })
+        onDetected(emptyList())
     }
 
     /**
