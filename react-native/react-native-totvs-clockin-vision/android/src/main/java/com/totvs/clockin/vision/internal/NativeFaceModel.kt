@@ -21,7 +21,6 @@ internal class NativeFaceModel private constructor(
     private val model by lazy {
         FaceRecognizer(config.modelDirectory).apply {
             loadEmbeddings(config.modelDirectory)
-            updateThreshold(0.4f)
         }
     }
 

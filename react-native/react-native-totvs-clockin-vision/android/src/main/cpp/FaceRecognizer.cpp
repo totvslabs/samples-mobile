@@ -4,10 +4,10 @@
 #include <exception>
 #include <stdexcept>
 
-/* In case logging is needed:
-#include <android/log.h>
-__android_log_write(ANDROID_LOG_DEBUG, "AICore", document.str().c_str());
-*/
+// In case logging is needed:
+// #include <android/log.h>
+// __android_log_write(ANDROID_LOG_DEBUG, "AICore", document.str().c_str());
+
 #include <dlib/base64.h>
 #include <dlib/compress_stream.h>
 #include <dlib/image_processing/frontal_face_detector.h>
@@ -59,30 +59,32 @@ string FaceRecognizer::faceRecognition(const cv::Mat image, bool skip_detection)
 
 string FaceRecognizer::faceRecognition(const cv_image_t cv_image, bool skip_detection)
 {
-    try
-    {
-        dlib::rectangle face_coords;
-        if (skip_detection) {
-            face_coords = dlib::rectangle(0, 0, cv_image.nc(), cv_image.nr());
-        } else {
+    dlib::rectangle face_coords;
+    if (skip_detection) {
+        face_coords = dlib::rectangle(0, 0, cv_image.nc(), cv_image.nr());
+    } else {
+        try {
             face_coords = detectFace(cv_image);
         }
-        dlib::full_object_detection shape = predictShape(cv_image, face_coords);
-        auto embedding = computeFaceEmbedding(cv_image, shape);
+        catch (FaceNotDetectedException &e)
+        {
+            return string("{\"status\": \"FaceNotDetected\"}");
+        }
+        catch (MultipleFacesDetectedException &e)
+        {
+            return string("{\"status\": \"MultipleFacesDetected\"}");
+        }
+    }
+    dlib::full_object_detection shape = predictShape(cv_image, face_coords);
+    auto embedding = computeFaceEmbedding(cv_image, shape);
+    try
+    {
         auto recognized_employees = embeddings_manager.search(embedding, threshold);
-        return jsonify(recognized_employees, embedding);
-    }
-    catch (FaceNotDetectedException &e)
-    {
-        return string("{\"status\": \"FaceNotDetected\"}");
-    }
-    catch (MultipleFacesDetectedException &e)
-    {
-        return string("{\"status\": \"MultipleFacesDetected\"}");
+        return jsonify(recognized_employees, embedding, string("FaceDetected"));
     }
     catch (PersonNotRecognizedException &e)
     {
-        return string("{\"status\": \"PersonNotRecognized\"}");
+        return jsonify(std::vector<RecognitionInfo>(), embedding, string("PersonNotRecognized"));
     };
 }
 
@@ -147,25 +149,29 @@ void FaceRecognizer::loadModels(string resources_path)
 
 string FaceRecognizer::jsonify(
     std::vector<RecognitionInfo> infos,
-    dlib::matrix<float, 0, 1> embedding)
+    dlib::matrix<float, 0, 1> embedding,
+    string status)
 {
     stringstream document;
     document << "{" << endl;
-    document << "  \"status\": \"FaceDetected\"," << endl;
+    document << "  \"status\": \"" << status << "\"," << endl;
     document << "  \"embedding\": \"";
     for (auto element : embedding)
     {
         document << element << ", ";
     }
     document.seekp(-2, document.cur); // removes the last comma
-    document << "\"," << endl;
-    document << "  \"results\": [" << endl;
-    for (auto info : infos)
-    {
-        document << "    " << info.jsonify() << "," << endl;
+    document << "\"";
+    if (infos.size() > 0) {
+        document << "," << endl;
+        document << "  \"results\": [" << endl;
+        for (auto info : infos)
+        {
+            document << "    " << info.jsonify() << "," << endl;
+        }
+        document.seekp(-2, document.cur); // removes the last comma
+        document << endl << "  ]" << endl;
     }
-    document.seekp(-2, document.cur); // removes the last comma
-    document << endl << "  ]" << endl;
     document << "}" << endl;
 
     return document.str();

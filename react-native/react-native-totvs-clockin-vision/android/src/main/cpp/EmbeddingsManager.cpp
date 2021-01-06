@@ -30,7 +30,7 @@ EmbeddingsManager::EmbeddingsManager(string embeddings_path)
 }
 
 vector<RecognitionInfo> EmbeddingsManager::search(
-    dlib::matrix<float, 0, 1> embedding, 
+    dlib::matrix<float, 0, 1> embedding,
     float threshold)
 {
     vector<RecognitionInfo> recognized_employees;
@@ -43,16 +43,23 @@ vector<RecognitionInfo> EmbeddingsManager::search(
         stringstream ss(employees_info[j]);
         if (distance < threshold)
         {
+            tokens.clear(); 
             // token should be name_personid
             while (std::getline(ss, token, delim))
-                tokens.push_back(token);
+            {
+                tokens.push_back(token); 
+            }
             if (tokens.size() != 2)
+            {
                 continue;
+            }
             RecognitionInfo rec(tokens[1], tokens[0], distance);
             recognized_employees.push_back(rec);
         }
     }
     if (recognized_employees.size() == 0)
+    {
         throw PersonNotRecognizedException();
+    }
     return recognized_employees;
 }

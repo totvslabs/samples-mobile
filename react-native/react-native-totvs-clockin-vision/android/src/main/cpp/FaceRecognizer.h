@@ -66,7 +66,8 @@ private:
 
     string jsonify(
         std::vector<RecognitionInfo> infos,
-        dlib::matrix<float, 0, 1> embedding
+        dlib::matrix<float, 0, 1> embedding,
+        std::string status
     );
     string faceRecognition(const cv_image_t image, bool skip_detection);
 };
