@@ -6,8 +6,7 @@ import androidx.annotation.WorkerThread
  * Model as representative of model classes that are capable of detection
  * tasks over an input value.
  */
-interface DetectionModel<Input, Output> :
-    Model {
+interface DetectionModel<in Input, out Output> : Model {
     /**
      * Perform detection over the input producing a list of detected entities of
      * type [Output].
@@ -17,5 +16,5 @@ interface DetectionModel<Input, Output> :
      */
     @WorkerThread
     @Throws(IllegalStateException::class)
-    fun detect(input: Input, onDetected: (List<Output>) -> Unit)
+    fun detect(input: Input, onDetected: (ModelOutput<Output>) -> Unit)
 }

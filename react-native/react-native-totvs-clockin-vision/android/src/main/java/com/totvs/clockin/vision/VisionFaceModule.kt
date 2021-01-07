@@ -175,7 +175,7 @@ class VisionFaceModule(
                 )
             ) { result ->
                 // let's dispatch the [OnFaceRecognized] event
-                OnFaceRecognized(result.file, result.faces)(context, viewTag)
+                OnFaceRecognized(result.file, result.output)(context, viewTag)
             }
             true
         }

@@ -21,6 +21,8 @@ import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.FastFaceDetector
 import com.totvs.camera.vision.stream.*
 import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
+import com.totvs.clockin.vision.core.Model
+import com.totvs.clockin.vision.core.ModelOutput
 import com.totvs.clockin.vision.core.RecognitionModel
 import com.totvs.clockin.vision.face.*
 import com.totvs.clockin.vision.face.VisionFaceCamera.RecognitionOptions
@@ -257,11 +259,11 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
                     }
                     recognitionExecutor.execute(saver)
                 }
-                val recognizer = ImageRecognizer(bitmap) { faces, exception ->
+                val recognizer = ImageRecognizer(bitmap) { output, exception ->
                     exception?.let {
                         Log.e(TAG, "Error recognizing image", it)
                     }
-                    result.faces = faces
+                    result.output = output
                     // notify we're done
                     latch.countDown()
                 }
@@ -561,15 +563,15 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
      */
     private inner class ImageRecognizer(
         private val bitmap: Bitmap,
-        private val onRecognized: (List<Face>, Throwable?) -> Unit
+        private val onRecognized: (ModelOutput<Face>, Throwable?) -> Unit
     ) : Runnable {
         override fun run() {
             try {
-                model.recognize(bitmap) { list ->
-                    onRecognized(list, null)
+                model.recognize(bitmap) { result ->
+                    onRecognized(result, null)
                 }
             } catch (ex: Exception) {
-                onRecognized(emptyList(), ex)
+                onRecognized(ModelOutput(), ex)
             }
         }
     }

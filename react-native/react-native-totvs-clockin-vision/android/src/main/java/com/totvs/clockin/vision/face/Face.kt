@@ -1,7 +1,5 @@
 package com.totvs.clockin.vision.face
 
-import android.graphics.Point
-import android.graphics.Rect
 import androidx.annotation.Keep
 
 /**
@@ -11,29 +9,18 @@ import androidx.annotation.Keep
 @Keep
 abstract class Face {
     /**
-     * Label of the face object. meta-info
+     * Name of the person recognized
      */
-    abstract val label: String?
+    abstract val name: String
+
+    /**
+     * Name of the person recognized
+     */
+    abstract val personId: String
 
     /**
      * Confidence of this face object. this might mean confidence of detection
      * or confidence of recognition.
      */
-    abstract val confidence: Float
-
-    /**
-     * Bounding box determining this face on the provided source where this face object
-     * was detected/recognized
-     */
-    abstract val boundingBox: Rect
-
-    /**
-     * Landmark points for this face object
-     */
-    abstract val landmarkPoints: List<Point>
-
-    /**
-     * Encoding of the face. meta-info
-     */
-    abstract val encoding: String?
+    abstract val distance: Float
 }

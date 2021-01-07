@@ -1,22 +1,26 @@
 package com.totvs.clockin.vision.internal
 
-import android.graphics.Point
-import android.graphics.Rect
+import android.util.Log
 import com.totvs.clockin.vision.face.Face
+import org.json.JSONObject
 
-internal class NativeFace : Face() {
-    override val label: String?
-        get() = TODO()
+internal data class NativeFace(
+    override val name: String,
+    override val personId: String,
+    override val distance: Float
+) : Face() {
+    companion object {
+        val Null = NativeFace(name = "", personId = "", distance = .0f)
 
-    override val confidence: Float
-        get() = TODO()
-
-    override val boundingBox: Rect
-        get() = TODO()
-
-    override val landmarkPoints: List<Point>
-        get() = TODO()
-
-    override val encoding: String?
-        get() = TODO()
+        fun fromJson(json: JSONObject): NativeFace = try {
+            NativeFace(
+                name = json.optString("name"),
+                personId = json.optString("person_id"),
+                distance = json.optDouble("distance").toFloat()
+            )
+        } catch (ex: Exception) {
+            Log.e("NativeFace", "Error parsing face", ex)
+            Null
+        }
+    }
 }

@@ -6,7 +6,7 @@ import androidx.annotation.WorkerThread
  * Model as representative of model classes that are capable of recognition
  * tasks over an input value.
  */
-interface RecognitionModel<Input, Output> : Model {
+interface RecognitionModel<in Input, out Output> : Model {
     /**
      * Perform recognition over the input producing a list of recognized entities of
      * type [Output].
@@ -16,5 +16,5 @@ interface RecognitionModel<Input, Output> : Model {
      */
     @WorkerThread
     @Throws(IllegalStateException::class)
-    fun recognize(input: Input, onRecognized: (List<Output>) -> Unit)
+    fun recognize(input: Input, onRecognized: (ModelOutput<Output>) -> Unit)
 }

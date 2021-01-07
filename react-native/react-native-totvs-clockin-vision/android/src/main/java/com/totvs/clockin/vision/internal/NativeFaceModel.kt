@@ -3,10 +3,8 @@ package com.totvs.clockin.vision.internal
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.annotation.WorkerThread
-import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
-import com.totvs.clockin.vision.core.DetectionModel
+import com.totvs.clockin.vision.core.*
 import com.totvs.clockin.vision.core.Model.Config
-import com.totvs.clockin.vision.core.RecognitionModel
 import com.totvs.clockin.vision.face.Face
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -57,27 +55,28 @@ internal class NativeFaceModel private constructor(
     protected fun finalize() = release()
 
     @WorkerThread
-    override fun recognize(input: Bitmap, onRecognized: (List<Face>) -> Unit) {
+    override fun recognize(input: Bitmap, onRecognized: (ModelOutput<Face>) -> Unit) {
         if (isDebug) {
             Log.i(TAG, "Performing recognition on: ${input.hashCode()}")
         }
         if (!trained.get()) {
             throw IllegalStateException("FaceModel not trained yet.")
         }
-//        val results = model.recognize(input)?.filterNotNull()?.toList() ?: emptyList()
-//        // sending up the results.
-//        onRecognized(results.map { NativeFace(it) })
+        // sending up the results.
+        onRecognized(NativeOutput.fromJson(
+            model.faceRecognition(input, false)
+        ))
     }
 
     @WorkerThread
-    override fun detect(input: Bitmap, onDetected: (List<Face>) -> Unit) {
+    override fun detect(input: Bitmap, onDetected: (ModelOutput<Face>) -> Unit) {
         if (isDebug) {
             Log.i(TAG, "Performing recognition on: ${input.hashCode()}")
         }
         if (!trained.get()) {
             throw IllegalStateException("FaceModel not trained yet.")
         }
-        onDetected(emptyList())
+        onDetected(ModelOutput())
     }
 
     /**
