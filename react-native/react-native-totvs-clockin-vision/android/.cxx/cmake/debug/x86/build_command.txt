@@ -14,7 +14,7 @@ arguments :
 -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/build/intermediates/cmake/debug/obj/x86
 -DCMAKE_MAKE_PROGRAM=/Users/jansv/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
 -DCMAKE_SYSTEM_NAME=Android
--DCMAKE_SYSTEM_VERSION=21
+-DCMAKE_SYSTEM_VERSION=22
 -DANDROID_PLATFORM=android-22
 -DANDROID_TOOLCHAIN=clang
 -DANDROID_STL=c++_shared

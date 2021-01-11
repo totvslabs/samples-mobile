@@ -50,7 +50,7 @@ CMAKE SERVER: {
     "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/build/intermediates/cmake/debug/obj/x86",
     "-DCMAKE_MAKE_PROGRAM\u003d/Users/jansv/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja",
     "-DCMAKE_SYSTEM_NAME\u003dAndroid",
-    "-DCMAKE_SYSTEM_VERSION\u003d21",
+    "-DCMAKE_SYSTEM_VERSION\u003d22",
     "-DANDROID_PLATFORM\u003dandroid-22",
     "-DANDROID_TOOLCHAIN\u003dclang",
     "-DANDROID_STL\u003dc++_shared",
