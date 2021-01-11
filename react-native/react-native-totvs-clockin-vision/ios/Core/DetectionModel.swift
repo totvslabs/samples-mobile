@@ -25,5 +25,5 @@ public protocol DetectionModel : Model  {
      *
      * @discussion requires to run on a working thread.
      */
-    func detect(input: Input, onDetected: @escaping ([Output]) -> Void) throws
+    func detect(input: Input, onDetected: @escaping (ModelOutput<Output>) -> Void) throws
 }

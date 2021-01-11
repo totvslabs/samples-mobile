@@ -28,9 +28,9 @@ open class RecognitionDetectionModel<Input, Output> : RecognitionModel, Detectio
     open func releaseResources() {
     }
     
-    open func detect(input: Input, onDetected: @escaping ([Output]) -> Void) throws {
+    open func detect(input: Input, onDetected: @escaping (ModelOutput<Output>) -> Void) throws {
     }
     
-    open func recognize(input: Input, onRecognized: @escaping ([Output]) -> Void) throws {
+    open func recognize(input: Input, onRecognized: @escaping (ModelOutput<Output>) -> Void) throws {
     }
 }

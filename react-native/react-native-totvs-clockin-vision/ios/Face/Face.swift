@@ -28,9 +28,4 @@ public protocol Face {
      * or confidence of recognition.
      */
     var distance: Float { get }
-
-    /**
-     * Encoding of the face. meta-info
-     */
-    var encoding: String { get }
 }

@@ -25,5 +25,5 @@ public protocol RecognitionModel : Model  {
      *
      * @discussion requires to run on a working thread.
      */
-    func recognize(input: Input, onRecognized: @escaping ([Output]) -> Void) throws
+    func recognize(input: Input, onRecognized: @escaping (ModelOutput<Output>) -> Void) throws
 }

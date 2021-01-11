@@ -530,14 +530,14 @@ extension VisionFaceCameraView {
         }
     }
     
-    private func recognizeImage(image: UIImage, onRecognize: @escaping ([Face], Error?) -> Void) {
+    private func recognizeImage(image: UIImage, onRecognize: @escaping (ModelOutput<Face>, Error?) -> Void) {
         do {
             try model?.recognize(input: image, onRecognized: { faces in
                 onRecognize(faces, nil)
             })
         } catch let error {
             print("\(TAG): Error recognizing: \(error)")
-            onRecognize([], error)
+            onRecognize(.empty(), error)
         }
     }
     
@@ -567,11 +567,11 @@ extension VisionFaceCameraView {
             }
             // image recognizer
             recognitionQueue.async {
-                self.recognizeImage(image: uiImage) { faces, error in
+                self.recognizeImage(image: uiImage) { output, error in
                     if let error = error {
                         print("\(TAG): Error recognizing image: \(error)")
                     }
-                    result.faces = faces
+                    result.output = output
                     // notify we're done
                     latch.countDown()
                 }
