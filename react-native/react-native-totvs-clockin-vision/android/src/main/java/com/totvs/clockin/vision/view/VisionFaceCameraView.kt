@@ -12,14 +12,18 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.ThemedReactContext
+import com.totvs.camera.core.ImageProxy
 import com.totvs.camera.view.CameraView
 import com.totvs.camera.view.GraphicOverlay
 import com.totvs.camera.view.core.CameraViewModuleOptions
+import com.totvs.camera.vision.AbstractVisionDetector
 import com.totvs.camera.vision.DetectionAnalyzer
 import com.totvs.camera.vision.core.VisionModuleOptions
 import com.totvs.camera.vision.face.FaceObject
 import com.totvs.camera.vision.face.FastFaceDetector
+import com.totvs.camera.vision.face.NullFaceObject
 import com.totvs.camera.vision.stream.*
+import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
 import com.totvs.clockin.vision.core.Model
 import com.totvs.clockin.vision.core.ModelOutput
@@ -34,9 +38,12 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.max
+
 
 /**
  * Camera View capable of face detection.
@@ -166,8 +173,16 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         DetectionAnalyzer(detectionExecutor, FastFaceDetector(context))
     }
 
+    /**
+     * Detector dedicated to still captures detection
+     */
+    private val stillCapturesDetector by lazy {
+        FastFaceDetector(context)
+    }
+
     init {
         enableDebug()
+        enableStillCapturesDetection()
         startUp()
     }
 
@@ -240,8 +255,17 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
                 isRecognizing.set(false)
                 Log.e(TAG, "Error taking picture", it)
             }
-            // closing the image after using.
-            val bitmap = image?.use { it.image?.toBitmap(it.imageInfo.rotationDegrees) }
+
+            val bitmap = when (detectStillCaptures) {
+                // will be closed after detection.
+                true -> image?.exclusiveUse {
+                    it.image?.toBitmap(it.imageInfo.rotationDegrees)
+                }
+                // closing the image after using.
+                else -> image?.use {
+                    it.image?.toBitmap(it.imageInfo.rotationDegrees)
+                }
+            }
 
             if (null != bitmap) {
                 // we add an extra task if we're required to save the image.
@@ -259,14 +283,26 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
                     }
                     recognitionExecutor.execute(saver)
                 }
-                val recognizer = ImageRecognizer(bitmap) { output, exception ->
-                    exception?.let {
-                        Log.e(TAG, "Error recognizing image", it)
+                val recognizer = ImageRecognizer(
+                    bitmap = bitmap,
+                    includeDetection = detectStillCaptures,
+                    executor = detectionExecutor,
+                    detector = stillCapturesDetector,
+                    image = if (detectStillCaptures) image else null,
+                    onDetected = {
+                        // trigger safe close, only called if image is provided as non-null, but
+                        // just in case: conditionally take.
+                        image?.takeIf { detectStillCaptures }?.use {  }
+                    },
+                    onRecognized = { output, exception ->
+                        exception?.let {
+                            Log.e(TAG, "Error recognizing image", it)
+                        }
+                        result.output = output
+                        // notify we're done
+                        latch.countDown()
                     }
-                    result.output = output
-                    // notify we're done
-                    latch.countDown()
-                }
+                )
                 recognitionExecutor.execute(recognizer)
 
                 try {
@@ -334,7 +370,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         if (null != analyzer) {
             return
         }
-        
+
         if (isDebug) {
             Log.i(TAG, "Installing DetectionAnalyzer...")
         }
@@ -348,7 +384,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
      */
     private fun checkAnalyzerState() {
         if (null == liveness) {
-           disableLiveness()
+            disableLiveness()
         }
         if (null == proximity) {
             disableProximity()
@@ -385,7 +421,9 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
         if (::detectionExecutor.isInitialized && !detectionExecutor.isShutdown) {
             return // this suffix to not initialize more than once the executors
         }
-        detectionExecutor = Executors.newSingleThreadExecutor()
+
+        // two threads for analyzer another for stillCapturesDetector
+        detectionExecutor = Executors.newFixedThreadPool(3)
         // one for [ImageSaver] another for [ImageRecognizer]
         recognitionExecutor = Executors.newFixedThreadPool(2)
     }
@@ -563,29 +601,97 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
      */
     private inner class ImageRecognizer(
         private val bitmap: Bitmap,
+        private val includeDetection: Boolean,
+        private val detector: AbstractVisionDetector<FaceObject>,
+        private val executor: Executor,
+        private val image: ImageProxy?,
+        private val onDetected: (FaceObject) -> Unit,
         private val onRecognized: (ModelOutput<Face>, Throwable?) -> Unit
     ) : Runnable {
         override fun run() {
             try {
-                model.recognize(bitmap) { result ->
-                    onRecognized(result, null)
+                image?.takeIf { includeDetection }
+                    ?.exclusiveUse {
+                        detector.detect(executor, image = it, onDetected = { face ->
+                            onDetected(face)
+                            recognize(face)
+                        })
+                    }
+                    ?: model.recognize(bitmap) { result ->
+                        onRecognized(result, null)
+                    }
+            } catch (ex: Exception) {
+                onRecognized(ModelOutput(), ex)
+            }
+        }
+
+        private fun recognize(face: FaceObject) {
+            try {
+                with(bitmap.getDetectionMeta(face)) {
+                    model.recognize(bitmap, includeDetection = !skip) { result ->
+                        onRecognized(result, null)
+                    }
                 }
             } catch (ex: Exception) {
                 onRecognized(ModelOutput(), ex)
             }
         }
+
+        /**
+         * Determine detection meta info based on the size of the face detected.
+         * This is related to the inability of the cpp lib to perform well on images
+         * with high light source.
+         */
+        private fun Bitmap.getDetectionMeta(face: FaceObject): DetectionMeta {
+            if (face === NullFaceObject) {
+                return DetectionMeta(skip = false, bitmap = this)
+            }
+
+            var x = max(face.boundingBox?.left?.toInt() ?: 0, 0)
+            var y = max(face.boundingBox?.top?.toInt() ?: 0, 0)
+
+            val cropWidth = when (x + face.width > width) {
+                true -> width.also { x = 0 }
+                else -> face.width.toInt()
+            }
+
+            val cropHeight = when (y + face.height > height) {
+                true -> height.also { y = 0 }
+                else -> face.height.toInt()
+            }
+            return when (cropWidth != face.width.toInt() || cropHeight != face.height.toInt()) {
+                true -> DetectionMeta(
+                    skip = true,
+                    bitmap = Bitmap.createBitmap(this, x, y, cropWidth, cropHeight)
+                )
+                else -> DetectionMeta(skip = false, bitmap = this)
+            }
+        }
+
+        private inner class DetectionMeta(val skip: Boolean, val bitmap: Bitmap)
     }
 
     companion object {
         private const val TAG = "FaceVisionCameraView"
 
         private val isDebug get() = ClockInVisionModuleOptions.DEBUG_ENABLED
+        private val detectStillCaptures get() = ClockInVisionModuleOptions.USES_STILL_CAPTURES_DETECTION
 
         // use this to debug the whole set of libraries. comment then out if no needed.
         private fun enableDebug() {
             VisionModuleOptions.DEBUG_ENABLED = true
             CameraViewModuleOptions.DEBUG_ENABLED = true
             ClockInVisionModuleOptions.DEBUG_ENABLED = true
+        }
+
+        /**
+         * Enable still capture detection during recognitions.
+         *
+         * This is related to the inability of the cpp lib to perform well on images
+         * with high light source. To disable this behavior remove the call to this method above.
+         */
+        private fun enableStillCapturesDetection() {
+            ClockInVisionModuleOptions.USES_STILL_CAPTURES_DETECTION = true
         }
     }
 }

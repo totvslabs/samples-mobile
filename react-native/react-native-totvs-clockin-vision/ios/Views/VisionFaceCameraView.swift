@@ -599,6 +599,9 @@ extension VisionFaceCameraView {
      * [options] is used to control the behavior of the recognition task. if [options.saveImage]
      * is set to true we'll save the picture at [options.outputDir] otherwise we'll skip that
      * task.
+     *
+     * Unlike the android counterpart, this recognition doesn't suppport detection metadata and relies on the
+     * c++ lib to do detection
      */
     func recognizeStillPicture(options: RecognitionOptions, onResult: @escaping (RecognitionResult) -> Void) {
         ensureSetup { }

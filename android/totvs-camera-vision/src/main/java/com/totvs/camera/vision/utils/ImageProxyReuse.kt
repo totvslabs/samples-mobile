@@ -21,9 +21,9 @@ import com.totvs.camera.vision.face.FastFaceDetector
  *
  * @see also [FaceDetector], [FastFaceDetector] and [BarcodeDetector]
  */
-fun <R> ImageProxy.exclusiveUse(block: () -> R): R = synchronized(this) {
+fun <R> ImageProxy.exclusiveUse(block: (ImageProxy) -> R): R = synchronized(this) {
     planes.forEach {
         it.buffer.rewind()
     }
-    block()
+    block(this)
 }

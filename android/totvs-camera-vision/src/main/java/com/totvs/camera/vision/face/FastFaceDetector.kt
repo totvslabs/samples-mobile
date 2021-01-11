@@ -60,7 +60,7 @@ open class FastFaceDetector(
         val frame = image.exclusiveUse {
             Frame.Builder()
                 .setImageData(
-                    Images.YUV_420_888toNV21(image.image!!),
+                    Images.YUV_420_888toNV21(it.image!!),
                     image.width,
                     image.height,
                     ImageFormat.NV21

@@ -54,7 +54,11 @@ internal class NativeFaceModel private constructor(
     protected fun finalize() = release()
 
     @WorkerThread
-    override fun recognize(input: Bitmap, onRecognized: (ModelOutput<Face>) -> Unit) {
+    override fun recognize(
+        input: Bitmap,
+        includeDetection: Boolean,
+        onRecognized: (ModelOutput<Face>) -> Unit
+    ) {
         if (isDebug) {
             Log.i(TAG, "Performing recognition on: ${input.hashCode()}")
         }
@@ -63,7 +67,7 @@ internal class NativeFaceModel private constructor(
         }
         // sending up the results.
         onRecognized(NativeOutput.fromJson(
-            model.faceRecognition(input, false)
+            model.faceRecognition(input, /*skip_detection=*/ !includeDetection)
         ))
     }
 
