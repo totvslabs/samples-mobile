@@ -39,8 +39,7 @@ internal class NativeFaceModel private constructor(
         if (isDebug) {
             Log.i(TAG, "Training model")
         }
-        // since model is lazy let's trigger the side effect of the initialization
-        model
+        model // since model is lazy let's trigger the side effect of the initialization
         trained.set(true)
     }
 
