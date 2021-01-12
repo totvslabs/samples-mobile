@@ -17,3 +17,4 @@ public class FaceRecognizerJNIJNI {
   public final static native int FaceRecognizer_getNNInputSize(long jarg1, FaceRecognizer jarg1_);
   public final static native void FaceRecognizer_setNNInputSize(long jarg1, FaceRecognizer jarg1_, int jarg2);
   public final static native void delete_FaceRecognizer(long jarg1);
+}
