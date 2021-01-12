@@ -1,7 +1,9 @@
 package com.totvs.camera.vision.face
 
 import android.content.Context
-import android.graphics.ImageFormat
+import android.graphics.ImageFormat.JPEG
+import android.graphics.ImageFormat.YUV_420_888
+import android.graphics.ImageFormat.NV21
 import android.graphics.RectF
 import android.util.Log
 import android.util.Size
@@ -33,7 +35,7 @@ import java.util.concurrent.Executor
  *
  * As-is this detector keeps a singleton of a high-accuracy detector.
  *
- * This detector relies on the old GMs Mobile Vision detection API, which proved to be faster
+ * This detector relies on the old GMS Mobile Vision detection API, which proved to be faster
  * than the new implementation.
  *
  * @see [VisionDetector]
@@ -54,17 +56,28 @@ open class FastFaceDetector(
         if (image.image == null) {
             return onDetected(NullFaceObject)
         }
+
+        if (image.format !in supportedImageFormats) {
+            throw UnsupportedImageFormat("${image.format} format is not supported. Supported " +
+                "formats = $supportedImageFormats")
+        }
+
         val rotation = image.imageInfo.rotationDegrees
         // we require to use this image exclusively and nobody else can read the data until
         // we're done with it.
         val frame = image.exclusiveUse {
-            Frame.Builder()
-                .setImageData(
-                    Images.YUV_420_888toNV21(image.image!!),
-                    image.width,
-                    image.height,
-                    ImageFormat.NV21
-                ).setRotation(rotation.toImageFrameRotation()).build()
+            when (it.format == JPEG) {
+                true -> Frame.Builder()
+                    .setBitmap(Images.toBitmap(it.image!!))
+                    .setRotation(rotation.toImageFrameRotation()).build()
+                else -> Frame.Builder()
+                    .setImageData(
+                        Images.YUV_420_888toNV21(it.image!!),
+                        image.width,
+                        image.height,
+                        NV21
+                    ).setRotation(rotation.toImageFrameRotation()).build()
+            }
         }
 
         executor.executeCatching(onDetected) {
@@ -164,6 +177,7 @@ open class FastFaceDetector(
 
         private const val TAG = "FastFaceDetector"
 
+        private val supportedImageFormats: List<Int> = listOf(JPEG, YUV_420_888)
         private lateinit var detector: FaceDetector
 
         /**

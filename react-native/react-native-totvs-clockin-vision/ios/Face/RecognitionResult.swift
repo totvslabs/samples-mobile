@@ -19,5 +19,5 @@ public struct RecognitionResult {
     /**
      Faces recognized from the image.
      */
-    var faces = [Face]()
+    var output: ModelOutput<Face> = .empty()
 }

@@ -1,6 +1,8 @@
 package com.totvs.clockin.vision.face
 
 import android.graphics.Bitmap
+import com.totvs.clockin.vision.core.Model
+import com.totvs.clockin.vision.core.ModelOutput
 import com.totvs.clockin.vision.core.RecognitionModel
 import com.totvs.clockin.vision.core.VisionCamera
 import java.io.File
@@ -60,7 +62,7 @@ interface VisionFaceCamera : VisionCamera {
      * Result of a recognition tasks.
      *
      * @param file in which the image was saved.
-     * @param faces recognized from the image.
+     * @param output model output for the recognized face
      */
-    data class RecognitionResult(var file: File? = null, var faces: List<Face> = emptyList())
+    data class RecognitionResult(var file: File? = null, var output: ModelOutput<Face> = ModelOutput())
 }

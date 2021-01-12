@@ -2,7 +2,7 @@ package com.totvs.clockin.vision.core
 
 import android.graphics.Bitmap
 import com.totvs.clockin.vision.face.Face
-import com.totvs.clockin.vision.impl.NativeFaceModel
+import com.totvs.clockin.vision.internal.NativeFaceModel
 import com.totvs.clockin.vision.core.Model.Config
 
 /**

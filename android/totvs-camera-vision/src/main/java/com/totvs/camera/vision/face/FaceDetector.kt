@@ -52,8 +52,8 @@ open class FaceDetector(
         // we're done with it.
         val inputImage = image.exclusiveUse {
             InputImage.fromMediaImage(
-                image.image!!,
-                image.imageInfo.rotationDegrees
+                it.image!!,
+                it.imageInfo.rotationDegrees
             )
         }
 

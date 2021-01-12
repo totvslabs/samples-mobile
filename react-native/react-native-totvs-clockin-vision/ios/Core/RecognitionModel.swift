@@ -18,12 +18,16 @@ public protocol RecognitionModel : Model  {
     
     /**
      * Perform detection over the input producing a list of detected entities of
-     * type [Output].
+     * type [Output]. Optionally also perform detection on the provided input
      *
      * This method might throw [IllegalStateException] if called before being the model
      * trained. This is implementation detail
      *
      * @discussion requires to run on a working thread.
      */
-    func recognize(input: Input, onRecognized: @escaping ([Output]) -> Void) throws
+    func recognize(
+        input: Input,
+        includeDetection: Bool,
+        onRecognized: @escaping (ModelOutput<Output>) -> Void
+    ) throws
 }

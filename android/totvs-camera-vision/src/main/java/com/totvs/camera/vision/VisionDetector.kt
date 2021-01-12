@@ -1,10 +1,10 @@
 package com.totvs.camera.vision
 
+import com.totvs.camera.core.ImageAnalyzer
 import com.totvs.camera.core.ImageProxy
+import com.totvs.camera.vision.barcode.BarcodeDetector
 import com.totvs.camera.vision.face.FaceDetector
 import com.totvs.camera.vision.face.FastFaceDetector
-import com.totvs.camera.vision.barcode.BarcodeDetector
-import com.totvs.camera.core.ImageAnalyzer
 import com.totvs.camera.vision.utils.exclusiveUse
 import java.util.concurrent.Executor
 

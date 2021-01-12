@@ -11,9 +11,6 @@ import UIKit
 /**
 * Clock-In specific purpose face object. This model class conforms specific
 * IPC format used for faces.
-*
-* Do notice that unlike android counterpart interface this one mirror the new c++ recognition
-* return type protocol
 */
 public protocol Face {
     /**
@@ -31,9 +28,4 @@ public protocol Face {
      * or confidence of recognition.
      */
     var distance: Float { get }
-
-    /**
-     * Encoding of the face. meta-info
-     */
-    var encoding: String { get }
 }
