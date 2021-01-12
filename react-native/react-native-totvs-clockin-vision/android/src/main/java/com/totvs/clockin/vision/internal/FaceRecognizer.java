@@ -15,7 +15,7 @@ public class FaceRecognizer {
   static {
     System.loadLibrary("ai_core");
   }
-  
+
   protected FaceRecognizer(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;

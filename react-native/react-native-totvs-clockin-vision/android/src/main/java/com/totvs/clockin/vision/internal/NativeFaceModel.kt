@@ -17,9 +17,7 @@ internal class NativeFaceModel private constructor(
     DetectionModel<Bitmap, Face> {
 
     private val model by lazy {
-        FaceRecognizer(config.modelDirectory).apply {
-            loadEmbeddings(config.modelDirectory)
-        }
+        FaceRecognizer(config.modelDirectory)
     }
 
     private val trained = AtomicBoolean(false)
@@ -74,7 +72,7 @@ internal class NativeFaceModel private constructor(
     @WorkerThread
     override fun detect(input: Bitmap, onDetected: (ModelOutput<Face>) -> Unit) {
         if (isDebug) {
-            Log.i(TAG, "Performing recognition on: ${input.hashCode()}")
+            Log.i(TAG, "Performing detection on: ${input.hashCode()}")
         }
         if (!trained.get()) {
             throw IllegalStateException("NativeFaceModel not trained yet.")
