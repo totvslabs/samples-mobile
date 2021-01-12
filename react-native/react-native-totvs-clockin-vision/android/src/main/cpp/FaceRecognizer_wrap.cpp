@@ -244,7 +244,7 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 extern "C" {
 #endif
 
-SWIGEXPORT jlong JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_new_1FaceRecognizer(JNIEnv *jenv, jclass jcls, jstring jarg1) {
+SWIGEXPORT jlong JNICALL Java_com_totvs_clockin_vision_internal_FaceRecognizerJNIJNI_new_1FaceRecognizer(JNIEnv *jenv, jclass jcls, jstring jarg1) {
   jlong jresult = 0 ;
   std::string arg1 ;
   FaceRecognizer *result = 0 ;
@@ -265,7 +265,7 @@ SWIGEXPORT jlong JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_new_1Fac
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecognizer_1faceRecognition_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jboolean jarg3) {
+SWIGEXPORT jstring JNICALL Java_com_totvs_clockin_vision_internal_FaceRecognizerJNIJNI_FaceRecognizer_1faceRecognition_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jboolean jarg3) {
   jstring jresult = 0 ;
   FaceRecognizer *arg1 = (FaceRecognizer *) 0 ;
   std::string arg2 ;
@@ -291,7 +291,7 @@ SWIGEXPORT jstring JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRe
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecognizer_1faceRecognition_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2, jboolean jarg3) {
+SWIGEXPORT jstring JNICALL Java_com_totvs_clockin_vision_internal_FaceRecognizerJNIJNI_FaceRecognizer_1faceRecognition_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2, jboolean jarg3) {
   jstring jresult = 0 ;
   FaceRecognizer *arg1 = (FaceRecognizer *) 0 ;
   cv::Mat arg2 ;
@@ -329,7 +329,7 @@ SWIGEXPORT jstring JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRe
 }
 
 
-SWIGEXPORT void JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecognizer_1loadEmbeddings(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT void JNICALL Java_com_totvs_clockin_vision_internal_FaceRecognizerJNIJNI_FaceRecognizer_1loadEmbeddings(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   FaceRecognizer *arg1 = (FaceRecognizer *) 0 ;
   std::string arg2 ;
   
@@ -349,7 +349,7 @@ SWIGEXPORT void JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecog
 }
 
 
-SWIGEXPORT void JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecognizer_1updateThreshold(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jfloat jarg2) {
+SWIGEXPORT void JNICALL Java_com_totvs_clockin_vision_internal_FaceRecognizerJNIJNI_FaceRecognizer_1updateThreshold(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jfloat jarg2) {
   FaceRecognizer *arg1 = (FaceRecognizer *) 0 ;
   float arg2 ;
   
@@ -362,7 +362,7 @@ SWIGEXPORT void JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecog
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecognizer_1getNNInputSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jint JNICALL Java_com_totvs_clockin_vision_internal_FaceRecognizerJNIJNI_FaceRecognizer_1getNNInputSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jint jresult = 0 ;
   FaceRecognizer *arg1 = (FaceRecognizer *) 0 ;
   int result;
@@ -377,7 +377,7 @@ SWIGEXPORT jint JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecog
 }
 
 
-SWIGEXPORT void JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecognizer_1setNNInputSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT void JNICALL Java_com_totvs_clockin_vision_internal_FaceRecognizerJNIJNI_FaceRecognizer_1setNNInputSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   FaceRecognizer *arg1 = (FaceRecognizer *) 0 ;
   int arg2 ;
   
@@ -390,7 +390,7 @@ SWIGEXPORT void JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_FaceRecog
 }
 
 
-SWIGEXPORT void JNICALL Java_com_totvs_recognizer_FaceRecognizerJNIJNI_delete_1FaceRecognizer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_com_totvs_clockin_vision_internal_FaceRecognizerJNIJNI_delete_1FaceRecognizer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   FaceRecognizer *arg1 = (FaceRecognizer *) 0 ;
   
   (void)jenv;
