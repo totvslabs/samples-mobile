@@ -69,7 +69,6 @@ add_library(
         src/main/cpp/FaceUtils.cpp
         src/main/cpp/EmbeddingsManager.cpp
         src/main/cpp/FaceRecognizer.cpp
-        src/main/cpp/FaceRecognizer_wrap.cpp
 )
 
 

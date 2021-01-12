@@ -17,7 +17,7 @@ arguments :
 -DCMAKE_SYSTEM_VERSION=22
 -DANDROID_PLATFORM=android-22
 -DANDROID_TOOLCHAIN=clang
--DANDROID_STL=c++_shared
+-DANDROID_STL=c++_static
 -DANDROID_CPP_FEATURES=rtti exceptions
 -B/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/.cxx/cmake/debug/x86
 -GNinja

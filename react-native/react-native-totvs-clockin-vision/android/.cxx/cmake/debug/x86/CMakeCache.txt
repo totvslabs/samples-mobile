@@ -27,7 +27,7 @@ ANDROID_NDK:UNINITIALIZED=/Users/jansv/Library/Android/sdk/ndk/21.0.6113669
 ANDROID_PLATFORM:UNINITIALIZED=android-22
 
 //No help, variable specified on the command line.
-ANDROID_STL:UNINITIALIZED=c++_shared
+ANDROID_STL:UNINITIALIZED=c++_static
 
 //No help, variable specified on the command line.
 ANDROID_TOOLCHAIN:UNINITIALIZED=clang

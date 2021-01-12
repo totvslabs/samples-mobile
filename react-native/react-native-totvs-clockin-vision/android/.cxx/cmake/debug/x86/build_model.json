@@ -85,7 +85,7 @@
         },
         {
           "name": "ANDROID_STL",
-          "value": "c++_shared"
+          "value": "c++_static"
         },
         {
           "name": "ANDROID_CPP_FEATURES",
@@ -106,7 +106,7 @@
     "buildSystemArgumentList": [
       "-DANDROID_PLATFORM\u003dandroid-22",
       "-DANDROID_TOOLCHAIN\u003dclang",
-      "-DANDROID_STL\u003dc++_shared",
+      "-DANDROID_STL\u003dc++_static",
       "-DANDROID_CPP_FEATURES\u003drtti exceptions"
     ],
     "buildTargetSet": [],

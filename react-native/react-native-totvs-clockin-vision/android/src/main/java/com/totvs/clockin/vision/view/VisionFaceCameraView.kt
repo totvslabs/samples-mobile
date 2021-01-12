@@ -25,7 +25,6 @@ import com.totvs.camera.vision.face.NullFaceObject
 import com.totvs.camera.vision.stream.*
 import com.totvs.camera.vision.utils.exclusiveUse
 import com.totvs.clockin.vision.core.ClockInVisionModuleOptions
-import com.totvs.clockin.vision.core.Model
 import com.totvs.clockin.vision.core.ModelOutput
 import com.totvs.clockin.vision.core.RecognitionModel
 import com.totvs.clockin.vision.face.*
@@ -43,7 +42,6 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.max
-
 
 /**
  * Camera View capable of face detection.
