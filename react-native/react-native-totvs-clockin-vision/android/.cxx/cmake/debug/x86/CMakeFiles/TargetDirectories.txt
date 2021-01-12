@@ -1,3 +1,0 @@
-/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/.cxx/cmake/debug/x86/CMakeFiles/rebuild_cache.dir
-/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/.cxx/cmake/debug/x86/CMakeFiles/edit_cache.dir
-/Users/jansv/Developer/enterprises/totvs/samples-mobile/react-native/react-native-totvs-clockin-vision/android/.cxx/cmake/debug/x86/CMakeFiles/ai_core.dir
