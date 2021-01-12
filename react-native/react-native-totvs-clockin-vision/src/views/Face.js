@@ -99,7 +99,9 @@ export const FaceCameraConstants = {
   // ZOOM_LIMITS.MAX, ZOOM_LIMITS.MIN
   ZOOM_LIMITS: VisionFaceModule.ZOOM_LIMITS,
   // LIVENESS_MODE
-  LIVENESS_MODE: VisionFaceModule.LIVENESS_MODE
+  LIVENESS_MODE: VisionFaceModule.LIVENESS_MODE,
+  // MODEL_OUTPUT_STATUS
+  MODEL_OUTPUT_STATUS: VisionFaceModule.MODEL_OUTPUT_STATUS
 };
 
 /**

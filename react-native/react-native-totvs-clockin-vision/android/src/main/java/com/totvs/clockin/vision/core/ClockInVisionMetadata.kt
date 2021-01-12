@@ -13,7 +13,8 @@ sealed class ExportableConstant {
 
     companion object {
         private val all = listOf(
-            LivenessModes
+            LivenessModes,
+            ModelOutputStatus
         )
 
         operator fun iterator() = all.iterator()
@@ -36,6 +37,26 @@ object LivenessModes : ExportableConstant() {
         "FACE" to FACE,
         "EYES" to EYES,
         "NONE" to NONE
+    )
+}
+
+/**
+ * Status constants outputted by this library as recognition procedure
+ */
+
+object ModelOutputStatus : ExportableConstant() {
+    override val name = "MODEL_OUTPUT_STATUS"
+
+    private const val FACE_DETECTED = "FaceDetected"
+    private const val FACE_NOT_DETECTED = "FaceNotDetected"
+    private const val MULTIPLE_FACES_DETECTED = "MultipleFacesDetected"
+    private const val PERSON_NOT_RECOGNIZED = "PersonNotRecognized"
+
+    override fun export(): Map<String, Any> = mapOf(
+        "FACE_DETECTED" to FACE_DETECTED,
+        "FACE_NOT_DETECTED" to FACE_NOT_DETECTED,
+        "MULTIPLE_FACES_DETECTED" to MULTIPLE_FACES_DETECTED,
+        "PERSON_NOT_RECOGNIZED" to PERSON_NOT_RECOGNIZED
     )
 }
 

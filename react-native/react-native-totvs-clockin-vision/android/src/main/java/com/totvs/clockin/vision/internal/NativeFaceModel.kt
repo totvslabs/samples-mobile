@@ -63,7 +63,7 @@ internal class NativeFaceModel private constructor(
             Log.i(TAG, "Performing recognition on: ${input.hashCode()}")
         }
         if (!trained.get()) {
-            throw IllegalStateException("FaceModel not trained yet.")
+            throw IllegalStateException("NativeFaceModel not trained yet.")
         }
         // sending up the results.
         onRecognized(NativeOutput.fromJson(
@@ -77,7 +77,7 @@ internal class NativeFaceModel private constructor(
             Log.i(TAG, "Performing recognition on: ${input.hashCode()}")
         }
         if (!trained.get()) {
-            throw IllegalStateException("FaceModel not trained yet.")
+            throw IllegalStateException("NativeFaceModel not trained yet.")
         }
         onDetected(ModelOutput())
     }

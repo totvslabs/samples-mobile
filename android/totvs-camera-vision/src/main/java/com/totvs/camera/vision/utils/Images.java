@@ -1,5 +1,7 @@
 package com.totvs.camera.vision.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 
 import androidx.annotation.RestrictTo;
@@ -77,5 +79,12 @@ public class Images {
         }
 
         return ByteBuffer.wrap(nv21);
+    }
+
+    public static Bitmap toBitmap(Image image) {
+        final ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+        final byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 }
