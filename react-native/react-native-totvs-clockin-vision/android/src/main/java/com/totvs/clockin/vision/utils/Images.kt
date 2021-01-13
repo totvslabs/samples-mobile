@@ -73,3 +73,9 @@ private fun Bitmap.rotate(degrees: Int) : Bitmap {
     }
     return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
 }
+
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+internal fun Bitmap.toByteArray() = with(ByteArrayOutputStream()) {
+    compress(Bitmap.CompressFormat.JPEG, 100, this)
+    toByteArray()
+}

@@ -6,6 +6,8 @@ import androidx.annotation.WorkerThread
 import com.totvs.clockin.vision.core.*
 import com.totvs.clockin.vision.core.Model.Config
 import com.totvs.clockin.vision.face.Face
+import com.totvs.clockin.vision.utils.toBase64
+import com.totvs.clockin.vision.utils.toByteArray
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -17,7 +19,9 @@ internal class NativeFaceModel private constructor(
     DetectionModel<Bitmap, Face> {
 
     private val model by lazy {
-        FaceRecognizer(config.modelDirectory)
+        FaceRecognizer(config.modelDirectory).apply {
+            updateThreshold(0.4f)
+        }
     }
 
     private val trained = AtomicBoolean(false)
@@ -65,7 +69,7 @@ internal class NativeFaceModel private constructor(
         }
         // sending up the results.
         onRecognized(NativeOutput.fromJson(
-            model.faceRecognition(input, /*skip_detection=*/ !includeDetection)
+            model.faceRecognition(input.toByteArray().toBase64(), /*skip_detection=*/ !includeDetection)
         ))
     }
 

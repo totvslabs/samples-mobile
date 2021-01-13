@@ -657,6 +657,7 @@ class VisionFaceCameraView @JvmOverloads internal constructor(
                 true -> height.also { y = 0 }
                 else -> face.height.toInt()
             }
+
             return when (cropWidth != face.width.toInt() || cropHeight != face.height.toInt()) {
                 true -> DetectionMeta(
                     skip = true,
