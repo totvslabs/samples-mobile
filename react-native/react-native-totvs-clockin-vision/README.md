@@ -97,3 +97,11 @@ reuse on new projects that uses both, the c++ recognition library and the `react
 The required files are `NativeRecognitionModel.swift` and `NativeFace.swift`.
 3. You'll need to inject `NativeRecognitionModel` to the `react-native-totvs-clockin-vision`, you'll see how to do that
 under `AppDelegate.m` file.
+
+
+#### Platform Implementation Differences
+
+As of right now, android and iOS implements a couple of distinct features that ar especific to each platfom until asked otherwise, here's a list:
+
+1. `android(only)` Face detection as part of still picture recognition process. This detection is done to extract information about the face and decide whether or not the native recognition model will skip or not a detection phase.
+2. `android(only)` Proximity detection based on the face location. This feature allows to compute the detected face position and determine whether is inside the visible camera view frame or not.
