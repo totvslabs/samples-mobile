@@ -53,7 +53,7 @@ abstract class StandardBoundsScaler<T : VisionObject>(
         val boundingBox = value.boundingBox ?: return receiver.send(value)
 
         val rotatedSize = when (value.sourceRotationDegrees) {
-            0, 180  -> value.sourceSize
+            0, 180 -> value.sourceSize
             90, 270 -> Size(value.sourceSize.height, value.sourceSize.width)
             else -> throw IllegalArgumentException("Valid rotation are 0, 90, 180, 270")
         }
@@ -141,7 +141,7 @@ abstract class StandardBoundsScaler<T : VisionObject>(
         scale = max(
             targetWidth / source.width.toFloat(),
             targetHeight / source.height.toFloat()
-        )
+        ) + OFF_SCREEN_EXTENT
         // this is the new area in which we're gonna display our object.
         val scaledSize = Size(
             ceil(source.width * scale).toInt(),
@@ -158,4 +158,13 @@ abstract class StandardBoundsScaler<T : VisionObject>(
 
     private fun needsReComputation(source: Size): Boolean =
         source != lastSourceCoordinate || lastOverlayCoordinate != overlay.size
+
+
+    companion object {
+        /**
+         * Percentage by which we allow the preview scale to go off screen and extend beyond camera view
+         * dimensions. See ensureScale for more detail.
+         */
+        private const val OFF_SCREEN_EXTENT = 0.05f
+    }
 }
