@@ -24,6 +24,9 @@ data class LivenessResult(val mode: Int)
  * will be regarded as not feasible region for the face to be to be even considered
  * for liveness. This parameter help us to deal with the situation that one face might
  * be in a corner of the screen coordinate system and we can't recognize it quite well.
+ *
+ * The nature of this receiver requires that face bounding box is scaled to target the
+ * camera view frame mn which is displayed.
  */
 class LivenessFace(
     private val infeasibleAreaPercent: Float = 0.2f,

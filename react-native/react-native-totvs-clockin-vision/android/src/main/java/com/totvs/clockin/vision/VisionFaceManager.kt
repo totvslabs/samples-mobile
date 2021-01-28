@@ -13,9 +13,7 @@ import com.totvs.clockin.vision.events.Event
 import com.totvs.clockin.vision.events.OnBarcodeDetected
 import com.totvs.clockin.vision.events.OnFaceProximity
 import com.totvs.clockin.vision.events.OnLiveness
-import com.totvs.clockin.vision.face.LivenessEyes
-import com.totvs.clockin.vision.face.LivenessFace
-import com.totvs.clockin.vision.face.ProximityByFaceWidth
+import com.totvs.clockin.vision.face.*
 import com.totvs.clockin.vision.utils.getModelOutputDir
 import com.totvs.clockin.vision.view.VisionFaceCameraView
 
@@ -113,7 +111,7 @@ class VisionFaceManager : AbstractViewManager<VisionFaceCameraView>() {
             if (null != proximity) {
                 proximity.threshold = TransientState.proximityThreshold
             } else {
-                cameraView.proximity = ProximityByFaceWidth { result ->
+                cameraView.proximity = ProximityByFaceWidthConstrained { result ->
                     // on detection send the event,
                     OnFaceProximity(
                         isUnderThreshold = result.isUnderThreshold,
