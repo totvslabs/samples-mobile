@@ -17,15 +17,6 @@ fileprivate enum SessionSetupState {
 }
 
 /**
- README carefully:  This property is a workaround to an issue related to  react native environment in which multiple
- camera views were created and the camera source related to the deatached view tried to acquire the camera session
- leaving the new one without a video output.
- As consequence this camera source can not be used in a normal iOS environment in which for the same camera source
- we can call stopRunning followed by startRunning. To enable this behavior, just remove this property.
-*/
-fileprivate var lastCameraAcquireId = -1
-
-/**
  * This controller is backed fully by `AVFoudnation` implementation, in order to change the
  * source of the camera device, this is the class that needs to be checked for.
  */
@@ -57,7 +48,7 @@ class CameraSource : NSObject {
             }
         }
     }
-     
+    
     /// Capture Session for the current camera device
     private let session = AVCaptureSession()
     
@@ -108,14 +99,12 @@ class CameraSource : NSObject {
     }
     
     private var isCameraSourceAlive: Bool {
-        lastCameraAcquireId == -1 || lastCameraAcquireId == hashValue
+        nil != cameraView
     }
-            
+    
     init(cameraView: CameraView) {
         super.init()
         self.cameraView = cameraView
-        
-        lastCameraAcquireId = self.hashValue
     }
 }
 
@@ -123,17 +112,26 @@ class CameraSource : NSObject {
 // MARK: - Lifecycle
 extension CameraSource {
     func startRunning() {
+        guard isCameraSourceAlive else {
+            return
+        }
+        
         previewView?.session = session
         
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             if sessionSetupState == .undetermined {
                 sessionQueue.async {
+                    guard self.isCameraSourceAlive else {
+                        self.stopRunning()
+                        return
+                    }
                     self.configureSession()
                 }
             }
             sessionQueue.async {
                 guard self.isCameraSourceAlive else {
+                    self.stopRunning()
                     return
                 }
                 self.addObservers()
@@ -185,12 +183,13 @@ private extension CameraSource {
         }
         session.beginConfiguration()
         
-        session.automaticallyConfiguresCaptureDeviceForWideColor = false        
+        session.automaticallyConfiguresCaptureDeviceForWideColor = false
         /**
          Set this property to control the quality of the images captured from the camera device.
          This will help with performance, quality of frames, speed of response, FPS, etc.
          */
-        session.sessionPreset = .iFrame1280x720
+//        session.sessionPreset = .iFrame1280x720
+        session.sessionPreset = .high
             
         /// - TAG: CameraDeviceInput
         do {
@@ -328,6 +327,10 @@ private extension CameraSource {
     }
     
     func removeObservers() {
+        if kvoObservations.isEmpty {
+            return // no observers
+        }
+        
         NotificationCenter.default.removeObserver(self)
         
         for o in kvoObservations {
@@ -374,7 +377,7 @@ private extension CameraSource {
         center.addObserver(self,
                            selector: #selector(sessionRuntimeError),
                            name: .AVCaptureSessionRuntimeError,
-                           object: cameraDeviceInput.device)
+                           object: session)
     }
     /// - TAG: Interruption Observations
     func observeInterrupptions() {
@@ -382,12 +385,12 @@ private extension CameraSource {
         center.addObserver(self,
                            selector: #selector(sessionWasInterrupted),
                            name: .AVCaptureSessionWasInterrupted,
-                           object: cameraDeviceInput.device)
+                           object: session)
         
         center.addObserver(self,
                            selector: #selector(sessionInterruptionEnded),
                            name: .AVCaptureSessionInterruptionEnded,
-                           object: cameraDeviceInput.device)
+                           object: session)
     }
     /// - TAG: Orientation Changes
     func observeOrientationChanges() {
@@ -422,6 +425,9 @@ extension CameraSource {
         monitorSubjectAreaChange: Bool)
     {
         sessionQueue.async {
+            guard self.isCameraSourceAlive else {
+                return
+            }
             let device = self.cameraDeviceInput.device
             do {
                 try device.lockForConfiguration()
@@ -456,14 +462,9 @@ private extension CameraSource {
             return
         }
         print("\(TAG): Capture session runtime error \(error)")
-        // If media service were reset nd the last start succeeded, restart the session
-        if error.code == .mediaServicesWereReset {
-            if isSessionRunning {
-                sessionQueue.async {
-                    self.session.startRunning()
-                    self.isSessionRunning = self.session.isRunning
-                }
-            }
+        sessionQueue.async {
+            self.session.startRunning()
+            self.isSessionRunning = self.session.isRunning
         }
     }
 }
@@ -482,7 +483,8 @@ private extension CameraSource {
            let reasonInteger = info.integerValue,
            let reason = AVCaptureSession.InterruptionReason(rawValue: reasonInteger)
         {
-            print("\(TAG): Capture Session was interrupted with reason \(reason)")
+            print("\(TAG): Capture Session was interrupted with reason \(reason.rawValue)")
+            
             if reason == .videoDeviceNotAvailableDueToSystemPressure {
                 print("\(TAG): Session stopped running due to shutdown system pressure level.")
             }
@@ -492,6 +494,9 @@ private extension CameraSource {
     @objc func sessionInterruptionEnded(notification: NSNotification) {
         print("\(TAG): Capture session interruption ended")
         sessionQueue.async {
+            guard self.isCameraSourceAlive else {
+                return
+            }
             self.session.startRunning()
             self.isSessionRunning = self.session.isRunning
         }
