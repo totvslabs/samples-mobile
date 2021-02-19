@@ -43,7 +43,8 @@ class CameraSource : NSObject {
             if let _ = analyzer, sessionSetupState != .undetermined {
                 installAnalyzer()
             }
-            if nil == analyzer {
+            // attempt to uninstall once on multiple nil set.
+            if nil == analyzer, nil != oldValue {
                 uninstallAnalyzer()
             }
         }
@@ -165,7 +166,7 @@ extension CameraSource {
     }
     
     func stopRunning() {
-        if (sessionSetupState == .configured) {
+        if sessionSetupState == .configured {
             sessionQueue.async {
                 self.removeObservers()
                 self.session.stopRunning()
@@ -182,13 +183,13 @@ private extension CameraSource {
             return
         }
         session.beginConfiguration()
-        
         session.automaticallyConfiguresCaptureDeviceForWideColor = false
-        /**
-         Set this property to control the quality of the images captured from the camera device.
-         This will help with performance, quality of frames, speed of response, FPS, etc.
-         */
-//        session.sessionPreset = .iFrame1280x720
+        // Set this property to control the quality of the images captured from the camera device.
+        // This will help with performance, quality of frames, speed of response, FPS, etc.
+        // It was found that in some devices using a sessionPreset of iFrame1280x720 were causing
+        // a failure at acquiring the capture session, resulting in a black screen.
+        
+        //session.sessionPreset = .iFrame1280x720
         session.sessionPreset = .high
             
         /// - TAG: CameraDeviceInput
@@ -200,7 +201,7 @@ private extension CameraSource {
             }
             let cameraInput = try AVCaptureDeviceInput(device: cameraDevice)
             
-            if session.canAddInput(cameraInput) {
+            if isCameraSourceAlive, session.canAddInput(cameraInput) {
                 session.addInput(cameraInput)
                 cameraDeviceInput = cameraInput
             } else {
@@ -215,7 +216,7 @@ private extension CameraSource {
         }
         
         /// - TAG: PhotoCaptureOutput
-        if session.canAddOutput(photoOutput) {
+        if isCameraSourceAlive, session.canAddOutput(photoOutput) {
             session.addOutput(photoOutput)
             
             photoOutput.isHighResolutionCaptureEnabled = true
@@ -229,7 +230,7 @@ private extension CameraSource {
         }
         
         if nil != analyzer {
-            if session.canAddOutput(dataOutput) {
+            if isCameraSourceAlive, session.canAddOutput(dataOutput) {
                 session.addOutput(dataOutput)
                 configureVideoDataOutput()
             } else {
@@ -242,7 +243,7 @@ private extension CameraSource {
         // initial orientation to all interested
         DispatchQueue.main.async {
             // if cameraView get deallocated while configuring, do nothing.
-            if nil != self.cameraView {
+            if self.isCameraSourceAlive {
                 self.setCameraOrientation(orientation: self.cameraView.windowOrientation)
             }
         }
@@ -253,9 +254,10 @@ private extension CameraSource {
     }
     
     func configureVideoDataOutput() {
-        dataOutput.videoSettings = [
-            (kCVPixelBufferPixelFormatTypeKey as String): kCVPixelFormatType_32BGRA,
-        ]
+        // Refer to the doc of this prop before changing it. Set to empty map because setting it to a value
+        // that doesn't match the session preset might cause problem trying to acquire the session start,
+        // in some devices were found to left a black screen at trying to start the capture session
+        dataOutput.videoSettings = [:]
         dataOutput.alwaysDiscardsLateVideoFrames = true
         dataOutput.setSampleBufferDelegate(self, queue: analysisQueue)
     }
@@ -461,8 +463,11 @@ private extension CameraSource {
         guard let error = notification.userInfo?[AVCaptureSessionErrorKey] as? AVError else {
             return
         }
-        print("\(TAG): Capture session runtime error \(error)")
+        print("\(TAG): Capture session runtime error {cameraSourceAlive: \(isCameraSourceAlive), hash: \(hashValue)} \(error)")
         sessionQueue.async {
+            guard self.isCameraSourceAlive else {
+                return
+            }
             self.session.startRunning()
             self.isSessionRunning = self.session.isRunning
         }
@@ -483,7 +488,7 @@ private extension CameraSource {
            let reasonInteger = info.integerValue,
            let reason = AVCaptureSession.InterruptionReason(rawValue: reasonInteger)
         {
-            print("\(TAG): Capture Session was interrupted with reason \(reason.rawValue)")
+            print("\(TAG): Capture Session was interrupted with reason \(reason.rawValue) {cameraSourceAlive: \(isCameraSourceAlive), hash: \(hashValue)}")
             
             if reason == .videoDeviceNotAvailableDueToSystemPressure {
                 print("\(TAG): Session stopped running due to shutdown system pressure level.")
@@ -724,7 +729,6 @@ extension CameraSource {
 // MARK: - Image Data Analysis
 extension CameraSource : AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        
         let buffer = CMSampleBufferGetImageBuffer(sampleBuffer)!
         let width  = CVPixelBufferGetWidth(buffer)
         let height = CVPixelBufferGetHeight(buffer)
