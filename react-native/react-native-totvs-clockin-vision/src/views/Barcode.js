@@ -354,7 +354,7 @@ export default class BarcodeCameraView extends Component<PropsType, StateType> {
     const z = toFiniteFloatOrNull(zoom);
 
     if (isAbsent(z) || !(MIN <= z && z <= MAX)) {
-      return console.warn(`Invalid facing value ${facing} possible values are front=${FRONT}, back=${BACK}`);
+      return console.warn(`Invalid zoom value ${zoom} possible values are min=${MIN}, max=${MAX}`);
     }
 
     return this._handle && VisionBarcodeModule.setZoom(z, this._handle);
