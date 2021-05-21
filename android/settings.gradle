@@ -1,7 +1,5 @@
 include ':deep-linking'
 include ':totvs-camera-app'
-include ':react-native-totvs-camera'
 include ':totvs-camera-core'
 include ':totvs-camera-view'
 include ':totvs-camera-vision'
-include ':react-native-totvs-clockin-vision'
