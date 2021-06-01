@@ -61,8 +61,4 @@ dependencies {
     def mlkit_version = '16.0.1'
     implementation "com.google.mlkit:face-detection:$mlkit_version"
     implementation "com.google.mlkit:barcode-scanning:$mlkit_version"
-
-//    implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
-//    implementation 'com.google.firebase:firebase-ml-vision-face-model:20.0.1'
-//    implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.1.1'
 }
