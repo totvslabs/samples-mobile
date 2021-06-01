@@ -1,6 +1,6 @@
 
 {
-  "name": "react-native-totvs-clockin-vision",
+  "name": "react-native-clockin-vision",
   "version": "1.0.0",
   "description": "A camera vision components for TOTVS Clock-In apps.",
   "author": "TOTVS Labs <info@totvslabs.com> (https://www.totvslabs.com/)",
