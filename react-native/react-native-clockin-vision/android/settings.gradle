@@ -1,4 +1,4 @@
-rootProject.name = 'react-native-totvs-clockin-vision'
+rootProject.name = 'react-native-clockin-vision'
 
 include ':totvs-camera-core'
 include ':totvs-camera-view'
