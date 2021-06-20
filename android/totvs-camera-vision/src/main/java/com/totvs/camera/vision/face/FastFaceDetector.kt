@@ -156,13 +156,13 @@ open class FastFaceDetector(
     protected fun Executor.executeCatching(
         onDetected: (FaceObject) -> Unit,
         block: () -> Unit
-    ) = this.runCatching {
-        execute(block)
-    }.exceptionOrNull()?.let { ex ->
-        if (DEBUG_ENABLED) {
-            Log.e(TAG, "", ex)
+    ) = execute {
+        runCatching(block).exceptionOrNull()?.let {
+            if (DEBUG_ENABLED) {
+                Log.e(TAG, "", it)
+            }
+            onDetected(NullFaceObject)
         }
-        onDetected(NullFaceObject)
     }
 
     /**
